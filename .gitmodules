@@ -1,6 +1,6 @@
-[submodule "riichi-mahjong-tiles"]
-	path = riichi-mahjong-tiles
+[submodule "extlibs/riichi-mahjong-tiles"]
+	path = extlibs/riichi-mahjong-tiles
 	url = git@github.com:FluffyStuff/riichi-mahjong-tiles.git
-[submodule "source-sans-pro"]
-	path = source-sans-pro
+[submodule "extlibs/source-sans-pro"]
+	path = extlibs/source-sans-pro
 	url = git@github.com:adobe-fonts/source-sans-pro.git
