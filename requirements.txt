@@ -1,0 +1,3 @@
+Cython ~= 0.29
+pygame ~= 1.9
+pdoc ~= 0.3
