@@ -1,4 +1,3 @@
-Cython ~= 0.29
 wheel ~= 0.35
 sfml == 2.3.2.dev1 
 pdoc ~= 0.3

@@ -10,6 +10,8 @@ Install the following dependencies:
 
 - Clang 10 ([clang-10](https://packages.ubuntu.com/bionic/clang-10)<sup>ubuntu</sup> or [clang](https://www.archlinux.org/packages/extra/x86_64/clang/)<sup>arch</sup>)
 
+- Boost Development Headers ([libboost-all-dev](https://packages.ubuntu.com/xenial/libboost-all-dev)<sup>ubuntu</sup> or [boost](https://www.archlinux.org/packages/extra/x86_64/boost/)<sup>arch</sup>)
+
 Clone the repository, with recursive submodule cloning:
 
 ```
