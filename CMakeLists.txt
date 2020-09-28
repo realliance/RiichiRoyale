@@ -4,7 +4,13 @@ include(FetchContent)
 project(RiichiRoyale)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+option(PACKAGE_TOOLS "Build the tools" OFF)
+
 add_subdirectory(${RiichiRoyale_SOURCE_DIR}/libs)
+
+if(PACKAGE_TOOLS)
+  add_subdirectory(${RiichiRoyale_SOURCE_DIR}/tools)
+endif()
 
 pybind11_add_module(RiichiRoyale SHARED)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")

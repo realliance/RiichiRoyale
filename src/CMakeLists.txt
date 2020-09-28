@@ -5,3 +5,10 @@ target_sources(RiichiRoyale
         "${DIR}/walls.cpp"
         "${DIR}/yaku.cpp"
 )
+
+if(PACKAGE_TOOLS)
+    target_sources(mahjongShuffle
+        PRIVATE
+            "${DIR}/walls.cpp"
+    )
+endif()

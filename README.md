@@ -21,9 +21,14 @@ Run the following commands within the project directory:
 # Install python dependencies locally
 pip install --user -r requirements.txt
 
-# Bootstrap CMake Environment
+# Create build directory for cmake
 mkdir build/
+
+# Bootstrap CMake Environment
 cmake -S . -B build
+
+# Or bootstrap CMake with tool building enabled
+cmake -S . -B build -DPACKAGE_TOOLS=ON
 
 # Build Project
 cmake --build build
