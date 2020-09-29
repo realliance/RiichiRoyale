@@ -13,10 +13,10 @@ MainWindow::MainWindow()
   sortButton = Gtk::CheckButton("Sorted");
   sortButton.set_active();
 
-  Walls::SetPath("../../extlibs/riichi-mahjong-tiles/Regular");
+  Walls::SetPath("../../build/_deps/riichimahjongtiles-src/Regular");
   auto Hand = walls.TakeHand();
   Walls::Sort(Hand);
-  front = Gdk::Pixbuf::create_from_file("../../extlibs/riichi-mahjong-tiles/Regular/Front.svg");
+  front = Gdk::Pixbuf::create_from_file("../../build/_deps/riichimahjongtiles-src/Regular/Front.svg");
   for(int i = 0; i < 14; i ++){
     int width = 100;
     auto top = Gdk::Pixbuf::create_from_file(Walls::GetPath(Hand[i]));
