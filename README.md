@@ -32,6 +32,10 @@ cmake -S . -B build
 # Or bootstrap CMake with tool building enabled
 cmake -S . -B build -DPACKAGE_TOOLS=ON
 
+# Or, if wanting to use Clang
+
+C=clang CXX=clang++ cmake -S . -B build
+
 # Build Project
 cmake --build build
 
