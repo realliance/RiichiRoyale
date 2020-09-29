@@ -1,4 +1,5 @@
 import sys
+from pygame import surface
 import pygame
 import libmahjong
 from riichiroyale import MahjongHand, load_image, load_tile
@@ -20,7 +21,7 @@ def main():
     pygame.display.set_icon(_build_icon())
 
     # Fill background
-    background = pygame.Surface(screen.get_size())
+    background = surface.Surface(screen.get_size())
     background = background.convert_alpha()
     background.fill((7, 99, 36))
 

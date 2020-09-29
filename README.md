@@ -39,7 +39,7 @@ python main.py
 
 ## Testing and Documentation
 
-TODO: Add environment command for running python and clang tests, as well as generating python documentation.
+The python test suite is located in `test/` and can be run with `python test`
 
 ## Good Resources
 

@@ -1,8 +1,10 @@
-import libmahjong
 from pygame.sprite import Group
+from pygame import surface
 import pygame
 from riichiroyale.sprites import MahjongPiece
 from riichiroyale.utils import load_image
+
+import libmahjong
 
 class MahjongHand(Group):
   def __init__(self):
@@ -32,12 +34,12 @@ class MahjongHand(Group):
 
 def load_tile(foreground, background, colorkey=None):
     _, _, width, height = background.get_rect()
-    merged = pygame.Surface([width, height], pygame.SRCALPHA)
+    merged = surface.Surface([width, height], pygame.SRCALPHA)
     merged.blit(background, (0, 0))
     merged.blit(foreground, (0, 0))
     merged = merged.convert_alpha()
-    if colorkey != None:
+    if colorkey is not None:
         if colorkey == -1:
             colorkey = merged.get_at((0,0))
-        merged.set_colorkey(colorkey, RLEACCEL)
+        merged.set_colorkey(colorkey, pygame.RLEACCEL)
     return merged
