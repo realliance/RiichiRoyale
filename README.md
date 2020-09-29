@@ -41,6 +41,8 @@ python main.py
 
 The python test suite is located in `test/` and can be run with `python test`
 
+The C++ test suite is located in `cxxtests/` and can be run with `make -C build check`
+
 ## Good Resources
 
 [DocDevs Mirror of Pygame Documentation](https://devdocs.io/pygame/): Standard Pygame API Docs. Pygame has a ratelimiter on their website of 50 visits per hour, which is very annoying while developing.
