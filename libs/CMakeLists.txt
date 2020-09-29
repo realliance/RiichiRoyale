@@ -22,3 +22,25 @@ if(NOT pybind11_POPULATED)
 
   add_subdirectory(${pybind11_SOURCE_DIR} ${pybind11_BINARY_DIR})
 endif()
+
+FetchContent_Declare(
+  riichimahjongtiles
+  GIT_REPOSITORY https://github.com/FluffyStuff/riichi-mahjong-tiles.git
+  GIT_TAG        9e2eba21ca69d6cd5cdd9a309d5754ac9517c481
+)
+
+FetchContent_GetProperties(riichimahjongtiles)
+if(NOT riichimahjongtiles_POPULATED)
+  FetchContent_Populate(riichimahjongtiles)
+endif()
+
+FetchContent_Declare(
+  sourcesanspro
+  GIT_REPOSITORY https://github.com/adobe-fonts/source-sans-pro.git
+  GIT_TAG        5b44992cc72686a04adef7e81507060100c6ca77
+)
+
+FetchContent_GetProperties(sourcesanspro)
+if(NOT sourcesanspro_POPULATED)
+  FetchContent_Populate(sourcesanspro)
+endif()

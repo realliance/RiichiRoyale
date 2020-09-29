@@ -15,7 +15,7 @@ Install the following dependencies:
 Clone the repository, with recursive submodule cloning:
 
 ```
-git clone --recursive git@github.com:HartleyAHartley/RiichiRoyale.git
+git clone git@github.com:HartleyAHartley/RiichiRoyale.git
 ```
 
 Run the following commands within the project directory:

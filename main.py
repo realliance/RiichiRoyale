@@ -26,7 +26,7 @@ def main():
     background.fill((7, 99, 36))
 
     # Display some text
-    font = pygame.font.Font('extlibs/source-sans-pro/TTF/SourceSans3-Regular.ttf', 36)
+    font = pygame.font.Font('build/_deps/sourcesanspro-src/TTF/SourceSans3-Regular.ttf', 36)
     text = font.render("Press Space to Refresh Hand", 1, (255, 255, 255))
     textpos = text.get_rect()
     textpos.bottomright = background.get_rect().bottomright
