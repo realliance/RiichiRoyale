@@ -3,7 +3,6 @@ target_sources(RiichiRoyale
     PRIVATE
         "${DIR}/python.cpp"
         "${DIR}/walls.cpp"
-        "${DIR}/yaku.cpp"
 )
 
 if(PACKAGE_TOOLS)
