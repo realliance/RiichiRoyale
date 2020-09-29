@@ -14,11 +14,11 @@ using Piece = u_int8_t;
 
 enum Pieces {
     TERMINAL_BIT = 1<<7,
-    HONOR_SUIT = 0<<4,
-    BAMBOO_SUIT = 1<<4,
-    PIN_SUIT = 2<<4,
-    CHARACTER_SUIT = 3<<4,
-    RED_FIVE = 1<<3,
+    HONOR_SUIT = 0<<5,
+    BAMBOO_SUIT = 1<<5,
+    PIN_SUIT = 2<<5,
+    CHARACTER_SUIT = 3<<5,
+    RED_FIVE = 1<<4,
     ERROR_PIECE = 0,
     ONE_BAMBOO   = BAMBOO_SUIT | 1 | TERMINAL_BIT,
     TWO_BAMBOO   = BAMBOO_SUIT | 2,
@@ -68,7 +68,7 @@ inline auto isTerminal(Piece p) -> bool{
 }
 
 inline auto getSuit(Piece p) -> int {
-    return p & 3<<4;
+    return p & 3<<5;
 }
 
 inline auto getPieceNum(Piece p) -> int {
