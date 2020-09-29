@@ -1,5 +1,6 @@
 pybind11 ~= 2.5
 pygame ~= 1.9
+pygame-gui ~= 0.5.7
 
 pdoc ~= 0.3
 pylint ~= 2.6
