@@ -1,6 +1,6 @@
 import sys
 import pygame
-import RiichiRoyale as mahjong
+import libmahjong
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 1500, 400
 
@@ -45,7 +45,7 @@ class MahjongHand(pygame.sprite.Group):
       posx += 105
 
   def getPieces(self):
-    w = mahjong.Walls()
+    w = libmahjong.Walls()
     p = w.TakeHand()
     return sorted(p)
 
@@ -58,7 +58,7 @@ class MahjongHand(pygame.sprite.Group):
       
       
   def createSprite(self,piece):
-    foreground = load_image(mahjong.Walls.GetPath(piece).split('.')[0]+'.png', convert=False)
+    foreground = load_image(libmahjong.Walls.GetPath(piece).split('.')[0]+'.png', convert=False)
     return load_tile(foreground, self.front)
 
 def main():
@@ -79,7 +79,7 @@ def main():
     textpos.bottomright = background.get_rect().bottomright
     background.blit(text, textpos)
 
-    mahjong.Walls.SetPath('resources/tiles/102x136')
+    libmahjong.Walls.SetPath('resources/tiles/102x136')
     hand = MahjongHand()
 
     # Blit everything to the screen
