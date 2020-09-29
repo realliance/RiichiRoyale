@@ -6,9 +6,11 @@ This getting start guide assumes you are running either Arch Linux or Ubuntu (wh
 
 Install the following dependencies:
 
+- `git`
+
 - `cmake`
 
-- Clang 10 ([clang-10](https://packages.ubuntu.com/bionic/clang-10)<sup>ubuntu</sup> or [clang](https://www.archlinux.org/packages/extra/x86_64/clang/)<sup>arch</sup>)
+- `clang` (or [clang-10](https://packages.ubuntu.com/bionic/clang-10) if on Ubuntu < 20.04LTS)
 
 Clone the repository, with recursive submodule cloning:
 
