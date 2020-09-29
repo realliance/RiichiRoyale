@@ -12,7 +12,7 @@ Install the following dependencies:
 
 - `clang` (or [clang-10](https://packages.ubuntu.com/bionic/clang-10) if on Ubuntu < 20.04LTS)
 
-Clone the repository, with recursive submodule cloning:
+Clone the repository:
 
 ```
 git clone git@github.com:HartleyAHartley/RiichiRoyale.git
