@@ -1,3 +1,5 @@
+import sys
+import unittest
 import pylint.lint
 from pylint import epylint
 
@@ -15,3 +17,12 @@ def _user_lint():
 
 def _ci_lint():
   return epylint.py_run(''.join(linting_locations), return_std=True)
+
+def main():
+  CI = sys.argv[1] == 'ci' if len(sys.argv) > 1 else False
+  run_lint(ci=CI)
+
+  unittest.main()
+
+if __name__ == '__main__':
+    main()
