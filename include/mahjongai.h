@@ -1,6 +1,5 @@
-#include "pieces.h"
+#pragma once
+#include "hand.h"
 
-struct MahjongAi{
-    Decision DiscardPiece() = 0;
-    Decision TakeDiscard() = 0;
-}
+class MahjongAI{
+};

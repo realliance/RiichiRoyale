@@ -1,6 +1,7 @@
+#pragma once
 #include "pieces.h"
 
-enum Decisions{
+enum Events{
     Discard,
     Riichi,
     ConcealedKan,
@@ -12,7 +13,15 @@ enum Decisions{
     Tsumo
 };
 
-struct Decision {
+enum Players{
+    East,
+    South,
+    West,
+    North
+};
+
+struct Event {
+    Players player;
     Piece piece;
-    Decisions decision = Discard;
+    Events decision;
 };

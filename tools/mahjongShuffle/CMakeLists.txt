@@ -12,6 +12,9 @@ target_sources(mahjongShuffle
         "${DIR}/main.cpp"
         "${DIR}/mainwindow.cpp"
         "${DIR}/mainwindow.h"
+        "${DIR}/walls.cpp"
+        "${DIR}/walls.h"
+        "${DIR}/pieces.h"
 )
 target_link_libraries(mahjongShuffle ${GTKMM_LIBRARIES})
 
