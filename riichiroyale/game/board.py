@@ -2,15 +2,15 @@ import random
 from .wall import generate_start_board
 
 class Board():
-  def __init__(self, wall=None, deadwall=None, dora_revealed=0, players=None, current_turn=0, current_dealer=0):
-
+  def __init__(self, wall=None, deadwall=None, dora_revealed=1, players=None, current_turn=0, current_dealer=0):
     if wall is not None and deadwall is not None:
       self.wall = wall
       self.deadwall = deadwall
     else:
       self.wall, self.deadwall = generate_start_board()
     self.dora_revealed = dora_revealed
-    self.players = players
+    if players is None:
+      self.players = []
     self.current_turn = current_turn
     self.current_dealer = current_dealer
 
@@ -32,7 +32,7 @@ class Board():
 
   def get_revealed_dora(self):
     dora = []
-    for index in range(0, len(self.deadwall), 2):
+    for index in range(0, self.dora_revealed, 2):
       dora.append(self.deadwall[index])
     return dora
 
@@ -48,6 +48,10 @@ class Board():
     if not self.out_of_tiles():
       self.on_turn()
 
+  def register_player(self, player):
+    player.board = self
+    self.players.append(player)
+
   def on_call(self, player):
     self.current_turn = self.players.index(player)
 
@@ -62,7 +66,6 @@ class Board():
       wait_on_decision = wait_on_decision or result
     if not wait_on_decision:
       self.next_turn()
-    
 
   def on_turn(self):
     self.players[self.current_turn].on_turn(self)

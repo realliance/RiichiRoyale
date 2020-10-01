@@ -4,6 +4,7 @@ from pygame.surface import Surface
 from riichiroyale.game import Tile
 from riichiroyale.utils import load_image
 
+SMALL_TILE_SIZE = [30,40]
 TILE_SIZE = [51,68]
 
 SUIT_PREFIX = {
@@ -23,6 +24,8 @@ HONOR_NAME = {
 }
 
 def get_tile_front_name(tile):
+  if tile == Tile.ERROR_PIECE:
+    return 'Back'
   suit = Tile.getSuit(tile)
   if suit == Tile.HONOR_SUIT:
     return HONOR_NAME[tile]
@@ -39,6 +42,7 @@ def get_all_tile_front_paths(dir_path, file_suffix='svg'):
     tile = Tile(tile_id)
     if Tile.isBoardPiece(tile):
       full_path_dict[tile] = get_tile_front_path(dir_path, tile, file_suffix)
+  full_path_dict[Tile.ERROR_PIECE] = get_tile_front_path(dir_path, Tile.ERROR_PIECE, file_suffix)
   return full_path_dict
 
 def build_tile_surface_dict(dir_path, size, file_suffix='svg'):

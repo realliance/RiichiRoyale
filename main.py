@@ -1,9 +1,8 @@
 import sys
-from pygame import surface, Rect, mouse
-import pygame
 import math
-import libmahjong
-from riichiroyale import Board, Player, build_tile_surface_dict, Tile, BoardRender, TILE_SIZE
+from pygame import surface, Rect
+import pygame
+from riichiroyale import Board, Player, build_tile_surface_dict, Tile, BoardRender, TILE_SIZE, SMALL_TILE_SIZE
 
 SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO = 16, 9
 
@@ -13,16 +12,17 @@ def get_play_area_pos(screen):
   w, h = screen.get_size()
   play_area_height = h
   player_area_width = math.floor(h * (float(SCREEN_WIDTH_RATIO)/SCREEN_HEIGHT_RATIO))
-  return Rect((w - player_area_width)/2, 0, player_area_width, play_area_height)
+  return Rect((w - player_area_width)//2, 0, player_area_width, play_area_height)
 
 def main():
   # Initialize screen
   pygame.init()
-  screen = pygame.display.set_mode([STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT], pygame.RESIZABLE)
+  screen = pygame.display.set_mode([STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT])
   pygame.display.set_caption('Riichi Royale')
 
   # Initialize tile surface dictionary
   tile_dictionary = build_tile_surface_dict('resources/tiles/102x136', TILE_SIZE, file_suffix='png')
+  small_tile_dictionary = build_tile_surface_dict('resources/tiles/102x136', SMALL_TILE_SIZE, file_suffix='png')
 
   # Set Icon
   pygame.display.set_icon(tile_dictionary[Tile.GREEN_DRAGON])
@@ -43,15 +43,22 @@ def main():
   bot_one = Player("Bot 1")
   bot_two = Player("Bot 2")
   bot_three = Player("Bot 3")
-  board = Board(players=[main_player, bot_one, bot_two, bot_three])
+  board = Board()
+
+  board.register_player(main_player)
+  board.register_player(bot_one)
+  board.register_player(bot_two)
+  board.register_player(bot_three)
+
   #board.shuffle_dealer()
   main_player.hand = board.draw_tile(num=13)
+  main_player.hand.sort()
   bot_one.hand = board.draw_tile(num=13)
   bot_two.hand = board.draw_tile(num=13)
   bot_three.hand = board.draw_tile(num=13)
   board.on_turn()
 
-  board_render = BoardRender(tile_dictionary, play_area, board, 0)
+  board_render = BoardRender(small_tile_dictionary, tile_dictionary, play_area, board, 0)
 
   # Event loop
   while 1:

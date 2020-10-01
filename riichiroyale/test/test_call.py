@@ -53,7 +53,12 @@ class TestGameCalls(unittest.TestCase):
     # Notable Player: P3 has a One Bamboo and Two Bamboo
     player_three = Player("Player Three", starting_hand=[Tile.ONE_BAMBOO, Tile.TWO_BAMBOO])
     player_four = Player("Player Four", starting_hand=[Tile.WEST_WIND, Tile.EAST_WIND])
-    board = Board(players=[player_one, player_two, player_three, player_four])
+    board = Board()
+
+    board.register_player(player_one)
+    board.register_player(player_two)
+    board.register_player(player_three)
+    board.register_player(player_four)
 
     # P1, who is sitting on P2's left, discards a Three Bamboo
     player_one.discard_pile = [Tile.THREE_BAMBOO]

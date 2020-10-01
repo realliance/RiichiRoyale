@@ -1,6 +1,5 @@
 pybind11 ~= 2.5
 pygame == 2.0.0.dev12
-pynanosvg ~= 0.3
 
 pdoc ~= 0.3
 pylint ~= 2.6

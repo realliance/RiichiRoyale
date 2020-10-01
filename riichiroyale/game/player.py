@@ -3,15 +3,35 @@ from .call import Call, chi_possible, kan_possible, pon_possible
 class Player:
   def __init__(self, name, starting_hand=None, discard_pile=None):
     self.name = name
-    self.hand = starting_hand
+    if starting_hand is None:
+      self.hand = []
+    else:
+      self.hand = starting_hand
     self.melded_hand = []
-    self.discard_pile = discard_pile
+    if discard_pile is None:
+      self.discard_pile = []
+    else:
+      self.discard_pile = discard_pile
     self.hand_open = False
+    self.board = None
     self.riichi_declared = False
     self.calls_avaliable = None
+    self.my_turn = False
 
   def full_hand(self):
     return self.hand + self.melded_hand
+
+  def on_tile_click(self, tile_index):
+    if self.my_turn:
+      # Discard Tile
+      tile = self.hand[tile_index]
+      del self.hand[tile_index]
+      self.hand.sort()
+      self.discard_pile.append(tile)
+      self.my_turn = False
+      if self.board is None:
+        raise "Cannot communicate with board! Is this player registered?"
+      self.board.on_discard(self)
 
   def on_opponent_discard(self, player, chi_avaliable):
     if len(player.discard_pile) == 0:
@@ -30,4 +50,5 @@ class Player:
       return True
 
   def on_turn(self, board):
+    self.my_turn = True
     self.hand += board.draw_tile()
