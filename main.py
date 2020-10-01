@@ -1,11 +1,13 @@
 import sys
+from math import cos, sin
+
 from pygame import surface
 import pygame
 import pygame_gui
 import libmahjong
 from riichiroyale import MahjongHand, load_image, load_tile
 
-SCREEN_WIDTH, SCREEN_HEIGHT = 1500, 400
+SCREEN_WIDTH, SCREEN_HEIGHT = 1500, 800
 
 
 def _build_icon():
@@ -30,9 +32,41 @@ def main():
 
     # Setup pygame-gui
     manager = pygame_gui.UIManager((SCREEN_WIDTH, SCREEN_HEIGHT), 'theme.json')
-    newgame_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)),
+    newgame_button_rect = pygame.Rect(0, 0, 100, 50)
+    newgame_button_rect.bottomleft = (500, -200)
+    newgame_button = pygame_gui.elements.UIButton(relative_rect=newgame_button_rect,
                                                   text='New Game',
-                                                  manager=manager)
+                                                  manager=manager,
+                                                  anchors={
+                                                      'top': 'bottom',
+                                                      'bottom': 'bottom',
+                                                      'left': 'left',
+                                                      'right': 'left',
+                                                  })
+    loadgame_button_rect = pygame.Rect(0, 0, 100, 50)
+    loadgame_button_rect.bottomleft = (650, -200)
+    loadgame_button = pygame_gui.elements.UIButton(relative_rect=loadgame_button_rect,
+                                                   text='Load Game',
+                                                   manager=manager,
+                                                   anchors={
+                                                       'top': 'bottom',
+                                                       'bottom': 'bottom',
+                                                       'left': 'left',
+                                                       'right': 'left',
+                                                   })
+
+    settings_button_rect = pygame.Rect(0, 0, 100, 50)
+    settings_button_rect.bottomleft = (800, -200)
+    loadgame_button = pygame_gui.elements.UIButton(relative_rect=settings_button_rect,
+                                                   text='Settings',
+                                                   manager=manager,
+                                                   anchors={
+                                                       'top': 'bottom',
+                                                       'bottom': 'bottom',
+                                                       'left': 'left',
+                                                       'right': 'left',
+                                                   })
+
 
     # Display some text
     font = pygame.font.Font('build/_deps/sourcesanspro-src/TTF/SourceSans3-Regular.ttf', 36)
@@ -40,7 +74,13 @@ def main():
     textpos = text.get_rect()
     textpos.bottomright = background.get_rect().bottomright
     textpos.right -= 10
+
+    titlefont = pygame.font.Font('build/_deps/sourcesanspro-src/TTF/SourceSans3-BoldIt.ttf', 100)
+    titletext = titlefont.render("Riichi Royale", 1, (255, 40, 40))
+    titletextpos = titletext.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+
     background.blit(text, textpos)
+    background.blit(titletext, titletextpos)
 
     libmahjong.Walls.SetPath('resources/tiles/102x136')
     hand = MahjongHand()
@@ -75,6 +115,9 @@ def main():
         manager.update(time_delta)
         screen.blit(background, (0, 0))
         hand.update()
+        for index, sprite in enumerate(hand.sprites()):
+            sprite.rect = ((SCREEN_WIDTH / 2 - 100) * cos(index + pygame.time.get_ticks() / 5000.0) + 700,
+                           (SCREEN_HEIGHT / 2 - 100) * sin(index + pygame.time.get_ticks() / 5000.0) + 350)
         hand.draw(screen)
         manager.draw_ui(screen)
         pygame.display.flip()
