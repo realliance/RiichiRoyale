@@ -2,7 +2,9 @@ import os
 import pygame
 from pygame.surface import Surface
 from riichiroyale.game import Tile
-from riichiroyale.utils import load_svg
+from riichiroyale.utils import load_image
+
+TILE_SIZE = [51,68]
 
 SUIT_PREFIX = {
   Tile.BAMBOO_SUIT: 'Sou',
@@ -41,12 +43,12 @@ def get_all_tile_front_paths(dir_path, file_suffix='svg'):
 
 def build_tile_surface_dict(dir_path, size, file_suffix='svg'):
   front_tile_paths = get_all_tile_front_paths(dir_path, file_suffix)
-  back_path = os.path.join(dir_path, 'Front.svg')
+  back_path = os.path.join(dir_path, 'Front.' + file_suffix)
   back_base = Surface(size, pygame.SRCALPHA)
-  load_svg(back_path, back_base, size)
+  load_image(back_path, back_base, size)
   result_dict = dict()
   for key, value in front_tile_paths.items():
     surface = back_base.copy()
-    load_svg(value, surface, size)
-    result_dict[key] = surface
+    load_image(value, surface, size)
+    result_dict[key] = surface.convert_alpha()
   return result_dict
