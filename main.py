@@ -2,19 +2,18 @@ import sys
 from pygame import surface
 import pygame
 import libmahjong
-from riichiroyale import MahjongHand, load_image, load_tile
+from riichiroyale import MahjongHand, load_image, load_tile, build_tile_surface_dict, Tile
 
-SCREEN_WIDTH, SCREEN_HEIGHT = 1500, 400
+SCREEN_WIDTH, SCREEN_HEIGHT = 1280, 720
 
 def _build_icon():
-  front = load_image('resources/tiles/51x68/Chun.png', convert=False)
-  back = load_image('resources/tiles/51x68/Front.png', convert=False)
-  return load_tile(front, back)
+  dictionary = build_tile_surface_dict('build/_deps/riichimahjongtiles-src/Regular', [51,68])
+  return dictionary[Tile.GREEN_DRAGON]
 
 def main():
     # Initialise screen
     pygame.init()
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
     pygame.display.set_caption('Riichi Royale')
 
     # Set Icon
@@ -33,7 +32,7 @@ def main():
     textpos.right -= 10
     background.blit(text, textpos)
 
-    libmahjong.Walls.SetPath('resources/tiles/102x136')
+    libmahjong.Walls.SetPath('resources/tiles/51x68')
     hand = MahjongHand()
 
     # Blit everything to the screen

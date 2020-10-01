@@ -1,6 +1,6 @@
-from enum import Enum
+from enum import IntEnum
 
-class Tile(Enum):
+class Tile(IntEnum):
   TERMINAL_BIT = 1<<7
   HONOR_SUIT = 0<<5
   BAMBOO_SUIT = 1<<5
@@ -48,15 +48,23 @@ class Tile(Enum):
 
   @staticmethod
   def isHonor(piece):
-    return (piece.value & Tile.CHARACTER_SUIT.value) == Tile.ERROR_PIECE.value
+    return (piece.value & Tile.CHARACTER_SUIT) == Tile.ERROR_PIECE
 
   @staticmethod
   def isTerminal(piece):
-    return (piece.value & Tile.TERMINAL_BIT.value) != Tile.ERROR_PIECE.value
+    return (piece.value & Tile.TERMINAL_BIT) != Tile.ERROR_PIECE
+
+  @staticmethod
+  def isBoardPiece(piece):
+    return piece & 0x0F != 0
 
   @staticmethod
   def getSuit(piece):
-    return piece.value & 3<<5
+    return Tile(piece.value & 3<<5)
+
+  @staticmethod
+  def isRedFive(piece):
+    return piece & Tile.RED_FIVE != Tile.ERROR_PIECE
 
   @staticmethod
   def getPieceNum(piece):
@@ -76,7 +84,7 @@ class Tile(Enum):
     suit = Tile.getSuit(self)
     is_terminal = new_number in (1, 9)
     if is_terminal:
-      return Tile(suit | new_number | Tile.TERMINAL_BIT.value)
+      return Tile(suit | new_number | Tile.TERMINAL_BIT)
     return Tile(suit | new_number)
 
   def __sub__(self, other):
@@ -88,5 +96,5 @@ class Tile(Enum):
     suit = Tile.getSuit(self)
     is_terminal = new_number in (1, 9)
     if is_terminal:
-      return Tile(suit | new_number | Tile.TERMINAL_BIT.value)
+      return Tile(suit | new_number | Tile.TERMINAL_BIT)
     return Tile(suit | new_number)

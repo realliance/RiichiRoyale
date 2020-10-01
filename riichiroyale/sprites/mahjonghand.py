@@ -9,7 +9,7 @@ import libmahjong
 class MahjongHand(Group):
   def __init__(self):
     Group.__init__(self)
-    self.front = load_image('resources/tiles/102x136/Front.png', convert=False)
+    self.front = load_image('resources/tiles/51x68/Front.png', convert=False)
     posx = 10
     posy = 50
     for piece in self.getPieces():

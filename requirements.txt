@@ -1,5 +1,6 @@
 pybind11 ~= 2.5
 pygame ~= 1.9
+pynanosvg ~= 0.3
 
 pdoc ~= 0.3
 pylint ~= 2.6
