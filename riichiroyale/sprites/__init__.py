@@ -1,3 +1,3 @@
-from .mahjongpiece import *
-from .mahjonghand import *
 from .tilerender import *
+from .boardrender import *
+from .tileload import *

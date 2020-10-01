@@ -14,15 +14,18 @@ class Board():
     self.current_turn = current_turn
     self.current_dealer = current_dealer
 
-  def draw_tile(self):
+  def draw_tile(self, num=1):
     if self.wall is None:
       raise "Wall is currently none!"
-    if len(self.wall) == 0:
-      raise "Cannot draw, Wall is currently empty!"
-    return self.wall.pop()
+    if len(self.wall) < num:
+      raise "Attempted to draw too many tiles, Wall doesn't have that number left!"
+    tiles_drawn = self.wall[:num]
+    del self.wall[:num]
+    return tiles_drawn
 
   def shuffle_dealer(self):
     self.current_dealer = random.randrange(0, len(self.players))
+    self.current_turn = self.current_dealer
 
   def out_of_tiles(self):
     return len(self.wall) == 0

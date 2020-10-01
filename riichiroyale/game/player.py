@@ -30,4 +30,4 @@ class Player:
       return True
 
   def on_turn(self, board):
-    self.hand.append(board.draw_tile())
+    self.hand += board.draw_tile()

@@ -1,7 +1,6 @@
 from pygame.sprite import Group
 from pygame import surface
 import pygame
-from riichiroyale.sprites import MahjongPiece
 from riichiroyale.utils import load_image
 
 import libmahjong
