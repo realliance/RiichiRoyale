@@ -34,6 +34,31 @@
          "bold": "0",
          "italic": "0",
          "regular_path": "build/_deps/sourcesanspro-src/TTF/SourceSans3-Regular.ttf"
+       },
+       "misc":
+       {
+           "shape": "rounded_rectangle",
+           "shape_corner_radius": "2",
+           "border_width": "1",
+           "state_transitions":
+           {
+               "normal_hovered": "0.1",
+               "hovered_normal": "0.1"
+           }
        }
-     }
+     },
+    "panel":
+    {
+      "colours":
+      {
+        "dark_bg": "#45494ebf,#65696eff,90"
+      },
+      "misc":
+       {
+           "shape": "rounded_rectangle",
+           "shape_corner_radius": "10",
+           "border_width": "1",
+           "shadow_width": "15"
+       }
+    }
  }
