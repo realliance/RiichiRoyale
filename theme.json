@@ -60,5 +60,50 @@
            "border_width": "1",
            "shadow_width": "15"
        }
-    }
+    },
+   "label":
+   {
+      "colours":
+         {
+           "dark_bg": "#00000000",
+           "normal_text": "#ffffff",
+           "text_shadow": "#505050"
+         },
+         "font":
+         {
+           "name": "SourceSans3-Regular",
+           "size": "36",
+           "bold": "0",
+           "italic": "0",
+           "regular_path": "build/_deps/sourcesanspro-src/TTF/SourceSans3-Regular.ttf"
+         },
+         "misc":
+         {
+           "text_shadow": "1",
+           "text_shadow_size": "1",
+           "text_shadow_offset": "1,1"
+         }
+   },
+   "mainMenuText": {
+      "colours":
+       {
+         "dark_bg": "#00000000",
+         "normal_text": "#df0f00",
+         "text_shadow": "#505050"
+       },
+       "font":
+       {
+         "name": "SourceSans3-SemiboldIt",
+         "size": "98",
+         "bold": "0",
+         "italic": "0",
+         "regular_path": "build/_deps/sourcesanspro-src/TTF/SourceSans3-SemiboldIt.ttf"
+       },
+       "misc":
+       {
+         "text_shadow": "0",
+         "text_shadow_size": "2",
+         "text_shadow_offset": "1,1"
+       }
+   }
  }

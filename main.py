@@ -68,9 +68,24 @@ def createmainmenu():
                                                        'left': 'left',
                                                        'right': 'left',
                                                    })
+
+    title_rect = pygame.Rect(0, 0, 800, 300)
+    title_rect.center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+    title_text = pygame_gui.elements.UILabel(relative_rect=title_rect,
+                                             text='Riichi Royale',
+                                             manager=menu.manager,
+                                             object_id='mainMenuText',
+                                             anchors={
+                                                 'left': 'left',
+                                                 'right': 'right',
+                                                 'top': 'top',
+                                                 'bottom': 'bottom'
+                                             })
+
     menu.uiElements.append(newgame_button)
     menu.uiElements.append(loadgame_button)
     menu.uiElements.append(settings_button)
+    menu.uiElements.append(title_text)
 
     # processuievent() is called when a UI event is caught while this menu is active
     def processuievent(event):
@@ -90,7 +105,7 @@ def createsettingsmenu():
     menu = Menu()
     menu.manager = pygame_gui.UIManager((SCREEN_WIDTH, SCREEN_HEIGHT), 'theme.json')
 
-    settingsmenu_rect = pygame.Rect(SCREEN_WIDTH/2 - 350, SCREEN_HEIGHT/2 - 250, 700, 500)
+    settingsmenu_rect = pygame.Rect(SCREEN_WIDTH / 2 - 500, SCREEN_HEIGHT / 2 - 350, 1000, 700)
     settingsmenu_panel = pygame_gui.elements.UIPanel(relative_rect=settingsmenu_rect,
                                                      starting_layer_height=1,
                                                      manager=menu.manager,
@@ -111,11 +126,25 @@ def createsettingsmenu():
                                                    'top': 'bottom',
                                                    'bottom': 'bottom',
                                                    'left': 'left',
-                                                   'right': 'left',
+                                                   'right': 'left'
                                                })
+
+    settings_label_rect = pygame.Rect(0, 0, 200, 50)
+    settings_label_rect.midtop = (500, 25)
+    settings_label = pygame_gui.elements.UILabel(relative_rect=settings_label_rect,
+                                                 container=settingsmenu_panel,
+                                                 text='Settings',
+                                                 manager=menu.manager,
+                                                 anchors={
+                                                     'left': 'left',
+                                                     'right': 'right',
+                                                     'top': 'top',
+                                                     'bottom': 'top'
+                                                 })
 
     menu.uiElements.append(settingsmenu_panel)
     menu.uiElements.append(back_button)
+    menu.uiElements.append(settings_label)
 
     # processuievent() is called when a UI event is caught while this menu is active
     def processuievent(event):
@@ -161,9 +190,6 @@ def main():
     titletext = titlefont.render("Riichi Royale", 1, (255, 40, 40))
     titletextpos = titletext.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
 
-    background.blit(text, textpos)
-    background.blit(titletext, titletextpos)
-
     libmahjong.Walls.SetPath('resources/tiles/102x136')
     hand = MahjongHand()
 
@@ -200,11 +226,12 @@ def main():
         # Update the state of the current menu
         currentMenu.manager.update(time_delta)
         screen.blit(background, (0, 0))
-        hand.update()
-        for index, sprite in enumerate(hand.sprites()):
-            sprite.rect = ((SCREEN_WIDTH / 2 - 100) * cos(index + pygame.time.get_ticks() / 5000.0) + 700,
-                           (SCREEN_HEIGHT / 2 - 100) * sin(index + pygame.time.get_ticks() / 5000.0) + 350)
-        hand.draw(screen)
+        if currentMenu == menus['main']:
+            hand.update()
+            for index, sprite in enumerate(hand.sprites()):
+                sprite.rect = ((SCREEN_WIDTH / 2 - 100) * cos(index + pygame.time.get_ticks() / 5000.0) + 700,
+                               (SCREEN_HEIGHT / 2 - 100) * sin(index + pygame.time.get_ticks() / 5000.0) + 350)
+            hand.draw(screen)
         currentMenu.manager.draw_ui(screen)
         pygame.display.flip()
         pygame.display.update()
