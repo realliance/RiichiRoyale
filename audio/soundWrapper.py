@@ -38,12 +38,19 @@ def setAllVolume(sounds, volume):
 #Music promoted by https://www.free-stock-music.com
 #Creative Commons Attribution 3.0 Unported License
 #https://creativecommons.org/licenses/by/3.0/deed.en_US
-#Will start playing music when called
 def musicInit(volume):
-	gameMusic = pygame.mixer.music.load("peritune-folk-chinese.wav")
+	gameMusic = pygame.mixer.music.load("peritune-folk-chinese.ogg")
 	pygame.mixer.music.set_volume(volume)
-	pygame.mixer.music.play()
+
 	
+def musicStop():
+	pygame.mixer.music.stop()
+	pygame.mixer.music.rewind()
+
+def musicStart():
+	pygame.mixer.music.play()
+
+
 
 def setMusicVolume(music, volume):
 	pygame.mixer.music.set_volume(volume)

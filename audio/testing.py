@@ -21,6 +21,7 @@ if __name__ == '__main__':
 	clock = pygame.time.Clock()
 	sounds = soundWrapper.soundInit()
 	soundWrapper.musicInit(0.01)
+	soundWrapper.musicStart()
 	soundWrapper.setAllSoundEffectVolume(sounds,0.5)
 	while not done:
 		for event in pygame.event.get():
