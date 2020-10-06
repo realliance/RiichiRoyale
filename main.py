@@ -70,7 +70,7 @@ def createmainmenu():
                                                    })
 
     title_rect = pygame.Rect(0, 0, 800, 300)
-    title_rect.center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+    title_rect.center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
     title_text = pygame_gui.elements.UILabel(relative_rect=title_rect,
                                              text='Riichi Royale',
                                              manager=menu.manager,
@@ -142,9 +142,38 @@ def createsettingsmenu():
                                                      'bottom': 'top'
                                                  })
 
+    volume_label_rect = pygame.Rect(0, 0, 200, 50)
+    volume_label_rect.midtop = (600, 150)
+    volume_label = pygame_gui.elements.UILabel(relative_rect=volume_label_rect,
+                                                 container=settingsmenu_panel,
+                                                 text='Volume:',
+                                                 manager=menu.manager,
+                                                 anchors={
+                                                     'left': 'left',
+                                                     'right': 'right',
+                                                     'top': 'top',
+                                                     'bottom': 'top'
+                                                 })
+
+    volume_rect = pygame.Rect(0, 0, 200, 50)
+    volume_rect.midtop = (800, 150)
+    volume_slider = pygame_gui.elements.UIHorizontalSlider(relative_rect=volume_rect,
+                                                           container=settingsmenu_panel,
+                                                           manager=menu.manager,
+                                                           value_range=(0, 100),
+                                                           start_value=100,
+                                                           anchors={
+                                                               'left': 'left',
+                                                               'right': 'right',
+                                                               'top': 'top',
+                                                               'bottom': 'top'
+                                                           })
+
     menu.uiElements.append(settingsmenu_panel)
     menu.uiElements.append(back_button)
     menu.uiElements.append(settings_label)
+    menu.uiElements.append(volume_slider)
+    menu.uiElements.append(volume_label)
 
     # processuievent() is called when a UI event is caught while this menu is active
     def processuievent(event):
@@ -179,16 +208,6 @@ def main():
     menus['main'] = mainmenu
     menus['settings'] = settingsmenu
 
-    # Display some text
-    font = pygame.font.Font('build/_deps/sourcesanspro-src/TTF/SourceSans3-Regular.ttf', 36)
-    text = font.render("Press Space to Refresh Hand", 1, (255, 255, 255))
-    textpos = text.get_rect()
-    textpos.bottomright = background.get_rect().bottomright
-    textpos.right -= 10
-
-    titlefont = pygame.font.Font('build/_deps/sourcesanspro-src/TTF/SourceSans3-BoldIt.ttf', 100)
-    titletext = titlefont.render("Riichi Royale", 1, (255, 40, 40))
-    titletextpos = titletext.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
 
     libmahjong.Walls.SetPath('resources/tiles/102x136')
     hand = MahjongHand()
