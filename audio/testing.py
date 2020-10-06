@@ -20,14 +20,13 @@ if __name__ == '__main__':
 	done = False
 	clock = pygame.time.Clock()
 	sounds = soundWrapper.soundInit()
+	soundWrapper.musicInit(0.01)
+	soundWrapper.setAllSoundEffectVolume(sounds,0.5)
 	while not done:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				done = True
 			if event.type == pygame.KEYDOWN:# any keyboard input
-				sounds[0][0].play()
-				time.sleep(2)
-				soundWrapper.setAllVolume(0.1,sounds)
 				sounds[0][0].play()
 		screen.fill(RED)
 		pygame.display.flip()

@@ -19,7 +19,33 @@ def soundInit():
 #  volume is an value from 0 to 1
 #  sounds is the array returned from soundInit()	
 #  returns new volume
-def setAllVolume(volume, sounds):
+def setAllSoundEffectVolume(sounds, volume):
 	for soundEffect in sounds:
 		soundEffect[0].set_volume(volume)
 	return volume
+	
+#  volume is an value from 0 to 1
+#  sounds is the array returned from soundInit()	
+#  returns new volume
+def setAllVolume(sounds, volume):
+	for soundEffect in sounds:
+		soundEffect[0].set_volume(volume)
+	pygame.mixer.music.set_volume(volume)
+	return volume
+
+
+#Folk Chinese by PeriTune | http://peritune.com
+#Music promoted by https://www.free-stock-music.com
+#Creative Commons Attribution 3.0 Unported License
+#https://creativecommons.org/licenses/by/3.0/deed.en_US
+#Will start playing music when called
+def musicInit(volume):
+	gameMusic = pygame.mixer.music.load("peritune-folk-chinese.wav")
+	pygame.mixer.music.set_volume(volume)
+	pygame.mixer.music.play()
+	
+
+def setMusicVolume(music, volume):
+	pygame.mixer.music.set_volume(volume)
+	return volume
+
