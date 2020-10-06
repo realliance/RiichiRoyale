@@ -10,6 +10,7 @@ def main(args):
 if __name__ == '__main__':
 	import sys
 	import pygame
+	import time
 	import soundWrapper
 	RED = (255, 0, 0)
 	pygame.init()
@@ -24,6 +25,9 @@ if __name__ == '__main__':
 			if event.type == pygame.QUIT:
 				done = True
 			if event.type == pygame.KEYDOWN:# any keyboard input
+				sounds[0][0].play()
+				time.sleep(2)
+				soundWrapper.setAllVolume(0.1,sounds)
 				sounds[0][0].play()
 		screen.fill(RED)
 		pygame.display.flip()
