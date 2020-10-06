@@ -4,8 +4,6 @@
 #  soundWrapper.py
 #_______________________________________________________________________
 
-
-
 import pygame
 
 def soundInit():
@@ -23,6 +21,7 @@ def setAllSoundEffectVolume(sounds, volume):
 	for soundEffect in sounds:
 		soundEffect[0].set_volume(volume)
 	return volume
+	
 	
 #  volume is an value from 0 to 1
 #  sounds is the array returned from soundInit()	
@@ -47,12 +46,11 @@ def musicStop():
 	pygame.mixer.music.stop()
 	pygame.mixer.music.rewind()
 
+
 def musicStart():
 	pygame.mixer.music.play(-1)
-
 
 
 def setMusicVolume(music, volume):
 	pygame.mixer.music.set_volume(volume)
 	return volume
-
