@@ -48,7 +48,7 @@ def musicStop():
 	pygame.mixer.music.rewind()
 
 def musicStart():
-	pygame.mixer.music.play()
+	pygame.mixer.music.play(-1)
 
 
 
