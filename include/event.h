@@ -1,27 +1,9 @@
 #pragma once
 #include "pieces.h"
-
-enum Events{
-    Discard,
-    Riichi,
-    ConcealedKan,
-    Decline,
-    Chi,
-    Pon,
-    Ron,
-    Kan,
-    Tsumo
-};
-
-enum Players{
-    East,
-    South,
-    West,
-    North
-};
+#include "enum.h"
 
 struct Event {
-    Players player;
+    Wind player;
     Piece piece;
-    Events decision;
+    Events type;
 };

@@ -1,12 +1,5 @@
 #pragma once
 
-enum Set {
-    CONCEALED_KAN,
-    KAN,
-    CHI,
-    PON
-};
-
 using Piece = u_int8_t;
 
 // TERMINAL_BIT, SUIT_2, RED_FIVE, PIECE_4

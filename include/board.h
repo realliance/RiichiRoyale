@@ -2,9 +2,11 @@
 #include <vector>
 #include "pieces.h"
 #include "hand.h"
+#include "walls.h"
+#include "enum.h"
 
 struct Board{
+  Walls walls;
   std::vector<Hand> hands;
-  std::vector<Piece> Dora;
-  Winds Wind;
+  Wind wind;
 };

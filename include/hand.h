@@ -1,30 +1,18 @@
 #pragma once
 #include "pieces.h"
-
-enum Melds{
-  Chi,
-  Pon,
-  Kan,
-  ConcealedKan
-};
+#include "enum.h"
 
 struct Meld{
-  Melds Meld;
+  CallType Meld;
   std::vector<Piece> Pieces;
 };
 
-enum Winds{
-  East,
-  South,
-  West,
-  North
-};
 
 struct Hand{
-  explicit Hand(std::vector<Piece> pieces,Winds seat):live(pieces),seat(seat),open(false){}
+  explicit Hand(std::vector<Piece> pieces, Wind seat):live(pieces),seat(seat),open(false){}
   std::vector<Piece> live;
   std::vector<Meld> melds;
   std::vector<Piece> discards;
-  Winds seat;
+  Wind seat;
   bool open;
 };
