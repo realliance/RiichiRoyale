@@ -1,3 +1,4 @@
+from functools import reduce
 from .call import Call, chi_possible, kan_possible, pon_possible
 
 class Player:
@@ -19,7 +20,8 @@ class Player:
     self.my_turn = False
 
   def full_hand(self):
-    return self.hand + self.melded_hand
+    meld_tiles = reduce(lambda acc, x: acc + x.tiles, self.melded_hand)
+    return self.hand + meld_tiles
 
   def on_tile_click(self, tile_index):
     if self.my_turn:
@@ -45,9 +47,8 @@ class Player:
     if len(calls_possible) == 0:
       self.calls_avaliable = None
       return False
-    else:
-      self.calls_avaliable = calls_possible
-      return True
+    self.calls_avaliable = calls_possible
+    return True
 
   def on_turn(self, board):
     self.my_turn = True

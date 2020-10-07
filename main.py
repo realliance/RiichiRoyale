@@ -3,10 +3,11 @@ import math
 from pygame import surface, Rect
 import pygame
 from riichiroyale import Board, Player, build_tile_surface_dict, Tile, BoardRender, TILE_SIZE, SMALL_TILE_SIZE
+from riichiroyale.game import Meld, CallDirection
 
 SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO = 16, 9
 
-STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT = 1280, 720
+STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT = 1366, 768
 
 def get_play_area_pos(screen):
   w, h = screen.get_size()
@@ -51,8 +52,14 @@ def main():
   board.register_player(bot_three)
 
   #board.shuffle_dealer()
-  main_player.hand = board.draw_tile(num=13)
+  main_player.hand = board.draw_tile(num=10)
   main_player.hand.sort()
+  main_player.melded_hand = [
+    Meld([Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO], CallDirection.Right),
+    Meld([Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO], CallDirection.Forward),
+    Meld([Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO], CallDirection.Right),
+    Meld([Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO], CallDirection.Forward, converted_kan=True)
+  ]
   bot_one.hand = board.draw_tile(num=13)
   bot_two.hand = board.draw_tile(num=13)
   bot_three.hand = board.draw_tile(num=13)
