@@ -104,7 +104,6 @@ def render_meld_hand(board_render, meld_hand, player_tiles):
   rect = Rect(board_render.surface.get_rect())
   xpos = rect.width - max_row_width - 25
   ypos = rect.height - 5
-  print(xpos, ypos)
   xpos_offset = 0
   ypos -= (max_meld_height * 2)
   i = 0

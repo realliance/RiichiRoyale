@@ -56,9 +56,7 @@ def main():
   main_player.hand.sort()
   main_player.melded_hand = [
     Meld([Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO], CallDirection.Right),
-    Meld([Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO], CallDirection.Forward),
     Meld([Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO], CallDirection.Right),
-    Meld([Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO], CallDirection.Forward, converted_kan=True)
   ]
   bot_one.hand = board.draw_tile(num=13)
   bot_two.hand = board.draw_tile(num=13)
