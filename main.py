@@ -52,13 +52,15 @@ def main():
   board.register_player(bot_three)
 
   #board.shuffle_dealer()
-  main_player.hand = board.draw_tile(num=10)
+  main_player.hand = board.draw_tile(num=7)
   main_player.hand.sort()
+  main_player.riichi_declared = True
   main_player.melded_hand = [
     Meld([Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO], CallDirection.Right),
     Meld([Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO, Tile.FIVE_BAMBOO], CallDirection.Right),
   ]
   bot_one.hand = board.draw_tile(num=13)
+  bot_one.riichi_declared = True
   bot_two.hand = board.draw_tile(num=13)
   bot_three.hand = board.draw_tile(num=13)
   board.on_turn()

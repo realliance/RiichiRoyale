@@ -20,7 +20,7 @@ class Player:
     self.my_turn = False
 
   def full_hand(self):
-    meld_tiles = reduce(lambda acc, x: acc + x.tiles, self.melded_hand)
+    meld_tiles = len(self.melded_hand) * 3
     return self.hand + meld_tiles
 
   def on_tile_click(self, tile_index):
