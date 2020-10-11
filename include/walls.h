@@ -1,7 +1,6 @@
 #pragma once
 #include <deque>
 #include <vector>
-#include <string>
 #include "pieces.h"
 
 class Walls{

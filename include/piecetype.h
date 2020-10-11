@@ -1,11 +1,12 @@
 #pragma once
+#include <stdint.h>
 
-using Piece = u_int8_t;
+using Piece = uint8_t;
 
 // TERMINAL_BIT, SUIT_2, RED_FIVE, PIECE_4
 // For honor pieces suit bits are set to 00.
 
-enum Pieces {
+enum PieceType {
     TERMINAL_BIT = 1<<7,
     HONOR_SUIT = 0<<5,
     BAMBOO_SUIT = 1<<5,

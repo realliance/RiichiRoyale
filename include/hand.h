@@ -2,17 +2,18 @@
 #include "pieces.h"
 #include "enum.h"
 
+//concealed kan, kan, pon, chi
+using CallType = EventType;
+
 struct Meld{
   CallType Meld;
   std::vector<Piece> Pieces;
 };
 
-
 struct Hand{
-  explicit Hand(std::vector<Piece> pieces, Wind seat):live(pieces),seat(seat),open(false){}
-  std::vector<Piece> live;
   std::vector<Meld> melds;
   std::vector<Piece> discards;
-  Wind seat;
-  bool open;
+  std::vector<Piece> live;
+  bool open = false;
+  bool riichi = false;
 };

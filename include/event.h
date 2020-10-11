@@ -3,7 +3,7 @@
 #include "enum.h"
 
 struct Event {
-    Wind player;
-    EventType type;
-    Piece piece;
+  EventType type;
+  Wind player;
+  Piece piece;
 };

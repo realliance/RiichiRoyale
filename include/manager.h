@@ -3,23 +3,25 @@
 #include <vector>
 #include <map>
 
-#include "pieces.h"
-#include "decision.h"
-#include "board.h"
+#include "piecetype.h"
+#include "gamestate.h"
+#include "scorebreakdown.h"
+struct Event;
 class MahjongAI;
 
 using newMahjongAiInst = MahjongAI* (*)();
 
 class MahjongGameManager{
-  Board boardState;
+  GameState state;
   static std::map<std::string,newMahjongAiInst> availableAIs;
-  std::vector<MahjongAI*> aiControllers;
   auto GameLoop() -> void;
-  auto NextDecision() -> std::vector<Decision
+  auto RoundLoop() -> void;
+  auto AvailableDecisions() -> std::map<int,std::vector<Event>>;
+  auto EventPriority(std::vector<Event> decisions) -> std::vector<Event>;
+  auto ScoreHand(std::vector<Event> wins) -> ScoreBreakdown;
 public:  
+  MahjongGameManager();
   static auto GetAvailableAIs() -> std::vector<std::string>;
   static auto RegisterAI(newMahjongAiInst newFunc, std::string Name) -> bool;
-  using StartingWall = std::vector<Piece>;
-  MahjongGameManager();
-  auto StartGame(std::vector<std::string> seatAIs) -> int;
+  auto StartGame(std::vector<std::string> seatAIs) -> void;
 };

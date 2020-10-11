@@ -1,7 +1,6 @@
 #include <random>
-#include <map>
+#include <iterator>
 #include <algorithm>
-#include <string>
 #include "walls.h"
 
 const std::vector<Piece> PIECE_SET = {
@@ -40,7 +39,7 @@ std::vector<Piece> Walls::TakeHand(bool dealer){
         return {};
     }
     std::vector<Piece> hand;
-    std::move(livingWalls.begin(), livingWalls.begin() + ( 13 + dealer ? 1:0 ), std::back_inserter(hand));
+    std::move(livingWalls.begin(), livingWalls.begin() + ( 13 + (dealer ? 1:0 )), std::back_inserter(hand));
     return hand;
 }
 

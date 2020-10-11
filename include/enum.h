@@ -8,7 +8,8 @@ enum EventType{
   Tsumo,
   ConcealedKan,
   Riichi,
-  Discard
+  Discard,
+  Decline
 };
 
 enum Wind{
