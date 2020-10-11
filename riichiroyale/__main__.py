@@ -3,7 +3,6 @@ import math
 from pygame import surface, Rect
 import pygame
 from riichiroyale import Board, Player, build_tile_surface_dict, Tile, BoardRender, TILE_SIZE, SMALL_TILE_SIZE
-from riichiroyale.game import Meld, CallDirection
 
 SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO = 16, 9
 

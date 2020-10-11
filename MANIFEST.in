@@ -1,0 +1,2 @@
+include build/_deps/sourcesanspro-src/TTF/*.ttf
+recursive-include  resources *.png

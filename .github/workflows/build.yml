@@ -1,0 +1,38 @@
+
+name: Build and Release Pipelines
+
+on:
+  push:
+    branches: [ feature/packaging ]
+  pull_request:
+    branches: [ mainline ]
+
+jobs:
+
+  linux-build:
+    name: Linux Build
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Depedencies
+      run: sudo apt-get install python3
+
+    - name: Create CMake Environment
+      run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build
+
+    - name: Install Python Packages
+      run: pip install -r requirements.txt --user
+
+    - name: Build Library
+      run: cmake --build build
+
+    - name: Package Project
+      run: python3 setup.py sdist
+
+    - name: Publish Build to PyPI
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        user: __token__
+        password: ${{ secrets.pypi_password }}

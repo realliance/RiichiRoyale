@@ -3,3 +3,5 @@ pygame == 2.0.0.dev12
 
 pdoc ~= 0.3
 pylint ~= 2.6
+
+setuptools
