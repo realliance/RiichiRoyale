@@ -4,6 +4,6 @@
 
 struct Event {
     Wind player;
+    EventType type;
     Piece piece;
-    Events type;
 };

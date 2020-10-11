@@ -1,10 +1,14 @@
 #pragma once
 
-enum Events{
-  Discard,
+enum EventType{
+  Ron,
+  Kan,
+  Pon,
+  Chi,
+  Tsumo,
+  ConcealedKan,
   Riichi,
-  Call,
-  Tsumo
+  Discard
 };
 
 enum Wind{
@@ -12,11 +16,4 @@ enum Wind{
   South,
   West,
   North
-};
-
-enum CallType{
-  Chi,
-  Pon,
-  Kan,
-  ConcealedKan
 };

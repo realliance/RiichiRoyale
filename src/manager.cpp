@@ -15,6 +15,7 @@ auto MahjongGameManager::StartGame(std::vector<std::string> playerAIs) -> int{
     aiControllers.push_back(availableAIs[playerAIs[i]]());
   }
   boardState.wind = East;
+  return 0;
 }
 
 std::map<std::string,newMahjongAiInst> MahjongGameManager::availableAIs = {};
@@ -33,4 +34,8 @@ auto MahjongGameManager::RegisterAI(newMahjongAiInst newFunc, std::string name) 
   }
   availableAIs[name] = newFunc;
   return true;
+}
+
+auto MahjongGameManager::GameLoop() -> void{
+  
 }

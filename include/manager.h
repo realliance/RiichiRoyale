@@ -4,6 +4,7 @@
 #include <map>
 
 #include "pieces.h"
+#include "decision.h"
 #include "board.h"
 class MahjongAI;
 
@@ -13,6 +14,8 @@ class MahjongGameManager{
   Board boardState;
   static std::map<std::string,newMahjongAiInst> availableAIs;
   std::vector<MahjongAI*> aiControllers;
+  auto GameLoop() -> void;
+  auto NextDecision() -> std::vector<Decision
 public:  
   static auto GetAvailableAIs() -> std::vector<std::string>;
   static auto RegisterAI(newMahjongAiInst newFunc, std::string Name) -> bool;
