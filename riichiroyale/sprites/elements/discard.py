@@ -41,7 +41,7 @@ def render_discard_pile(board_render, player_id):
 def render_vertical_discard_pile(board_render, player_id):
   group = Group()
   board = board_render.board
-  player = board.players[0]
+  player = board.players[player_id]
 
   if player.discard_pile is None:
     return group
@@ -50,8 +50,8 @@ def render_vertical_discard_pile(board_render, player_id):
   rect.center = (0,0)
 
   side_calculation = (SMALL_TILE_SIZE[1] + 10) * 4
-  if player_id == 1: rect.right = side_calculation
-  if player_id == 3: rect.left = -side_calculation
+  if player_id == 1: rect.right = side_calculation + 150
+  if player_id == 3: rect.left = -side_calculation - 150
 
   tile_offset = 10
   tiles_per_row = 12

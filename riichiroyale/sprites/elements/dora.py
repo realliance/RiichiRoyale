@@ -13,8 +13,9 @@ def render_dora_pile(board_render):
   full_width = (SMALL_TILE_SIZE[0] + tile_offset) * 5 - tile_offset
   xpos = 0
 
-  rect = Rect(0, 0, full_width, SMALL_TILE_SIZE[1])
-  rect.topleft = (10, 10)
+  rect = Rect(board_render.surface.get_rect())
+  rect.y = 10
+  rect.x = rect.width - full_width - 10
   for tile in dora_revealed:
     tile_pos = (rect.x + xpos, rect.y)
     tile_sprite = TileRender(board_render.small_dictionary, tile, tile_pos, small_tile=True)
