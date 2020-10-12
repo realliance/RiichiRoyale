@@ -20,11 +20,9 @@ jobs:
       run: choco install python3 -y --version=3.8.1
 
     - name: Install CMake
-      uses: crazy-max/ghaction-chocolatey@v1
       run: choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
 
     - name: Install Mingw
-      uses: crazy-max/ghaction-chocolatey@v1
       run: choco install mingw -y
 
     - name: Install Python Dependencies
