@@ -2,6 +2,7 @@ import sys
 from pygame import surface
 import pygame
 import libmahjong
+import soundWrapper
 from riichiroyale import MahjongHand, load_image, load_tile
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 1500, 400
@@ -16,7 +17,10 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption('Riichi Royale')
-
+    sounds = soundWrapper.soundInit()
+    soundWrapper.musicInit(0.05)
+    soundWrapper.musicStart()
+    soundWrapper.setAllSoundEffectVolume(sounds,0.5)
     # Set Icon
     pygame.display.set_icon(_build_icon())
 
