@@ -19,18 +19,18 @@ jobs:
 
     - name: Install Python3
       uses: crazy-max/ghaction-chocolatey@v1
-        with:
-          args: install python3 -y --version=3.8.1
+      with:
+        args: install python3 -y --version=3.8.1
 
     - name: Install CMake
       uses: crazy-max/ghaction-chocolatey@v1
-        with:
-          args: install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
+      with:
+        args: install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
 
     - name: Install Mingw
       uses: crazy-max/ghaction-chocolatey@v1
-        with:
-          args: install mingw -y
+      with:
+        args: install mingw -y
 
     - name: Install Python Dependencies
       run: py -m pip install -r requirements.txt --user
