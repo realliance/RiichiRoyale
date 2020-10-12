@@ -7,6 +7,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(PACKAGE_TESTS "Build the tests" ON)
 option(PACKAGE_TOOLS "Build the tools" OFF)
 
+find_package (Python3 COMPONENTS Interpreter Development)
+
 add_subdirectory(${RiichiRoyale_SOURCE_DIR}/libs)
 
 if(PACKAGE_TOOLS)

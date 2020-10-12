@@ -7,7 +7,7 @@ enum Set {
     PON
 };
 
-using Piece = u_int8_t;
+using Piece = uint8_t;
 
 // TERMINAL_BIT, SUIT_2, RED_FIVE, PIECE_4
 // For honor pieces suit bits are set to 00.
