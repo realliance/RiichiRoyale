@@ -9,6 +9,50 @@ on:
 
 jobs:
 
+  windows-build:
+    name: Windows Build
+    runs-on: windows-2019
+    container: friism/vs-build-tools:17
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Python3
+      uses: crazy-max/ghaction-chocolatey@v1
+        with:
+          args: install python3 -y --version=3.8.1
+
+    - name: Install CMake
+      uses: crazy-max/ghaction-chocolatey@v1
+        with:
+          args: install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
+
+    - name: Install Mingw
+      uses: crazy-max/ghaction-chocolatey@v1
+        with:
+          args: install mingw -y
+
+    - name: Install Python Dependencies
+      run: py -m pip install -r requirements.txt --user
+
+    - name: Create CMake Environment
+      run: cmake -G"MinGW Makefiles" -DCMAKE_C_COMPILER="C:/ProgramData/chocolatey/bin/gcc.exe" -DCMAKE_CXX_COMPILER="C:/ProgramData/chocolatey/bin/g++.exe" -S . -B build
+
+    - name: Build Library
+      run: cmake --build build
+
+    - name: Package Project
+      run: python3 setup.py bdist --format=msi
+
+    - name: Show Built Distributions
+      run: ls dist/
+
+    - name: Publish Build to PyPI
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        user: __token__
+        password: ${{ secrets.pypi_password }}
+
   linux-build:
     name: Linux Build
     runs-on: ubuntu-20.04
