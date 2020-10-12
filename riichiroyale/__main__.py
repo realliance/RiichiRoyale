@@ -1,6 +1,7 @@
-import sys
+import sys, os
 import math
 from pygame import surface, Rect
+import libmahjong
 import pygame
 from riichiroyale import Board, Player, build_tile_surface_dict, Tile, BoardRender, TILE_SIZE, SMALL_TILE_SIZE
 
@@ -20,9 +21,11 @@ def main():
   screen = pygame.display.set_mode([STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT])
   pygame.display.set_caption('Riichi Royale')
 
+  current_path = os.path.dirname(os.path.realpath(__file__))
+
   # Initialize tile surface dictionary
-  tile_dictionary = build_tile_surface_dict('resources/tiles/102x136', TILE_SIZE, file_suffix='png')
-  small_tile_dictionary = build_tile_surface_dict('resources/tiles/102x136', SMALL_TILE_SIZE, file_suffix='png')
+  tile_dictionary = build_tile_surface_dict(os.path.join(current_path, 'resources/tiles/102x136'), TILE_SIZE, file_suffix='png')
+  small_tile_dictionary = build_tile_surface_dict(os.path.join(current_path, 'resources/tiles/102x136'), SMALL_TILE_SIZE, file_suffix='png')
 
   # Set Icon
   pygame.display.set_icon(tile_dictionary[Tile.GREEN_DRAGON])

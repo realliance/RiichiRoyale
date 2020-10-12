@@ -1,2 +1,3 @@
-include build/_deps/sourcesanspro-src/TTF/*.ttf
-recursive-include  resources *.png
+include riichiroyale/libmahjong.so
+recursive-include  riichiroyale *.png
+recursive-include  riichiroyale *.ttf

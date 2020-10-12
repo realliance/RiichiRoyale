@@ -40,5 +40,5 @@ add_custom_target(
 )
 
 add_custom_command(TARGET RiichiRoyale POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:RiichiRoyale> ${CMAKE_CURRENT_SOURCE_DIR}/libmahjong.so
+  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:RiichiRoyale> ${CMAKE_CURRENT_SOURCE_DIR}/riichiroyale/libmahjong.so
 )
