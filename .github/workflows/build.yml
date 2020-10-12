@@ -16,14 +16,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install Python3
-      run: choco install python3 -y --version=3.8.1
-
-    - name: Install CMake
-      run: choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
-
-    - name: Install Mingw
-      run: choco install mingw -y
+    #- name: Install Python3
+    #  run: choco install python3 -y --version=3.8.1
 
     - name: Install Python Dependencies
       run: py -m pip install -r requirements.txt --user
