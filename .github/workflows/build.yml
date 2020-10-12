@@ -17,25 +17,24 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install Python3
-      uses: crazy-max/ghaction-chocolatey@v1
-      with:
-        args: install python3 -y --version=3.8.1
+      run: choco install python3 -y --version=3.8.1
 
     - name: Install CMake
       uses: crazy-max/ghaction-chocolatey@v1
-      with:
-        args: install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
+      run: choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
 
     - name: Install Mingw
       uses: crazy-max/ghaction-chocolatey@v1
-      with:
-        args: install mingw -y
+      run: choco install mingw -y
 
     - name: Install Python Dependencies
       run: py -m pip install -r requirements.txt --user
 
+    - name: Install Twine
+      run: py -m pip install -U twine --user
+
     - name: Create CMake Environment
-      run: cmake -G"MinGW Makefiles" -DCMAKE_C_COMPILER="C:/ProgramData/chocolatey/bin/gcc.exe" -DCMAKE_CXX_COMPILER="C:/ProgramData/chocolatey/bin/g++.exe" -S . -B build
+      run: cmake -G"MinGW Makefiles" -DCMAKE_C_COMPILER="C:/ProgramData/chocolatey/bin/gcc.exe" -DCMAKE_CXX_COMPILER="C:/ProgramData/chocolatey/bin/g++.exe" -S . -B build -DPACKAGE_TESTS=OFF
 
     - name: Build Library
       run: cmake --build build
@@ -46,11 +45,8 @@ jobs:
     - name: Show Built Distributions
       run: ls dist/
 
-    - name: Publish Build to PyPI
-      uses: pypa/gh-action-pypi-publish@master
-      with:
-        user: __token__
-        password: ${{ secrets.pypi_password }}
+    - name: Upload build
+      run: twine upload -u __token__ -p ${{ secrets.pypi_password }}
 
   linux-build:
     name: Linux Build
@@ -63,7 +59,7 @@ jobs:
       run: sudo apt-get install python3
 
     - name: Create CMake Environment
-      run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build
+      run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DPACKAGE_TESTS=OFF
 
     - name: Install Python Packages
       run: pip install -r requirements.txt --user
