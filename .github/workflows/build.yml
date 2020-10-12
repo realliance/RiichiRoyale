@@ -31,6 +31,9 @@ jobs:
     - name: Package Project
       run: python3 setup.py sdist
 
+    - name: Show Built Distributions
+      run: ls dist/
+
     - name: Publish Build to PyPI
       uses: pypa/gh-action-pypi-publish@master
       with:
