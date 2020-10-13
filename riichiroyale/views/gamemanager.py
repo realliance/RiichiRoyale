@@ -7,12 +7,8 @@ class GameManager:
   def add_view(self, view):
     self.views[view.name] = view
 
-  def process_ui_event(self, event):
-    self.views[self.current_view].process_ui_event(event)
-
-  def update_gui_manager(self, event):
-    if self.views[self.current_view].manager is not None:
-      self.views[self.current_view].manager.process_events(event)
+  def on_pygame_event(self, event):
+    self.views[self.current_view].on_pygame_event(event)
 
   def set_active_view(self, name):
     self.current_view = name

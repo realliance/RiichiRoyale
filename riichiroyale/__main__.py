@@ -3,7 +3,7 @@ import sys
 import math
 from pygame import surface, Rect
 import pygame
-from riichiroyale import GameManager, MainMenu, create_settings_menu, GameView, build_tile_surface_dict, Tile, TILE_SIZE, SMALL_TILE_SIZE, SoundManager
+from riichiroyale import GameManager, MainMenu, Settings, create_settings_menu, GameView, build_tile_surface_dict, Tile, TILE_SIZE, SMALL_TILE_SIZE, SoundManager
 
 SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO = 16, 9
 
@@ -47,7 +47,7 @@ def main():
   game_manager = GameManager(sound_manager)
 
   main_menu = MainMenu(game_manager, tile_dictionary, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT)
-  settings_menu = create_settings_menu(game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT)
+  settings_menu = Settings(game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT)
   game_view = GameView(sound_manager, screen, tile_dictionary, small_tile_dictionary, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT, SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO)
   game_manager.add_view(main_menu)
   game_manager.add_view(settings_menu)
@@ -66,11 +66,7 @@ def main():
     for event in pygame.event.get():
         if event.type == pygame.constants.QUIT:
             return
-        # Pass UI events to the current menu for processing
-        if event.type == pygame.USEREVENT:
-            game_manager.process_ui_event(event)
-        # Pass window events to pygame-gui for processing
-        game_manager.update_gui_manager(event)
+        game_manager.on_pygame_event(event)
 
     game_manager.update(time_delta)
     screen.blit(clear_background, (0, 0))

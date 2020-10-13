@@ -34,24 +34,21 @@ class GameView(View):
     self.small_tile_dict = small_tile_dict
     self.board_render = None
 
+  def get_play_area_pos(self, screen):
+    w, h = screen.get_size()
+    play_area_height = h
+    player_area_width = math.floor(h * (float(self.screen_width_ratio)/self.screen_height_ratio))
+    return Rect((w - player_area_width)//2, 0, player_area_width, play_area_height)
+
   def on_match_start(self):
     self.match.new_board()
     self.board_render = BoardRender(self.small_tile_dict, self.tile_dict, self.play_area, self.match.current_board, 0)
     self.match.current_board.on_turn()
 
-  def process_ui_event(self, _event):
-    return False
-
-  def update(self, _time_delta):
+  def update(self, _):
     self.board_render.update()
 
   def draw(self, screen):
     self.board_render.draw(self.background)
     screen.blit(self.background, (0, 0))
     screen.blit(self.play_area, (self.player_area_rect.x, self.player_area_rect.y))
-
-  def get_play_area_pos(self, screen):
-    w, h = screen.get_size()
-    play_area_height = h
-    player_area_width = math.floor(h * (float(self.screen_width_ratio)/self.screen_height_ratio))
-    return Rect((w - player_area_width)//2, 0, player_area_width, play_area_height)

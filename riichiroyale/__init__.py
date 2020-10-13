@@ -6,4 +6,3 @@ from .utils import *
 from .test import *
 from .game import *
 from .views import *
-from .menus import *

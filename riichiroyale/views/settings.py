@@ -1,15 +1,31 @@
 import os
+from pygame import surface
 import pygame
 import pygame_gui
-from .menu import Menu
+from .menuview import MenuView
+
+class Settings(MenuView):
+  def __init__(self, game_manager, screen_width, screen_height):
+    ui_manager, process_ui_event = create_settings_menu(game_manager, screen_width, screen_height)
+    super().__init__("settings", ui_manager)
+    self.screen_width = screen_width
+    self.screen_height = screen_height
+
+    self.background = surface.Surface((screen_width, screen_height)).convert_alpha()
+    self.background.fill((7, 99, 36))
+    self.process_ui_event = process_ui_event
+
+  def draw(self, screen):
+    screen.blit(self.background, (0, 0))
+    super().draw(screen)
 
 def create_settings_menu(game_manager, screen_width, screen_height):
     current_path = os.path.dirname(os.path.realpath(__file__))
-    menu = Menu('settings', pygame_gui.UIManager((screen_width, screen_height), os.path.join(current_path, '../resources/theme.json')))
+    ui_manager = pygame_gui.UIManager((screen_width, screen_height), os.path.join(current_path, '../resources/theme.json'))
     settingsmenu_rect = pygame.Rect(screen_width / 2 - 500, screen_height / 2 - 350, 1000, 700)
     settingsmenu_panel = pygame_gui.elements.UIPanel(relative_rect=settingsmenu_rect,
                                                      starting_layer_height=1,
-                                                     manager=menu.manager,
+                                                     manager=ui_manager,
                                                      anchors={
                                                          'top': 'top',
                                                          'bottom': 'bottom',
@@ -22,7 +38,7 @@ def create_settings_menu(game_manager, screen_width, screen_height):
     back_button = pygame_gui.elements.UIButton(relative_rect=back_button_rect,
                                                container=settingsmenu_panel,
                                                text='Back',
-                                               manager=menu.manager,
+                                               manager=ui_manager,
                                                anchors={
                                                    'top': 'bottom',
                                                    'bottom': 'bottom',
@@ -32,10 +48,10 @@ def create_settings_menu(game_manager, screen_width, screen_height):
 
     settings_label_rect = pygame.Rect(0, 0, 200, 100)
     settings_label_rect.midtop = (500, 25)
-    settings_label = pygame_gui.elements.UILabel(relative_rect=settings_label_rect,
+    pygame_gui.elements.UILabel(relative_rect=settings_label_rect,
                                                  container=settingsmenu_panel,
                                                  text='Settings',
-                                                 manager=menu.manager,
+                                                 manager=ui_manager,
                                                  anchors={
                                                      'left': 'left',
                                                      'right': 'right',
@@ -45,10 +61,10 @@ def create_settings_menu(game_manager, screen_width, screen_height):
 
     volume_label_rect = pygame.Rect(0, 0, 200, 100)
     volume_label_rect.midleft = (500, 150)
-    volume_label = pygame_gui.elements.UILabel(relative_rect=volume_label_rect,
+    pygame_gui.elements.UILabel(relative_rect=volume_label_rect,
                                                container=settingsmenu_panel,
                                                text='Volume:',
-                                               manager=menu.manager,
+                                               manager=ui_manager,
                                                anchors={
                                                    'left': 'left',
                                                    'right': 'right',
@@ -60,7 +76,7 @@ def create_settings_menu(game_manager, screen_width, screen_height):
     master_volume_rect.midleft = (700, 150)
     master_volume_slider = pygame_gui.elements.UIHorizontalSlider(relative_rect=master_volume_rect,
                                                                   container=settingsmenu_panel,
-                                                                  manager=menu.manager,
+                                                                  manager=ui_manager,
                                                                   value_range=(0, 100),
                                                                   start_value=100,
                                                                   anchors={
@@ -74,7 +90,7 @@ def create_settings_menu(game_manager, screen_width, screen_height):
     sfx_volume_rect.midleft = (700, 250)
     sfx_volume_slider = pygame_gui.elements.UIHorizontalSlider(relative_rect=sfx_volume_rect,
                                                                   container=settingsmenu_panel,
-                                                                  manager=menu.manager,
+                                                                  manager=ui_manager,
                                                                   value_range=(0, 100),
                                                                   start_value=100,
                                                                   anchors={
@@ -88,7 +104,7 @@ def create_settings_menu(game_manager, screen_width, screen_height):
     music_volume_rect.midleft = (700, 250)
     music_volume_slider = pygame_gui.elements.UIHorizontalSlider(relative_rect=music_volume_rect,
                                                                container=settingsmenu_panel,
-                                                               manager=menu.manager,
+                                                               manager=ui_manager,
                                                                value_range=(0, 100),
                                                                start_value=100,
                                                                anchors={
@@ -97,14 +113,6 @@ def create_settings_menu(game_manager, screen_width, screen_height):
                                                                    'top': 'top',
                                                                    'bottom': 'top'
                                                                })
-
-    menu.uiElements.append(settingsmenu_panel)
-    menu.uiElements.append(back_button)
-    menu.uiElements.append(settings_label)
-    menu.uiElements.append(master_volume_slider)
-    menu.uiElements.append(sfx_volume_slider)
-    menu.uiElements.append(music_volume_slider)
-    menu.uiElements.append(volume_label)
 
     # process_ui_event() is called when a UI event is caught while this menu is active
     def process_ui_event(event):
@@ -117,5 +125,4 @@ def create_settings_menu(game_manager, screen_width, screen_height):
         game_manager.sound_manager.set_sfx_volume(sfx_volume_slider.get_current_value() / 100.0)
         game_manager.sound_manager.set_master_volume(master_volume_slider.get_current_value() / 100.0)
 
-    menu.process_ui_event = process_ui_event
-    return menu
+    return ui_manager, process_ui_event
