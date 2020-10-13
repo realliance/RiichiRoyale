@@ -6,9 +6,10 @@ import pygame
 import pygame_gui
 import libmahjong
 from riichiroyale import MahjongHand, load_image, load_tile
+import soundWrapper
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 1500, 800
-
+sounds = []
 
 class Menu:
     uiElements = list()
@@ -102,6 +103,7 @@ def createmainmenu():
 
 
 def createsettingsmenu():
+    global sounds
     menu = Menu()
     menu.manager = pygame_gui.UIManager((SCREEN_WIDTH, SCREEN_HEIGHT), 'theme.json')
 
@@ -129,7 +131,7 @@ def createsettingsmenu():
                                                    'right': 'left'
                                                })
 
-    settings_label_rect = pygame.Rect(0, 0, 200, 50)
+    settings_label_rect = pygame.Rect(0, 0, 200, 100)
     settings_label_rect.midtop = (500, 25)
     settings_label = pygame_gui.elements.UILabel(relative_rect=settings_label_rect,
                                                  container=settingsmenu_panel,
@@ -142,37 +144,67 @@ def createsettingsmenu():
                                                      'bottom': 'top'
                                                  })
 
-    volume_label_rect = pygame.Rect(0, 0, 200, 50)
-    volume_label_rect.midtop = (600, 150)
+    volume_label_rect = pygame.Rect(0, 0, 200, 100)
+    volume_label_rect.midleft = (500, 150)
     volume_label = pygame_gui.elements.UILabel(relative_rect=volume_label_rect,
-                                                 container=settingsmenu_panel,
-                                                 text='Volume:',
-                                                 manager=menu.manager,
-                                                 anchors={
-                                                     'left': 'left',
-                                                     'right': 'right',
-                                                     'top': 'top',
-                                                     'bottom': 'top'
-                                                 })
+                                               container=settingsmenu_panel,
+                                               text='Volume:',
+                                               manager=menu.manager,
+                                               anchors={
+                                                   'left': 'left',
+                                                   'right': 'right',
+                                                   'top': 'top',
+                                                   'bottom': 'top'
+                                               })
 
-    volume_rect = pygame.Rect(0, 0, 200, 50)
-    volume_rect.midtop = (800, 150)
-    volume_slider = pygame_gui.elements.UIHorizontalSlider(relative_rect=volume_rect,
-                                                           container=settingsmenu_panel,
-                                                           manager=menu.manager,
-                                                           value_range=(0, 100),
-                                                           start_value=100,
-                                                           anchors={
-                                                               'left': 'left',
-                                                               'right': 'right',
-                                                               'top': 'top',
-                                                               'bottom': 'top'
-                                                           })
+    master_volume_rect = pygame.Rect(0, 0, 200, 50)
+    master_volume_rect.midleft = (700, 150)
+    master_volume_slider = pygame_gui.elements.UIHorizontalSlider(relative_rect=master_volume_rect,
+                                                                  container=settingsmenu_panel,
+                                                                  manager=menu.manager,
+                                                                  value_range=(0, 100),
+                                                                  start_value=100,
+                                                                  anchors={
+                                                                      'left': 'left',
+                                                                      'right': 'right',
+                                                                      'top': 'top',
+                                                                      'bottom': 'top'
+                                                                  })
+
+    sfx_volume_rect = pygame.Rect(0, 0, 200, 50)
+    sfx_volume_rect.midleft = (700, 250)
+    sfx_volume_slider = pygame_gui.elements.UIHorizontalSlider(relative_rect=sfx_volume_rect,
+                                                                  container=settingsmenu_panel,
+                                                                  manager=menu.manager,
+                                                                  value_range=(0, 100),
+                                                                  start_value=100,
+                                                                  anchors={
+                                                                      'left': 'left',
+                                                                      'right': 'right',
+                                                                      'top': 'top',
+                                                                      'bottom': 'top'
+                                                                  })
+
+    music_volume_rect = pygame.Rect(0, 0, 200, 50)
+    music_volume_rect.midleft = (700, 250)
+    music_volume_slider = pygame_gui.elements.UIHorizontalSlider(relative_rect=music_volume_rect,
+                                                               container=settingsmenu_panel,
+                                                               manager=menu.manager,
+                                                               value_range=(0, 100),
+                                                               start_value=100,
+                                                               anchors={
+                                                                   'left': 'left',
+                                                                   'right': 'right',
+                                                                   'top': 'top',
+                                                                   'bottom': 'top'
+                                                               })
 
     menu.uiElements.append(settingsmenu_panel)
     menu.uiElements.append(back_button)
     menu.uiElements.append(settings_label)
-    menu.uiElements.append(volume_slider)
+    menu.uiElements.append(master_volume_slider)
+    menu.uiElements.append(sfx_volume_slider)
+    menu.uiElements.append(music_volume_slider)
     menu.uiElements.append(volume_label)
 
     # processuievent() is called when a UI event is caught while this menu is active
@@ -182,6 +214,10 @@ def createsettingsmenu():
             if event.ui_element == back_button:
                 print('Pressed back')
                 currentMenu = menus['main']
+        elif event.user_type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
+            soundWrapper.setMusicVolume(music_volume_slider.get_current_value() / 100.0)
+            soundWrapper.setAllSoundEffectVolume(sounds, sfx_volume_slider.get_current_value() / 100.0)
+            soundWrapper.setAllVolume(sounds, sfx_volume_slider.get_current_value() / 100.0)
 
     menu.processuievent = processuievent
     return menu
@@ -189,6 +225,7 @@ def createsettingsmenu():
 
 def main():
     global currentMenu
+    global sounds
     # Initialise screen
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -208,9 +245,15 @@ def main():
     menus['main'] = mainmenu
     menus['settings'] = settingsmenu
 
-
     libmahjong.Walls.SetPath('resources/tiles/102x136')
     hand = MahjongHand()
+
+    # Initialize sounds
+    sounds = soundWrapper.soundInit()
+    soundWrapper.musicInit(0.05)
+    soundWrapper.musicStart()
+    soundWrapper.setAllSoundEffectVolume(sounds,0.5)
+
 
     # Blit everything to the screen
     screen.blit(background, (0, 0))
