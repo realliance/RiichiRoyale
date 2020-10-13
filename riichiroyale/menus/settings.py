@@ -113,10 +113,9 @@ def create_settings_menu(game_manager, screen_width, screen_height):
               print('Pressed back')
               game_manager.set_active_view('main_menu')
       elif event.user_type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
-        #soundWrapper.setMusicVolume(music_volume_slider.get_current_value() / 100.0)
-        #soundWrapper.setAllSoundEffectVolume(sounds, sfx_volume_slider.get_current_value() / 100.0)
-        #soundWrapper.setAllVolume(sounds, sfx_volume_slider.get_current_value() / 100.0)
-        print('Sound unimplemented')
+        game_manager.sound_manager.set_music_volume(music_volume_slider.get_current_value() / 100.0)
+        game_manager.sound_manager.set_sfx_volume(sfx_volume_slider.get_current_value() / 100.0)
+        game_manager.sound_manager.set_master_volume(master_volume_slider.get_current_value() / 100.0)
 
     menu.process_ui_event = process_ui_event
     return menu

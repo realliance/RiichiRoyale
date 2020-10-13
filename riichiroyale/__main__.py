@@ -3,7 +3,7 @@ import sys
 import math
 from pygame import surface, Rect
 import pygame
-from riichiroyale import GameManager, create_main_menu, create_settings_menu, GameView, build_tile_surface_dict, Tile, TILE_SIZE, SMALL_TILE_SIZE
+from riichiroyale import GameManager, create_main_menu, create_settings_menu, GameView, build_tile_surface_dict, Tile, TILE_SIZE, SMALL_TILE_SIZE, SoundManager
 
 SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO = 16, 9
 
@@ -35,8 +35,16 @@ def main():
   clear_background = clear_background.convert_alpha()
   clear_background.fill((0, 0, 0))
 
+  # Initialize Sound Manager
+  sound_manager = SoundManager()
+  sound_manager.add_audio_source('tileSound', os.path.join(current_path, 'resources/audio/dominoPlace.wav'))
+  sound_manager.add_audio_source('shuffleSound', os.path.join(current_path, 'resources/audio/dominoDump.wav'))
+  sound_manager.add_audio_source('selected', os.path.join(current_path, 'resources/audio/dominoSelect.wav'))
+
+  sound_manager.add_audio_source('backgroundMusic', os.path.join(current_path, 'resources/audio/peritune-folk-chinese.ogg'), preload=False)
+
   # Initialize Game Manager and Menus
-  game_manager = GameManager()
+  game_manager = GameManager(sound_manager)
 
   main_menu = create_main_menu(game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT)
   settings_menu = create_settings_menu(game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT)
@@ -48,6 +56,8 @@ def main():
 
   # Clock for pygame-gui
   clock = pygame.time.Clock()
+
+  sound_manager.play_music('backgroundMusic')
 
   # Event loop
   while 1:
