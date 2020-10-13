@@ -48,7 +48,7 @@ def main():
 
   main_menu = create_main_menu(game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT)
   settings_menu = create_settings_menu(game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT)
-  game_view = GameView(screen, tile_dictionary, small_tile_dictionary, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT, SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO)
+  game_view = GameView(sound_manager, screen, tile_dictionary, small_tile_dictionary, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT, SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO)
   game_manager.add_view(main_menu)
   game_manager.add_view(settings_menu)
   game_manager.add_view(game_view)

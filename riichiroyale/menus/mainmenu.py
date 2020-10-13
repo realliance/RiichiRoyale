@@ -68,6 +68,7 @@ def create_main_menu(game_manager, screen_width, screen_height):
             if event.ui_element == newgame_button:
                 print('Pressed new game')
                 game_manager.set_active_view('game')
+                game_manager.get_active_view().on_match_start()
             if event.ui_element == settings_button:
                 print('Switching to settings menu')
                 game_manager.set_active_view('settings')

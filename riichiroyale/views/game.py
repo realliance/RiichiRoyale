@@ -3,11 +3,11 @@ import libmahjong
 import pygame
 from pygame import Rect
 from pygame import surface
-from riichiroyale import Board, Player, BoardRender
+from riichiroyale import Board, Player, BoardRender, Match
 from .view import View
 
 class GameView(View):
-  def __init__(self, screen, tile_dict, small_tile_dict, screen_width, screen_height, width_ratio, height_ratio):
+  def __init__(self, sound_manager, screen, tile_dict, small_tile_dict, screen_width, screen_height, width_ratio, height_ratio):
     super().__init__("game")
     self.screen = screen
     self.screen_width = screen_width
@@ -24,27 +24,20 @@ class GameView(View):
     self.player_area_rect = self.get_play_area_pos(screen)
     self.play_area = surface.Surface((self.player_area_rect.width, self.player_area_rect.height), flags=pygame.SRCALPHA)
 
-    # Example game Board
-    main_player = Player("Player")
-    bot_one = Player("Bot 1")
-    bot_two = Player("Bot 2")
-    bot_three = Player("Bot 3")
-    board = Board()
+    self.match = Match(sound_manager)
+    self.match.register_player(Player("Player"))
+    self.match.register_player(Player("Bot 1"))
+    self.match.register_player(Player("Bot 2"))
+    self.match.register_player(Player("Bot 3"))
 
-    board.register_player(main_player)
-    board.register_player(bot_one)
-    board.register_player(bot_two)
-    board.register_player(bot_three)
+    self.tile_dict = tile_dict
+    self.small_tile_dict = small_tile_dict
+    self.board_render = None
 
-    #board.shuffle_dealer()
-    main_player.hand = board.draw_tile(num=13)
-    main_player.hand.sort()
-    bot_one.hand = board.draw_tile(num=13)
-    bot_two.hand = board.draw_tile(num=13)
-    bot_three.hand = board.draw_tile(num=13)
-    board.on_turn()
-
-    self.board_render = BoardRender(small_tile_dict, tile_dict, self.play_area, board, 0)
+  def on_match_start(self):
+    self.match.new_board()
+    self.board_render = BoardRender(self.small_tile_dict, self.tile_dict, self.play_area, self.match.current_board, 0)
+    self.match.current_board.on_turn()
 
   def process_ui_event(self, _event):
     return False

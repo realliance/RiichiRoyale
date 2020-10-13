@@ -17,6 +17,9 @@ class GameManager:
   def set_active_view(self, name):
     self.current_view = name
 
+  def get_active_view(self):
+    return self.views[self.current_view]
+
   def update(self, time_delta):
     self.views[self.current_view].update(time_delta)
 
