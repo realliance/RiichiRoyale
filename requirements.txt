@@ -1,5 +1,7 @@
 pybind11 ~= 2.5
-pygame == 2.0.0.dev12
+pygame == 2.0.0.dev14
 
 pdoc ~= 0.3
 pylint ~= 2.6
+
+setuptools

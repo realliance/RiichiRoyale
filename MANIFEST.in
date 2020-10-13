@@ -1,0 +1,3 @@
+include riichiroyale/libmahjong.so
+recursive-include  riichiroyale *.png
+recursive-include  riichiroyale *.ttf

@@ -4,8 +4,10 @@ include(FetchContent)
 project(RiichiRoyale)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-option(PACKAGE_TESTS "Build the tests" ON)
+option(PACKAGE_TESTS "Build the tests" OFF)
 option(PACKAGE_TOOLS "Build the tools" OFF)
+
+find_package (Python3 COMPONENTS Interpreter Development)
 
 add_subdirectory(${RiichiRoyale_SOURCE_DIR}/libs)
 
@@ -38,5 +40,5 @@ add_custom_target(
 )
 
 add_custom_command(TARGET RiichiRoyale POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:RiichiRoyale> ${CMAKE_CURRENT_SOURCE_DIR}/libmahjong.so
+  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:RiichiRoyale> ${CMAKE_CURRENT_SOURCE_DIR}/riichiroyale/libmahjong.so
 )
