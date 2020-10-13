@@ -33,7 +33,10 @@
          "size": "16",
          "bold": "0",
          "italic": "0",
-         "regular_path": "build/_deps/sourcesanspro-src/TTF/SourceSans3-Regular.ttf"
+         "regular_resource": {
+          "package": "riichiroyale.resources.fonts",
+          "resource": "SourceSans3-Regular.ttf"
+         }
        },
        "misc":
        {
@@ -75,8 +78,11 @@
            "size": "36",
            "bold": "0",
            "italic": "0",
-           "regular_path": "build/_deps/sourcesanspro-src/TTF/SourceSans3-Regular.ttf"
-         },
+           "regular_resource": {
+            "package": "riichiroyale.resources.fonts",
+            "resource": "SourceSans3-Regular.ttf"
+           }
+          },
          "misc":
          {
            "text_shadow": "1",
@@ -97,7 +103,10 @@
          "size": "98",
          "bold": "0",
          "italic": "0",
-         "regular_path": "build/_deps/sourcesanspro-src/TTF/SourceSans3-SemiboldIt.ttf"
+         "regular_resource": {
+          "package": "riichiroyale.resources.fonts",
+          "resource": "SourceSans3-SemiboldIt.ttf"
+         }
        },
        "misc":
        {

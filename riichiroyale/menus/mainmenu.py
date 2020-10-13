@@ -1,11 +1,13 @@
 import os
 import pygame
 import pygame_gui
+from pygame_gui.core.ui_font_dictionary import UIFontDictionary
 from .menu import Menu
 
 def create_main_menu(game_manager, screen_width, screen_height):
     current_path = os.path.dirname(os.path.realpath(__file__))
-    menu = Menu("main_menu", pygame_gui.UIManager((screen_width, screen_height), os.path.join(current_path, '../resources/theme.json')))
+    ui_manager = pygame_gui.UIManager((screen_width, screen_height), os.path.join(current_path, '../resources/theme.json'))
+    menu = Menu("main_menu", ui_manager)
     newgame_button_rect = pygame.Rect(0, 0, 100, 50)
     newgame_button_rect.bottomleft = (500, -200)
     newgame_button = pygame_gui.elements.UIButton(relative_rect=newgame_button_rect,
