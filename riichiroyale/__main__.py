@@ -1,9 +1,11 @@
-import sys, os
+import os
+import sys
 import math
 from pygame import surface, Rect
-import libmahjong
 import pygame
-from riichiroyale import Board, Player, build_tile_surface_dict, Tile, BoardRender, TILE_SIZE, SMALL_TILE_SIZE
+from riichiroyale import GameManager, create_main_menu, create_settings_menu
+from riichiroyale import build_tile_surface_dict, Tile, BoardRender, TILE_SIZE, SMALL_TILE_SIZE
+from riichiroyale import Board, Player, GameView
 
 SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO = 16, 9
 
@@ -31,59 +33,50 @@ def main():
   pygame.display.set_icon(tile_dictionary[Tile.GREEN_DRAGON])
 
   # Fill background
-  background = surface.Surface(screen.get_size())
-  background = background.convert_alpha()
-  background.fill((7, 99, 36))
+  clear_background = surface.Surface(screen.get_size())
+  clear_background = clear_background.convert_alpha()
+  clear_background.fill((0, 0, 0))
 
-  # Play Area Surface
-  player_area_rect = get_play_area_pos(screen)
-  play_area = surface.Surface((player_area_rect.width, player_area_rect.height), flags=pygame.SRCALPHA)
+  # Initialize Game Manager and Menus
+  game_manager = GameManager()
 
-  current_screen_size = screen.get_size()
+  main_menu = create_main_menu(game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT)
+  settings_menu = create_settings_menu(game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT)
+  game_view = GameView(screen, tile_dictionary, small_tile_dictionary, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT, SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO)
+  game_manager.add_view(main_menu)
+  game_manager.add_view(settings_menu)
+  game_manager.add_view(game_view)
+  game_manager.set_active_view('main_menu')
 
-  # Example game Board
-  main_player = Player("Player")
-  bot_one = Player("Bot 1")
-  bot_two = Player("Bot 2")
-  bot_three = Player("Bot 3")
-  board = Board()
-
-  board.register_player(main_player)
-  board.register_player(bot_one)
-  board.register_player(bot_two)
-  board.register_player(bot_three)
-
-  #board.shuffle_dealer()
-  main_player.hand = board.draw_tile(num=13)
-  main_player.hand.sort()
-  bot_one.hand = board.draw_tile(num=13)
-  bot_two.hand = board.draw_tile(num=13)
-  bot_three.hand = board.draw_tile(num=13)
-  board.on_turn()
-
-  board_render = BoardRender(small_tile_dictionary, tile_dictionary, play_area, board, 0)
+  # Clock for pygame-gui
+  clock = pygame.time.Clock()
 
   # Event loop
   while 1:
+    time_delta = clock.tick(60) / 1000.0
     pygame.event.pump()
     for event in pygame.event.get():
-      if event.type == pygame.constants.QUIT:
-        return
+        if event.type == pygame.constants.QUIT:
+            return
+        # Pass UI events to the current menu for processing
+        if event.type == pygame.USEREVENT:
+            game_manager.process_ui_event(event)
+        # Pass window events to pygame-gui for processing
+        game_manager.update_gui_manager(event)
 
-    if screen.get_size() != current_screen_size:
-      player_area_rect = get_play_area_pos(screen)
-      play_area = surface.Surface((player_area_rect.width, player_area_rect.height), flags=pygame.SRCALPHA)
-      board_render.surface = play_area
-      board_render.force_redraw()
-      background = surface.Surface(screen.get_size())
-      background = background.convert_alpha()
-      background.fill((7, 99, 36))
-      current_screen_size = screen.get_size()
+    #if screen.get_size() != current_screen_size:
+    #  player_area_rect = get_play_area_pos(screen)
+    #  play_area = surface.Surface((player_area_rect.width, player_area_rect.height), flags=pygame.SRCALPHA)
+    #  board_render.surface = play_area
+    #  board_render.force_redraw()
+    #  background = surface.Surface(screen.get_size())
+    #  background = background.convert_alpha()
+    #  background.fill((7, 99, 36))
+    #  current_screen_size = screen.get_size()
 
-    board_render.update()
-    board_render.draw(background)
-    screen.blit(background, (0, 0))
-    screen.blit(play_area, (player_area_rect.x, player_area_rect.y))
+    game_manager.update(time_delta)
+    screen.blit(clear_background, (0, 0))
+    game_manager.draw(screen)
     pygame.display.flip()
     pygame.display.update()
 

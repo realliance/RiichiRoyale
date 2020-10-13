@@ -1,39 +1,52 @@
-import sys
-import enum
-from math import cos, sin
-from pygame import surface
+import os
 import pygame
 import pygame_gui
-import libmahjong
-from riichiroyale import MahjongHand, load_image, load_tile
-import soundWrapper
+from riichiroyale import View
 
-SCREEN_WIDTH, SCREEN_HEIGHT = 1500, 800
-sounds = []
+class GameManager:
+  def __init__(self):
+    self.views = dict()
+    self.current_view = None
 
-class Menu:
-    uiElements = list()
-    manager = pygame_gui.UIManager
+  def add_view(self, view):
+    self.views[view.name] = view
 
-    def processuievent(self, event):
-        print('Got uncaught UI event: ', event)
+  def process_ui_event(self, event):
+    self.views[self.current_view].process_ui_event(event)
 
+  def update_gui_manager(self, event):
+    if self.views[self.current_view].manager is not None:
+      self.views[self.current_view].manager.process_events(event)
 
-currentMenu = Menu()
-menus = {
+  def set_active_view(self, name):
+    self.current_view = name
 
-}
+  def update(self, time_delta):
+    self.views[self.current_view].update(time_delta)
 
+  def draw(self, screen):
+    self.views[self.current_view].draw(screen)
 
-def _build_icon():
-    front = load_image('resources/tiles/51x68/Chun.png', convert=False)
-    back = load_image('resources/tiles/51x68/Front.png', convert=False)
-    return load_tile(front, back)
+class Menu(View):
+  def __init__(self, name, gui_manager, elements=None):
+    super().__init__(name)
+    self.manager = gui_manager
+    if elements is None:
+      self.uiElements = []
+    else:
+      self.uiElements = elements
 
+    self.process_ui_event = None
 
-def createmainmenu():
-    menu = Menu()
-    menu.manager = pygame_gui.UIManager((SCREEN_WIDTH, SCREEN_HEIGHT), 'theme.json')
+  def update(self, time_delta):
+    return self.manager.update(time_delta)
+
+  def draw(self, screen):
+    self.manager.draw_ui(screen)
+
+def create_main_menu(game_manager, screen_width, screen_height):
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    menu = Menu("main_menu", pygame_gui.UIManager((screen_width, screen_height), os.path.join(current_path, '../resources/theme.json')))
     newgame_button_rect = pygame.Rect(0, 0, 100, 50)
     newgame_button_rect.bottomleft = (500, -200)
     newgame_button = pygame_gui.elements.UIButton(relative_rect=newgame_button_rect,
@@ -71,7 +84,7 @@ def createmainmenu():
                                                    })
 
     title_rect = pygame.Rect(0, 0, 800, 300)
-    title_rect.center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+    title_rect.center = (screen_width / 2, screen_height / 2)
     title_text = pygame_gui.elements.UILabel(relative_rect=title_rect,
                                              text='Riichi Royale',
                                              manager=menu.manager,
@@ -89,25 +102,23 @@ def createmainmenu():
     menu.uiElements.append(title_text)
 
     # processuievent() is called when a UI event is caught while this menu is active
-    def processuievent(event):
-        global currentMenu
+    def process_ui_event(event):
         if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == newgame_button:
                 print('Pressed new game')
+                game_manager.set_active_view('game')
             if event.ui_element == settings_button:
                 print('Switching to settings menu')
-                currentMenu = menus['settings']
+                game_manager.set_active_view('settings')
 
-    menu.processuievent = processuievent
+    menu.process_ui_event = process_ui_event
     return menu
 
 
-def createsettingsmenu():
-    global sounds
-    menu = Menu()
-    menu.manager = pygame_gui.UIManager((SCREEN_WIDTH, SCREEN_HEIGHT), 'theme.json')
-
-    settingsmenu_rect = pygame.Rect(SCREEN_WIDTH / 2 - 500, SCREEN_HEIGHT / 2 - 350, 1000, 700)
+def create_settings_menu(game_manager, screen_width, screen_height):
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    menu = Menu('settings', pygame_gui.UIManager((screen_width, screen_height), os.path.join(current_path, '../resources/theme.json')))
+    settingsmenu_rect = pygame.Rect(screen_width / 2 - 500, screen_height / 2 - 350, 1000, 700)
     settingsmenu_panel = pygame_gui.elements.UIPanel(relative_rect=settingsmenu_rect,
                                                      starting_layer_height=1,
                                                      manager=menu.manager,
@@ -207,97 +218,17 @@ def createsettingsmenu():
     menu.uiElements.append(music_volume_slider)
     menu.uiElements.append(volume_label)
 
-    # processuievent() is called when a UI event is caught while this menu is active
-    def processuievent(event):
-        global currentMenu
-        if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-            if event.ui_element == back_button:
-                print('Pressed back')
-                currentMenu = menus['main']
-        elif event.user_type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
-            soundWrapper.setMusicVolume(music_volume_slider.get_current_value() / 100.0)
-            soundWrapper.setAllSoundEffectVolume(sounds, sfx_volume_slider.get_current_value() / 100.0)
-            soundWrapper.setAllVolume(sounds, sfx_volume_slider.get_current_value() / 100.0)
+    # process_ui_event() is called when a UI event is caught while this menu is active
+    def process_ui_event(event):
+      if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+          if event.ui_element == back_button:
+              print('Pressed back')
+              game_manager.set_active_view('main_menu')
+      elif event.user_type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
+        #soundWrapper.setMusicVolume(music_volume_slider.get_current_value() / 100.0)
+        #soundWrapper.setAllSoundEffectVolume(sounds, sfx_volume_slider.get_current_value() / 100.0)
+        #soundWrapper.setAllVolume(sounds, sfx_volume_slider.get_current_value() / 100.0)
+        print('Sound unimplemented')
 
-    menu.processuievent = processuievent
+    menu.process_ui_event = process_ui_event
     return menu
-
-
-def main():
-    global currentMenu
-    global sounds
-    # Initialise screen
-    pygame.init()
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption('Riichi Royale')
-
-    # Set Icon
-    pygame.display.set_icon(_build_icon())
-
-    # Fill background
-    background = surface.Surface(screen.get_size())
-    background = background.convert_alpha()
-    background.fill((7, 99, 36))
-
-    # Setup menus
-    mainmenu = createmainmenu()
-    settingsmenu = createsettingsmenu()
-    menus['main'] = mainmenu
-    menus['settings'] = settingsmenu
-
-    libmahjong.Walls.SetPath('resources/tiles/102x136')
-    hand = MahjongHand()
-
-    # Initialize sounds
-    sounds = soundWrapper.soundInit()
-    soundWrapper.musicInit(0.05)
-    soundWrapper.musicStart()
-    soundWrapper.setAllSoundEffectVolume(sounds,0.5)
-
-
-    # Blit everything to the screen
-    screen.blit(background, (0, 0))
-    pygame.display.flip()
-
-    space_pressed = False
-
-    # Clock for pygame-gui
-    clock = pygame.time.Clock()
-
-    # Menu to draw
-    currentMenu = mainmenu
-
-    # Event loop
-    while 1:
-        time_delta = clock.tick(60) / 1000.0
-        pygame.event.pump()
-        keys = pygame.key.get_pressed()
-        for event in pygame.event.get():
-            if event.type == pygame.constants.QUIT:
-                return
-            # Pass UI events to the current menu for processing
-            if event.type == pygame.USEREVENT:
-                currentMenu.processuievent(event)
-            # Pass window events to pygame-gui for processing
-            currentMenu.manager.process_events(event)
-        if keys[pygame.constants.K_SPACE] and not space_pressed:
-            space_pressed = True
-            hand.newHand()
-        if not keys[pygame.constants.K_SPACE]:
-            space_pressed = False
-        # Update the state of the current menu
-        currentMenu.manager.update(time_delta)
-        screen.blit(background, (0, 0))
-        if currentMenu == menus['main']:
-            hand.update()
-            for index, sprite in enumerate(hand.sprites()):
-                sprite.rect = ((SCREEN_WIDTH / 2 - 100) * cos(index + pygame.time.get_ticks() / 5000.0) + 700,
-                               (SCREEN_HEIGHT / 2 - 100) * sin(index + pygame.time.get_ticks() / 5000.0) + 350)
-            hand.draw(screen)
-        currentMenu.manager.draw_ui(screen)
-        pygame.display.flip()
-        pygame.display.update()
-
-
-if __name__ == "__main__":
-    sys.exit(main())

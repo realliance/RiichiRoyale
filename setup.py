@@ -13,14 +13,15 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/HartleyAHartley/RiichiRoyale",
-    packages=['libmahjong', ''],
-    package_dir={'libmahjong': '.', '': '.'},
-    package_data={'libmahjong': ['riichiroyale/libmahjong.so'], '': ['riichiroyale/libmahjong.so', 'riichiroyale/*', 'riichiroyale/**/*', 'riichiroyale/**/**/*', 'riichiroyale/resources/**/**/*', 'build/_deps/sourcesanspro-src/TFF/*']},
+    packages=['libmahjong', 'riichiroyale'],
+    package_dir={'libmahjong': '.', 'riichiroyale': '.'},
+    package_data={'libmahjong': ['riichiroyale/libmahjong.so'], 'riichiroyale': ['riichiroyale/libmahjong.so', 'riichiroyale/*', 'riichiroyale/**/*', 'riichiroyale/**/**/*', 'riichiroyale/resources/**/**/*', 'build/_deps/sourcesanspro-src/TFF/*']},
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: Microsoft :: Windows",
         "Operating System :: Unix",
     ],
+    scripts=['riichiroyale/__main__.py'],
     entry_points = {
         'console_scripts': ['riichiroyale=riichiroyale.__main__:main'],
     },
