@@ -11,6 +11,12 @@ def soundInit():
 	dominoDump = pygame.mixer.Sound("./audio/dominoDump.wav")
 	dominoSelect = pygame.mixer.Sound("./audio/dominoSelect.wav")
 	sounds = [[tileClacking,"tileSound"],[dominoDump,"shuffleSound"],[dominoSelect,"selected"]]
+	global masterVolume
+	masterVolume = 1
+	global sfxVolume
+	sfxVolume = 1
+	global musicVolume
+	musicVolume = 1
 	return sounds
 	
 	
@@ -18,19 +24,21 @@ def soundInit():
 #  sounds is the array returned from soundInit()	
 #  returns new volume
 def setAllSoundEffectVolume(sounds, volume):
+	sfxVolume = volume
 	for soundEffect in sounds:
-		soundEffect[0].set_volume(volume)
-	return volume
+		soundEffect[0].set_volume(sfxVolume*masterVolume)
+	return sfxVolume
 	
 	
 #  volume is an value from 0 to 1
 #  sounds is the array returned from soundInit()	
 #  returns new volume
-def setAllVolume(sounds, volume):
+def setMasterVolume(sounds, volume):
+	masterVolume = volume
 	for soundEffect in sounds:
-		soundEffect[0].set_volume(volume)
-	pygame.mixer.music.set_volume(volume)
-	return volume
+		soundEffect[0].set_volume(sfxVolume*masterVolume)
+	pygame.mixer.music.set_volume(musicVolume*masterVolume)
+	return masterVolume
 
 
 #Folk Chinese by PeriTune | http://peritune.com
@@ -39,7 +47,8 @@ def setAllVolume(sounds, volume):
 #https://creativecommons.org/licenses/by/3.0/deed.en_US
 def musicInit(volume):
 	gameMusic = pygame.mixer.music.load("./audio/peritune-folk-chinese.ogg")
-	pygame.mixer.music.set_volume(volume)
+	musicVolume = volume
+	pygame.mixer.music.set_volume(musicVolume*masterVolume)
 
 	
 def musicStop():
@@ -51,6 +60,7 @@ def musicStart():
 	pygame.mixer.music.play(-1)
 
 
-def setMusicVolume(music, volume):
-	pygame.mixer.music.set_volume(volume)
-	return volume
+def setMusicVolume(volume):
+	musicVolume = volume
+	pygame.mixer.music.set_volume(musicVolume*masterVolume)
+	return musicVolume

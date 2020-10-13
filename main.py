@@ -18,7 +18,7 @@ def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption('Riichi Royale')
     sounds = soundWrapper.soundInit()
-    soundWrapper.musicInit(0.05)
+    soundWrapper.musicInit(0.1)
     soundWrapper.musicStart()
     soundWrapper.setAllSoundEffectVolume(sounds,0.5)
     # Set Icon
