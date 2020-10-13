@@ -3,7 +3,7 @@ import sys
 import math
 from pygame import surface, Rect
 import pygame
-from riichiroyale import GameManager, create_main_menu, create_settings_menu, GameView, build_tile_surface_dict, Tile, TILE_SIZE, SMALL_TILE_SIZE, SoundManager
+from riichiroyale import GameManager, MainMenu, create_settings_menu, GameView, build_tile_surface_dict, Tile, TILE_SIZE, SMALL_TILE_SIZE, SoundManager
 
 SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO = 16, 9
 
@@ -46,7 +46,7 @@ def main():
   # Initialize Game Manager and Menus
   game_manager = GameManager(sound_manager)
 
-  main_menu = create_main_menu(game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT)
+  main_menu = MainMenu(game_manager, tile_dictionary, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT)
   settings_menu = create_settings_menu(game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT)
   game_view = GameView(sound_manager, screen, tile_dictionary, small_tile_dictionary, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT, SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO)
   game_manager.add_view(main_menu)
@@ -71,16 +71,6 @@ def main():
             game_manager.process_ui_event(event)
         # Pass window events to pygame-gui for processing
         game_manager.update_gui_manager(event)
-
-    #if screen.get_size() != current_screen_size:
-    #  player_area_rect = get_play_area_pos(screen)
-    #  play_area = surface.Surface((player_area_rect.width, player_area_rect.height), flags=pygame.SRCALPHA)
-    #  board_render.surface = play_area
-    #  board_render.force_redraw()
-    #  background = surface.Surface(screen.get_size())
-    #  background = background.convert_alpha()
-    #  background.fill((7, 99, 36))
-    #  current_screen_size = screen.get_size()
 
     game_manager.update(time_delta)
     screen.blit(clear_background, (0, 0))

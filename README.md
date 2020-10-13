@@ -40,7 +40,8 @@ C=clang CXX=clang++ cmake -S . -B build
 cmake --build build
 
 # Run Project
-python main.py
+python setup.py develop --user
+python riichiroyale
 ```
 
 ## Testing and Documentation
