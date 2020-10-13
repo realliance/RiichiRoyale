@@ -9,6 +9,7 @@ enum EventType{
   ConcealedKan,
   Riichi,
   Discard,
+  Draw,
   Decline
 };
 

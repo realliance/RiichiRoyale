@@ -2,8 +2,11 @@
 #include <string>
 #include <array>
 #include <vector>
+#include <memory>
 #include <map>
 
+#include "event.h"
+#include "piecetype.h"
 #include "manager.h"
 #include "walls.h"
 #include "enum.h"
@@ -43,39 +46,158 @@ auto MahjongGameManager::GameLoop() -> void{
     state.players[i].controller->GameStart(i);
   }
   while(state.roundCounter < 8){
-    RoundLoop();
+    RoundStart();
   }
   for(auto & player : state.players){
     player.controller->GameEnd();
   }
 }
 
-auto MahjongGameManager::RoundLoop() -> void{
+auto MahjongGameManager::RoundStart() -> void {
   state.walls = Walls();
   for(size_t i = 0; i < 4; i++){
-    auto hand = state.walls.TakeHand(i==0);
+    auto hand = state.walls.TakeHand();
     state.players[i].controller->RoundStart(hand,state.players[i].seat, state.wind);
-    std::move(hand.begin(), hand.end(), state.players[i].hand.live);
+    state.players[i].hand.live = hand;
   }
+  return PlayerDraw(state.dealer);
+}
+
+auto MahjongGameManager::PlayerDraw(int player) -> void {
+  state.players[player].controller->ReceiveEvent(Event{Draw,player,state.walls.TakePiece()});
+  auto decisions = AvailableInHand(player);
+  auto response = state.players[player].controller->MakeDecision(decisions);
+  bool valid = false;
+  switch(response.type){
+    case Discard:
+      valid = RemovePiece(player, response.piece);
+      break;
+    case Tsumo: {
+      for(const auto & decision : decisions){
+        if(decision.type == Tsumo){
+          RoundEnd(player, response);
+          break;
+        }
+      }
+      break;
+    }
+    case ConcealedKan:
+      
+
+  }
+}
+
+
+auto MahjongGameManager::RoundLoop() -> void{
+
 
   std::vector<Event> current;
-  current.push_back(Event{Decline});
+  current.push_back(Event{Draw,East,state.walls.TakePiece()});
   while(current[0].type != Ron && current[0].type != Tsumo){
     std::vector<Event> possibleEvents;
     auto decisions = AvailableDecisions();
-    for(int i = 0; i < 4; i++){
-      if(current[0].type != Decline){
-        state.players[i].controller->ReceiveEvent(current[0]);
-      }
-      if(decisions.contains(i)){
-        possibleEvents.push_back(
-          state.players[i].controller->MakeDecision(decisions[i]));
+    if(current[0].type == Draw){
+      state.players[current[0].player].controller->ReceiveEvent(current[0]);
+    }else if(current[0].type != Decline){
+      for(int player = 0; player < 4; player++){
+        state.players[player].controller->ReceiveEvent(current[0]);    
+        if(decisions.contains(player)){
+          possibleEvents.push_back(
+            state.players[player].controller->MakeDecision(decisions[player])
+          );
+        } 
       }
     }
     current = EventPriority(possibleEvents);
   }
-  ScoreBreakdown breakdown = ScoreHand(state.players[current.player]);
+  auto breakdown = ScoreHand(current);
   for(int i = 0; i < 4; i++){
+    state.players[i].controller->RoundEnd(breakdown);
+  }
+}
+
+auto MahjongGameManager::AvailableDecisions() -> std::map<int,std::vector<Event>>{
+
+}
+
+auto MahjongGameManager::EventPriority(std::vector<Event> decisions) -> std::vector<Event>{
+  std::vector<Event> events;
+  events.push_back(Event{Decline,Wind(-1),0});
+  for(const auto & decision : decisions){
+    if(decision.type > events.front().type){
+      events.clear();
+      events.push_back(decision);
+    }else if(decision.type == events.front().type){
+      events.push_back(decision);
+    }
+  }
+  return events;
+}
+
+auto MahjongGameManager::ScoreHand(std::vector<Event> wins) -> std::array<int,4>{
+
+}
+
+inline auto MahjongGameManager::CountPieces(int player, Piece p) const -> int{
+  return std::count(state.players[player].hand.live.begin(),
+                state.players[player].hand.live.end(),
+                p);
+}
+
+auto MahjongGameManager::CanRon(int player, Event e) const -> bool{
+  if(e.type != Discard && e.type != ConcealedKan && e.type != Kan){
+    return false;
+  }
+}
+
+auto MahjongGameManager::CanKan(int player, Event e) const -> bool{
+    if(e.type != Discard){
+    return false;
+  }
+  if(CountPieces(player,e.piece) == 3){
+    return true;
+  }
+  return false;
+}
+
+auto MahjongGameManager::CanPon(int player, Event e) const -> bool{
+  if(e.type != Discard){
+    return false;
+  }
+  if(CountPieces(player,e.piece) >= 2){
+    return true;
+  }
+  return false;
+}
+
+auto MahjongGameManager::CanChi(int player, Event e) const -> bool{
+  if(e.type != Discard || e.piece.isHonor()){
+    return false;
+  }
+  if(e.player-1 != player || !(player == 0 && e.player == 4)){
+    return false;
+  }
+  if(CountPieces(player,e.piece-2) > 0 && CountPieces(player,e.piece-1) > 0){
+    return true;
+  }
+  if(CountPieces(player,e.piece-1) > 0 && CountPieces(player,e.piece+1) > 0){
+    return true;
+  }
+  if(CountPieces(player,e.piece+1) > 0 && CountPieces(player,e.piece+2) > 0){
+    return true;
+  }
+}
+
+auto MahjongGameManager::CanTsumo(int player) const -> bool{
+  if(e.type != Discard){
 
   }
+}
+
+auto MahjongGameManager::CanConcealedKan(int player) const -> bool{
+
+}
+
+auto MahjongGameManager::CanRiichi(int player, Event e) const -> bool{
+
 }

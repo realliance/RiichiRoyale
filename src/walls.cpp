@@ -31,21 +31,21 @@ Piece Walls::TakePiece(){
         livingWalls.pop_front();
         return p;
     }
-    return Pieces::ERROR_PIECE;
+    return PieceType::ERROR_PIECE;
 }
 
-std::vector<Piece> Walls::TakeHand(bool dealer){
-    if(livingWalls.size() < 14){
+std::vector<Piece> Walls::TakeHand(){
+    if(livingWalls.size() < 13){
         return {};
     }
     std::vector<Piece> hand;
-    std::move(livingWalls.begin(), livingWalls.begin() + ( 13 + (dealer ? 1:0 )), std::back_inserter(hand));
+    std::move(livingWalls.begin(), livingWalls.begin() + 13, std::back_inserter(hand));
     return hand;
 }
 
 Piece Walls::TakeReplacementTile() {
     if(replacements < 1){
-        return Pieces::ERROR_PIECE;
+        return PieceType::ERROR_PIECE;
     }
     replacements--;
     Piece p = deadWall.front();

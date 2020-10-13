@@ -1,5 +1,5 @@
 #pragma once
-#include "pieces.h"
+#include "piecetype.h"
 #include "enum.h"
 
 //concealed kan, kan, pon, chi

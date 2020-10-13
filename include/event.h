@@ -1,9 +1,9 @@
 #pragma once
-#include "pieces.h"
+#include "piecetype.h"
 #include "enum.h"
 
 struct Event {
   EventType type;
-  Wind player;
+  int player;
   Piece piece;
 };

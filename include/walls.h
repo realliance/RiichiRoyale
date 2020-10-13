@@ -1,7 +1,7 @@
 #pragma once
 #include <deque>
 #include <vector>
-#include "pieces.h"
+#include "piecetype.h"
 
 class Walls{
   std::deque<Piece> livingWalls;
@@ -11,7 +11,7 @@ class Walls{
   public:
   explicit Walls();
   Piece TakePiece();
-  std::vector<Piece> TakeHand(bool dealer);
+  std::vector<Piece> TakeHand();
   Piece TakeReplacementTile();
   std::vector<Piece> GetDoras() const;
   std::vector<Piece> GetUraDoras() const;
