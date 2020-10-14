@@ -22,8 +22,8 @@ class StatefulBoardElement():
     self.rendered.clear(surface, background)
     self.rendered.draw(surface)
 
-  def update(self):
-    self.rendered.update()
+  def update(self, tutorial_state=None):
+    self.rendered.update(tutorial_state=tutorial_state)
 
 class BoardRender():
   def __init__(self, small_dictionary, dictionary, surface, board, player_pov):
@@ -52,10 +52,11 @@ class BoardRender():
     # Doras
     self.elements.append(StatefulBoardElement(0, lambda: self.board.dora_revealed, lambda: render_dora_pile(self)))
     
-  def update(self):
+  def update(self, tutorial_state=None):
     # Notify elements to check state changes
     for element in self.elements:
-      element.update()
+      element.update(tutorial_state=tutorial_state)
+
     
   def force_redraw(self):
     for element in self.elements:

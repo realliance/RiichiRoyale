@@ -23,17 +23,19 @@ class Player:
     meld_tiles = len(self.melded_hand) * 3
     return self.hand + meld_tiles
 
-  def on_tile_click(self, tile_index):
+  def on_tile_click(self, tile_index, tutorial_state=None):
     if self.my_turn:
       # Discard Tile
       tile = self.hand[tile_index]
-      del self.hand[tile_index]
-      self.hand.sort()
-      self.discard_pile.append(tile)
-      self.my_turn = False
-      if self.board is None:
-        raise "Cannot communicate with board! Is this player registered?"
-      self.board.on_discard(self)
+      if (tutorial_state is None) or (tutorial_state.next_discard == tile):
+        del self.hand[tile_index]
+        self.hand.sort()
+        self.discard_pile.append(tile)
+        self.my_turn = False
+        if self.board is None:
+          raise "Cannot communicate with board! Is this player registered?"
+        self.board.on_discard(self)
+        tutorial_state.discard()
 
   def on_opponent_discard(self, player, chi_avaliable):
     if len(player.discard_pile) == 0:
