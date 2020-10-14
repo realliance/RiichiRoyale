@@ -1,6 +1,6 @@
 import copy
 from pygame.sprite import Group
-from .elements import render_center_info, render_hand, render_meld_hand, render_discard_pile, render_vertical_discard_pile, render_dora_pile
+from .elements import render_center_info, render_hand, render_meld_hand, render_discard_pile, render_vertical_discard_pile, render_dora_pile, render_hidden_hand
 
 class StatefulBoardElement():
   def __init__(self, default_value, get_value, render):
@@ -37,8 +37,19 @@ class BoardRender():
     # Player Hand
     self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].hand, lambda: render_hand(self, player_pov)))
 
+    # Opponent Hands
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[1].hand, lambda: render_hidden_hand(self, 1, 1)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[2].hand, lambda: render_hidden_hand(self, 2, 2)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[3].hand, lambda: render_hidden_hand(self, 3, 3)))
+
     # Player Melds
-    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].melded_hand, lambda: render_meld_hand(self, self.board.players[player_pov].melded_hand, len(self.board.players[player_pov].hand))))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].melded_hand, lambda: render_meld_hand(self, self.board.players[player_pov].melded_hand)))
+
+    # Opponent Melds
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].melded_hand, lambda: render_meld_hand(self, self.board.players[player_pov].melded_hand, seat=1)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].melded_hand, lambda: render_meld_hand(self, self.board.players[player_pov].melded_hand, seat=2)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].melded_hand, lambda: render_meld_hand(self, self.board.players[player_pov].melded_hand, seat=3)))
+
 
     # Discard Piles
     self.elements.append(StatefulBoardElement([], lambda: self.board.players[0].discard_pile, lambda: render_discard_pile(self, 0)))

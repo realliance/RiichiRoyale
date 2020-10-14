@@ -1,3 +1,4 @@
+import os
 from pygame.surface import Surface
 from pygame import Rect
 import pygame
@@ -5,7 +6,9 @@ from pygame.sprite import LayeredUpdates, Sprite
 from pygame.font import Font
 
 def create_wind_markers(board, parent_rect, group):
-  font = Font("build/_deps/sourcesanspro-src/TTF/SourceSans3-Semibold.ttf", 40)
+  current_path = os.path.dirname(os.path.realpath(__file__))
+  font_path = os.path.join(current_path, '..', '..', 'resources/fonts/SourceSans3-Semibold.ttf')
+  font = Font(font_path, 40)
   MARKER_SIZE = (40, 40)
   MARKER_SIZE_HALF = (MARKER_SIZE[0] / 2, MARKER_SIZE[1] / 2)
   MARKER_OFFSET = 40
@@ -119,7 +122,9 @@ def render_center_info(board_render):
   info_rect.center = board_render.surface.get_rect().center
   pygame.draw.rect(center_info_surface, (0, 0, 0), info_rect)
 
-  font = Font("build/_deps/sourcesanspro-src/TTF/SourceSans3-Semibold.ttf", 60)
+  current_path = os.path.dirname(os.path.realpath(__file__))
+  font_path = os.path.join(current_path, '..', '..', 'resources/fonts/SourceSans3-Semibold.ttf')
+  font = Font(font_path, 60)
 
   # Tiles Left in Wall
   tile_count_surface = font.render(str(len(board.wall)), True, (255, 255, 255))
