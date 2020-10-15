@@ -48,9 +48,9 @@ def main():
 
   
   sound_manager.add_audio_source('lobby', os.path.join(current_path, 'resources/audio/music/lobby.wav'), preload=False)
-  sound_manager.add_audio_source('game1', os.path.join(current_path, 'resources/audio/music/game2.wav'), preload=False)
-  sound_manager.add_audio_source('game2', os.path.join(current_path, 'resources/audio/music/game3.wav'), preload=False)
-  sound_manager.add_audio_source('game3', os.path.join(current_path, 'resources/audio/music/game4.wav'), preload=False)
+  sound_manager.add_audio_source('game1', os.path.join(current_path, 'resources/audio/music/game1.wav'), preload=False)
+  sound_manager.add_audio_source('game2', os.path.join(current_path, 'resources/audio/music/game2.wav'), preload=False)
+  sound_manager.add_audio_source('game3', os.path.join(current_path, 'resources/audio/music/game3.wav'), preload=False)
 
   sound_manager.music_playlist = ['game1', 'game2', 'game3']
 

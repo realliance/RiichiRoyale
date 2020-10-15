@@ -1,12 +1,12 @@
 import os
 import math
-import libmahjong
-import pygame_gui
 import random
+import pygame_gui
 import pygame
 from pygame import Rect
 from pygame import surface
-from riichiroyale import Board, Player, BoardRender, Match
+import libmahjong
+from riichiroyale import Player, BoardRender, Match
 from .menuview import MenuView
 
 class GameView(MenuView):
@@ -19,8 +19,6 @@ class GameView(MenuView):
     self.screen_height = screen_height
     self.screen_width_ratio = width_ratio
     self.screen_height_ratio = height_ratio
-    self.process_ui_event = process_ui_event
-
 
     # Fill background
     background = surface.Surface(screen.get_size())
@@ -28,6 +26,7 @@ class GameView(MenuView):
     self.background.fill((7, 99, 36))
 
     self.sound_manager = sound_manager
+    self.process_ui_event = process_ui_event
 
     # Play Area Surface
     self.player_area_rect = self.get_play_area_pos(screen)
@@ -62,8 +61,9 @@ class GameView(MenuView):
     self.board_render = BoardRender(self.small_tile_dict, self.tile_dict, self.play_area, self.match.current_board, 0)
     self.match.current_board.on_turn()
 
-  def update(self, _):
+  def update(self, time_delta):
     self.board_render.update(self.tutorial)
+    super().update(time_delta)
 
   def draw(self, screen):
     self.board_render.draw(self.background)
