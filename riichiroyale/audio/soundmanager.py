@@ -59,7 +59,7 @@ class SoundManager():
 		path = self.audio_sources[name][1]
 		pygame.mixer.music.load(path)
 		pygame.mixer.music.set_volume(self.music_volume * self.master_volume)
-		pygame.mixer.music.play()
+		pygame.mixer.music.play(-1)
 
 	def stop_music(self):
 		pygame.mixer.music.stop()

@@ -18,13 +18,13 @@ class TileRender(DirtySprite):
     self.tile_rect = Rect(self.rect[0], self.rect[1], sizes[0], sizes[1])
     self.can_interact = interact
 
-  def update(self):
+  def update(self, tutorial_state=None):
     if self.can_interact and self.tile_rect.collidepoint(mouse.get_pos()):
       self.rect = (self.pos[0], self.pos[1] - 10)
       self.dirty = 1
       buttons = mouse.get_pressed()
       if buttons[0] and self.owner is not None:
-        self.owner.on_tile_click(self.known_index)
+        self.owner.on_tile_click(self.known_index, tutorial_state=tutorial_state) # EDIT THIS FOR TUTORIAL
     else:
       self.rect = self.pos
       self.dirty = 1
