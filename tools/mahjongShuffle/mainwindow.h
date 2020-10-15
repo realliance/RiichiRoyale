@@ -30,6 +30,8 @@ protected:
   std::vector<Gtk::Image> imageArray;
   Glib::RefPtr<Gdk::Pixbuf> front;
   Gtk::CheckButton sortButton;
+  Gtk::CheckButton stopButton;
+  Gtk::CheckButton loopButton;
   Gtk::Label isStdForm;
   int dots = 0;
 

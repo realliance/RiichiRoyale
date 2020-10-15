@@ -123,7 +123,7 @@ auto GetPossibleStdFormHand() -> std::vector<Piece>{
 
   uint8_t pieceCount[256] = {};
   for(const auto & piece : livingWalls){
-    pieceCount[piece.value()]++;
+    pieceCount[piece.toUint8_t()]++;
   }
 
   std::vector<bool> choosePair = {false,false,false,false,true};
@@ -136,27 +136,27 @@ auto GetPossibleStdFormHand() -> std::vector<Piece>{
   for(bool choice : choosePair){
     if(choice){
       int pair = pairSelection(g);
-      while(pieceCount[PAIRS[pair][0].value()] < 2){
+      while(pieceCount[PAIRS[pair][0].toUint8_t()] < 2){
         pair = pairSelection(g);
       }
       hand.push_back(PAIRS[pair][0]);
       hand.push_back(PAIRS[pair][1]);
-      pieceCount[PAIRS[pair][0].value()] -= 2;
+      pieceCount[PAIRS[pair][0].toUint8_t()] -= 2;
     }else{
       int triplet = tripletSelection(g);
       while((triplet <= 20 && 
-              (pieceCount[TRIPLETS[triplet][0].value()] < 1 ||
-                pieceCount[TRIPLETS[triplet][1].value()] < 1 ||
-                pieceCount[TRIPLETS[triplet][2].value()] < 1)) || 
-              (triplet > 20 && pieceCount[TRIPLETS[triplet][0].value()] < 3)){
+              (pieceCount[TRIPLETS[triplet][0].toUint8_t()] < 1 ||
+                pieceCount[TRIPLETS[triplet][1].toUint8_t()] < 1 ||
+                pieceCount[TRIPLETS[triplet][2].toUint8_t()] < 1)) || 
+              (triplet > 20 && pieceCount[TRIPLETS[triplet][0].toUint8_t()] < 3)){
         triplet = tripletSelection(g);
       }
       if(triplet <= 20){
-        pieceCount[TRIPLETS[triplet][0].value()]--;
-        pieceCount[TRIPLETS[triplet][1].value()]--;
-        pieceCount[TRIPLETS[triplet][2].value()]--;
+        pieceCount[TRIPLETS[triplet][0].toUint8_t()]--;
+        pieceCount[TRIPLETS[triplet][1].toUint8_t()]--;
+        pieceCount[TRIPLETS[triplet][2].toUint8_t()]--;
       }else{
-        pieceCount[TRIPLETS[triplet][0].value()]-=3;
+        pieceCount[TRIPLETS[triplet][0].toUint8_t()]-=3;
       }
       hand.push_back(TRIPLETS[triplet][0]);
       hand.push_back(TRIPLETS[triplet][1]);

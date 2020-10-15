@@ -5,6 +5,7 @@
 #include "piecetype.h"
 
 enum NodeType {
+  Error,
   ChiSet,
   PonSet,
   Pair,

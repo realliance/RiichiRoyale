@@ -12,11 +12,11 @@ target_sources(mahjongShuffle
     "${DIR}/main.cpp"
     "${DIR}/mainwindow.cpp"
     "${DIR}/mainwindow.h"
-    "${DIR}/stdform.cpp"
-    "${DIR}/stdform.h"
     "${RiichiRoyale_SOURCE_DIR}/src/piecetype.cpp"
     "${RiichiRoyale_SOURCE_DIR}/src/walls.cpp"
     "${RiichiRoyale_SOURCE_DIR}/src/possiblesets.cpp"
+    "${RiichiRoyale_SOURCE_DIR}/src/handtree.cpp"
+    "${RiichiRoyale_SOURCE_DIR}/src/handnode.cpp"
 )
 target_link_libraries(mahjongShuffle ${GTKMM_LIBRARIES})
 target_include_directories(mahjongShuffle PRIVATE "${RiichiRoyale_SOURCE_DIR}/include")

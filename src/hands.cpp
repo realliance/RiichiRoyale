@@ -21,43 +21,43 @@ auto isInStdForm(const RoundState* state) -> HandState{
   std::vector<Piece> pieces;
   uint8_t pieceCount[256] = {};
   for(const auto & piece: state->currentPlayer->hand){
-    pieceCount[piece.value()]++;
-    if(pieceCount[piece.value()] == 1){
+    pieceCount[piece.toUint8_t()]++;
+    if(pieceCount[piece.toUint8_t()] == 1){
       pieces.push_back(piece);
     }
   }
   std::vector<Meld> handComp;
   Piece pair = ERROR_PIECE;
   for(const auto & piece: pieces){
-    if(pieceCount[piece.value()] == 3){
+    if(pieceCount[piece.toUint8_t()] == 3){
       handComp.push_back(Meld{Pon,{piece,piece,piece}});
-      pieceCount[piece.value()] = 0;
+      pieceCount[piece.toUint8_t()] = 0;
       continue;
     }
-    if(pieceCount[piece.value()] > 0 && pieceCount[piece.value()+1] > 0 && pieceCount[piece.value()+2] > 0){
+    if(pieceCount[piece.toUint8_t()] > 0 && pieceCount[piece.toUint8_t()+1] > 0 && pieceCount[piece.toUint8_t()+2] > 0){
       handComp.push_back(Meld{Chi,{piece,piece+1,piece+2}});
-      pieceCount[piece.value()]--;
-      pieceCount[piece.value()+1]--;
-      pieceCount[piece.value()+2]--;
+      pieceCount[piece.toUint8_t()]--;
+      pieceCount[piece.toUint8_t()+1]--;
+      pieceCount[piece.toUint8_t()+2]--;
       continue;
     }
-    if(pieceCount[piece.value()-1] > 0 && pieceCount[piece.value()] > 0 && pieceCount[piece.value()+1] > 0){
+    if(pieceCount[piece.toUint8_t()-1] > 0 && pieceCount[piece.toUint8_t()] > 0 && pieceCount[piece.toUint8_t()+1] > 0){
       handComp.push_back(Meld{Chi,{piece,piece+1,piece+2}});
-      pieceCount[piece.value()]--;
-      pieceCount[piece.value()+1]--;
-      pieceCount[piece.value()+2]--;
+      pieceCount[piece.toUint8_t()]--;
+      pieceCount[piece.toUint8_t()+1]--;
+      pieceCount[piece.toUint8_t()+2]--;
       continue;
     }
-    if(pieceCount[piece.value()-2] > 0 && pieceCount[piece.value()-1] > 0 && pieceCount[piece.value()] > 0){
+    if(pieceCount[piece.toUint8_t()-2] > 0 && pieceCount[piece.toUint8_t()-1] > 0 && pieceCount[piece.toUint8_t()] > 0){
       handComp.push_back(Meld{Chi,{piece,piece+1,piece+2}});
-      pieceCount[piece.value()]--;
-      pieceCount[piece.value()+1]--;
-      pieceCount[piece.value()+2]--;
+      pieceCount[piece.toUint8_t()]--;
+      pieceCount[piece.toUint8_t()+1]--;
+      pieceCount[piece.toUint8_t()+2]--;
       continue;
     }
-    if(pieceCount[piece.value()] == 2 && pair == ERROR_PIECE){
+    if(pieceCount[piece.toUint8_t()] == 2 && pair == ERROR_PIECE){
       pair = piece;
-      pieceCount[piece.value()]-=2;
+      pieceCount[piece.toUint8_t()]-=2;
       continue;
     }
     return DoesNotSatisfy;
@@ -129,7 +129,7 @@ auto isMixedTripleChi(const RoundState* state) -> HandState{
   for(const auto & piece : state->currentPlayer->hand.live){
     if(!piece.isHonor()){
       count++;
-      pieces[piece.value()]++;
+      pieces[piece.toUint8_t()]++;
     }
   }
   int chiMatches[8] = {};

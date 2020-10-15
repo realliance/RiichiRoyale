@@ -62,7 +62,7 @@ public:
   Piece():p(ERROR_PIECE){}
   Piece(uint8_t p):p(p){}
 
-  auto value() const -> uint8_t;
+  auto toUint8_t() const -> uint8_t;
 
   auto raw_value() const -> uint8_t;
 

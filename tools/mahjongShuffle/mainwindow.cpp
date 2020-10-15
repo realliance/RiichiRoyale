@@ -1,9 +1,12 @@
 #include <iostream>
 #include <gdkmm/pixbuf.h>
 #include <algorithm>
+ #include <fstream>
+
+#include "handtree.h"
+#include "handnode.h"
 #include "mainwindow.h"
 #include "possiblesets.h"
-#include "stdform.h"
 
 MainWindow::MainWindow()
 : grid(), button("Get New Hand"){
@@ -15,6 +18,10 @@ MainWindow::MainWindow()
 
   sortButton = Gtk::CheckButton("Sorted");
   sortButton.set_active();
+  stopButton = Gtk::CheckButton("Stopped");
+  stopButton.set_active(false);
+  loopButton = Gtk::CheckButton("Loop");
+  loopButton.set_active(false);
 
   stdformbutton = Gtk::CheckButton("Standard form");
   stdformbutton.set_active(false);
@@ -25,11 +32,11 @@ MainWindow::MainWindow()
   auto Hand = walls.TakeHand();
   Hand.push_back(walls.TakePiece());
   std::sort(Hand.begin(),Hand.end());
-  isStdForm = isInStdForm(Hand) ? Gtk::Label("In Standard Form") : Gtk::Label("Not Standard Form");
+  isStdForm = Gtk::Label("Not Checked Yet");
   front = Gdk::Pixbuf::create_from_file("../../build/_deps/riichimahjongtiles-src/Regular/Front.svg");
   for(int i = 0; i < 14; i ++){
     int width = 100;
-    auto top = Gdk::Pixbuf::create_from_file(getFilePath(Hand[i].value()));
+    auto top = Gdk::Pixbuf::create_from_file(getFilePath(Hand[i].toUint8_t()));
     auto piece = front->copy();
     top->composite(
       piece,0,0,top->get_width(),top->get_height(),
@@ -47,9 +54,10 @@ MainWindow::MainWindow()
   grid.set_row_spacing(10);
   grid.attach(button,5,1,2);
   grid.attach(sortButton,7,1);
-  grid.attach(stdformbutton,8,1,2);
+  grid.attach(stdformbutton,10,1,2);
   grid.attach(isStdForm,2,1,3);
-
+  grid.attach(stopButton,8,1,1);
+  grid.attach(loopButton,9,1,1);
   grid.show_all();
 }
 
@@ -59,35 +67,55 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_button_clicked()
 {
+  if(stopButton.get_active()){
+    return;
+  }
   std::vector<Piece> Hand;
-  if(stdformbutton.get_active()){
-    Hand = GetPossibleStdFormHand();
-  }else{
-    walls = Walls();
-    Hand = walls.TakeHand();
-    Hand.push_back(walls.TakePiece());
-  }
-  if(sortButton.get_active()){
-    std::sort(Hand.begin(),Hand.end());
-  }
-  std::string dotsStr = "";
-  dots = (dots+1)%4;
-  if(dots == 4){
-    dots = 0;
-  }
-  if(dots == 1){
-    dotsStr = ".";
-  }
-  if(dots == 2){
-    dotsStr = "..";
-  }
-  if(dots == 3){
-    dotsStr = "...";
-  }
-  isStdForm.set_text(isInStdForm(Hand) ? "In Standard Form"+dotsStr : "Not Standard Form"+dotsStr);
+  do{
+    if(stdformbutton.get_active()){
+      Hand = GetPossibleStdFormHand();
+    }else{
+      walls = Walls();
+      Hand = walls.TakeHand();
+      Hand.push_back(walls.TakePiece());
+    }
+    if(sortButton.get_active()){
+      std::sort(Hand.begin(),Hand.end());
+    }
+    std::string dotsStr = "";
+    dots = (dots+1)%4;
+    if(dots == 4){
+      dots = 0;
+    }
+    if(dots == 1){
+      dotsStr = ".";
+    }
+    if(dots == 2){
+      dotsStr = "..";
+    }
+    if(dots == 3){
+      dotsStr = "...";
+    }
+    Node* root = breakdownHand(Hand);
+    if(root){
+      std::ofstream os("hand.gv");
+      root->DumpAsDot(os);
+      os.close();
+      
+      if(root->leaves.size() > 0 && root->leaves[0]->type != Single && root->leaves[0]->type != Error){
+        isStdForm.set_text("In Standard Form"+dotsStr);
+      }else {
+        isStdForm.set_text("Not Standard Form"+dotsStr);
+      }
+      delete root;
+    }else{
+      isStdForm.set_text("Error Case Found"+dotsStr);
+      stopButton.set_active();
+    }
+  }while(loopButton.get_active() && !stopButton.get_active());
   for(int i = 0; i < 14; i ++){
     int width = 100;
-    auto top = Gdk::Pixbuf::create_from_file(getFilePath(Hand[i].value()));
+    auto top = Gdk::Pixbuf::create_from_file(getFilePath(Hand[i].toUint8_t()));
     auto piece = front->copy();
     top->composite(
       piece,0,0,top->get_width(),top->get_height(),

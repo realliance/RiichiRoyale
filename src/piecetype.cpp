@@ -1,7 +1,7 @@
 #include <string>
 #include "piecetype.h"
 
-auto Piece::value() const -> uint8_t {
+auto Piece::toUint8_t() const -> uint8_t {
   return p & ~uint8_t(RED_FIVE);
 }
 
