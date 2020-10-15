@@ -1,5 +1,6 @@
 import math
 import libmahjong
+import random
 import pygame
 from pygame import Rect
 from pygame import surface
@@ -19,6 +20,8 @@ class GameView(View):
     background = surface.Surface(screen.get_size())
     self.background = background.convert_alpha()
     self.background.fill((7, 99, 36))
+
+    self.sound_manager = sound_manager
 
     # Play Area Surface
     self.player_area_rect = self.get_play_area_pos(screen)
@@ -41,6 +44,8 @@ class GameView(View):
     return Rect((w - player_area_width)//2, 0, player_area_width, play_area_height)
 
   def on_match_start(self):
+    random.shuffle(self.sound_manager.music_playlist)
+    self.sound_manager.start_playlist()
     self.match.new_board()
     self.board_render = BoardRender(self.small_tile_dict, self.tile_dict, self.play_area, self.match.current_board, 0)
     self.match.current_board.on_turn()

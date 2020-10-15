@@ -18,8 +18,6 @@ class Board():
     self.current_dealer = current_dealer
 
   def draw_tile(self, num=1):
-    if self.sound_manager is not None:
-      self.sound_manager.play_sfx("selected")
     if self.wall is None:
       raise "Wall is currently none!"
     if len(self.wall) < num:
@@ -62,7 +60,7 @@ class Board():
 
   def on_discard(self, player):
     if self.sound_manager is not None:
-      self.sound_manager.play_sfx("tileSound")
+      self.sound_manager.play_from_set('clack')
     player_index = self.players.index(player)
     wait_on_decision = False
     for index in range(len(self.players)):

@@ -37,11 +37,22 @@ def main():
 
   # Initialize Sound Manager
   sound_manager = SoundManager()
-  sound_manager.add_audio_source('tileSound', os.path.join(current_path, 'resources/audio/dominoPlace.wav'))
-  sound_manager.add_audio_source('shuffleSound', os.path.join(current_path, 'resources/audio/dominoDump.wav'))
-  sound_manager.add_audio_source('selected', os.path.join(current_path, 'resources/audio/dominoSelect.wav'))
 
-  sound_manager.add_audio_source('backgroundMusic', os.path.join(current_path, 'resources/audio/peritune-folk-chinese.ogg'), preload=False)
+  sound_manager.register_sfx_set('clack')
+
+  # Init Clacks
+  for x in range(1, 18):
+    name = 'clack{0}'.format(x)
+    sound_manager.add_audio_source(name, os.path.join(current_path, 'resources/audio/tileclack/clack-{:02}.wav'.format(x)))
+    sound_manager.add_to_sfx_set('clack', name)
+
+  
+  sound_manager.add_audio_source('lobby', os.path.join(current_path, 'resources/audio/music/lobby.wav'), preload=False)
+  sound_manager.add_audio_source('game1', os.path.join(current_path, 'resources/audio/music/game2.wav'), preload=False)
+  sound_manager.add_audio_source('game2', os.path.join(current_path, 'resources/audio/music/game3.wav'), preload=False)
+  sound_manager.add_audio_source('game3', os.path.join(current_path, 'resources/audio/music/game4.wav'), preload=False)
+
+  sound_manager.music_playlist = ['game1', 'game2', 'game3']
 
   # Initialize Game Manager and Menus
   game_manager = GameManager(sound_manager)
@@ -57,7 +68,7 @@ def main():
   # Clock for pygame-gui
   clock = pygame.time.Clock()
 
-  sound_manager.play_music('backgroundMusic')
+  sound_manager.play_music('lobby')
 
   # Event loop
   while 1:

@@ -1,12 +1,26 @@
 import pygame
+import random
 from pygame.mixer import Sound
 
 class SoundManager():
 	def __init__(self):
 		self.audio_sources = dict()
+		self.playlist_running = False
+		self.music_playlist = []
+		self.sfx_sets = dict()
+		self.current_playlist_song = 0
 		self.master_volume = 1
 		self.music_volume = 1
 		self.sfx_volume = 1
+
+	def register_sfx_set(self, name):
+		self.sfx_sets[name] = []
+
+	def add_to_sfx_set(self, name, sfx):
+		self.sfx_sets[name] += [sfx]
+
+	def play_from_set(self, set_name):
+		self.play_sfx(random.choice(self.sfx_sets[set_name]))
 
 	def add_audio_source(self, name, path, preload=True):
 		if preload:
@@ -24,6 +38,20 @@ class SoundManager():
 			self.audio_sources[name] = [True, path, sound_obj]
 		sound_obj.set_volume(self.master_volume * self.sfx_volume)
 		sound_obj.play()
+
+	def on_update(self):
+		if not pygame.mixer.music.get_busy():
+			self.current_playlist_song += 1
+			if self.current_playlist_song >= len(self.current_playlist_song):
+				self.current_playlist_song = 0
+			self.play_music(self.music_playlist[self.current_playlist_song])
+
+	def start_playlist(self):
+		self.playlist_running = True
+		path = self.audio_sources[self.music_playlist[self.current_playlist_song]][1]
+		pygame.mixer.music.load(path)
+		pygame.mixer.music.set_volume(self.music_volume * self.master_volume)
+		pygame.mixer.music.play()
 
 	def play_music(self, name):
 		if name not in self.audio_sources:
