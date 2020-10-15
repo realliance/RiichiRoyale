@@ -1,0 +1,20 @@
+ 
+lobby.mp3:
+Airport Lounge by Kevin MacLeod
+Link: https://incompetech.filmmusic.io/song/3347-airport-lounge
+License: http://creativecommons.org/licenses/by/4.0/
+
+game1.mp3:
+Acid Trumpet by Kevin MacLeod
+Link: https://incompetech.filmmusic.io/song/3340-acid-trumpet
+License: http://creativecommons.org/licenses/by/4.0/
+
+game2.mp3:
+Shades of Spring by Kevin MacLeod
+Link: https://incompetech.filmmusic.io/song/4342-shades-of-spring
+License: http://creativecommons.org/licenses/by/4.0/
+
+game3.mp3:
+Backbay Lounge by Kevin MacLeod
+Link: https://incompetech.filmmusic.io/song/3408-backbay-lounge
+License: http://creativecommons.org/licenses/by/4.0/
