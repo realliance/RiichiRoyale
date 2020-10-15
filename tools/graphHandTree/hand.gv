@@ -1,0 +1,28 @@
+digraph {
+  0 [label="RootNode: Root",shape=underline,color=black];
+  1 [label="Single: Man7",shape=box,color=blue];
+  2 [label="Single: Man8",shape=box,color=blue];
+  3 [label="Single: Sou1",shape=box,color=blue];
+  4 [label="Single: Sou3",shape=box,color=blue];
+  5 [label="Pair: Man2",shape=oval,color=green];
+  6 [label="Pair: Sou4",shape=oval,color=green];
+  7 [label="Pair: Sou8",shape=oval,color=green];
+  8 [label="Pair: Sou4",shape=oval,color=green];
+  9 [label="Pair: Sou4",shape=oval,color=green];
+  10 [label="Pair: Sou8",shape=oval,color=green];
+  11 [label="Pair: Sou8",shape=oval,color=green];
+  12 [label="Pair: Sou8",shape=oval,color=green];
+
+  0 -> 1;
+  1 -> 2;
+  2 -> 3;
+  3 -> 4;
+  4 -> 5;
+  4 -> 6;
+  4 -> 7;
+  4 -> 8;
+  4 -> 9;
+  4 -> 10;
+  4 -> 11;
+  4 -> 12;
+}

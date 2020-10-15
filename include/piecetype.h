@@ -1,9 +1,11 @@
 #pragma once
 #include <stdint.h>
-
+#include <map>
+#include "enum.h"
 
 // TERMINAL_BIT, SUIT_2, RED_FIVE, PIECE_4
 // For honor pieces suit bits are set to 00.
+
 
 enum PieceType {
     TERMINAL_BIT = 1<<7,
@@ -52,36 +54,48 @@ enum PieceType {
     GREEN_DRAGON = HONOR_SUIT | 7
 };
 
-struct Piece{
+class Piece{
+private:
+  static const std::map<uint8_t,std::string> STR_MAP;
+  uint8_t p;
+public:
+  Piece():p(ERROR_PIECE){}
   Piece(uint8_t p):p(p){}
-  inline auto isHonor() const -> bool{
-    return (p & CHARACTER_SUIT) == ERROR_PIECE;
-  }
-  inline auto isTerminal() const -> bool{
-    return (p & TERMINAL_BIT) != ERROR_PIECE;
-  }
-  inline auto getSuit() const -> int {
-    return p & 3<<5;
-  }
 
-  inline auto getPieceNum() const -> int {
-    return p & 15;
-  }
-  inline auto operator++() -> Piece{
+  auto value() const -> uint8_t;
+
+  auto raw_value() const -> uint8_t;
+
+  auto isHonor() const -> bool;
+
+  auto isTerminal() const -> bool;
+
+  auto getSuit() const -> int;
+
+  auto getPieceNum() const -> int;
+  
+  auto isGreen() const -> bool;
+
+  static auto fromWind(Wind w) -> Piece;
+
+  auto toStr() const -> std::string;
+
+  auto operator++() -> Piece&{
     if(isHonor()){
       p = ERROR_PIECE;
-      return p;
+      return *this;
     }
     if(getPieceNum() == 9){
       p = ERROR_PIECE;
-      return p;
+      return *this;
     }
-    return static_cast<Piece>(p+1);
+    p++;
+    return *this;
   }
 
   inline auto operator++(int) -> Piece{
     Piece _p(*this);
-    ++p;
+    operator++();
     return _p;
   }
 
@@ -91,19 +105,28 @@ struct Piece{
 
   inline auto operator-(int i) const -> Piece{
     if(isHonor() || (getPieceNum()-i < 1)){
-      return ERROR_PIECE;
+      return Piece(ERROR_PIECE);
     }
-    return (p-i) & ~uint8_t(RED_FIVE);
+    if(getPieceNum()-i == 1){
+      return Piece(((p-i) & ~uint8_t(RED_FIVE)) | TERMINAL_BIT);
+    }
+    return Piece(((p-i) & ~uint8_t(RED_FIVE)) & ~uint8_t(TERMINAL_BIT));
   }
-
 
   inline auto operator+(int i) const -> Piece{
     if(isHonor() || (getPieceNum()+i > 9)){
-      return ERROR_PIECE;
+      return Piece(ERROR_PIECE);
     }
-    return (p+i) & ~uint8_t(RED_FIVE);
+    if(getPieceNum()+i == 9){
+      return Piece(((p+i) & ~uint8_t(RED_FIVE)) | TERMINAL_BIT);
+    }
+    return Piece(((p+i) & ~uint8_t(RED_FIVE)) & ~uint8_t(TERMINAL_BIT));
   }
 
-private:
-  uint8_t p;
+  inline auto operator<(Piece other) -> bool{   
+      if(getSuit() != other.getSuit()){
+        return getSuit() > other.getSuit();
+      }
+      return getPieceNum() < other.getPieceNum();  
+  };
 };

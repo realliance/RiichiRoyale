@@ -5,9 +5,14 @@ target_sources(RiichiRoyale
     "${DIR}/event.h"
     "${DIR}/gamestate.h"
     "${DIR}/hand.h"
+    "${DIR}/handnode.h"
+    "${DIR}/handtree.h"
     "${DIR}/mahjongai.h"
     "${DIR}/manager.h"
     "${DIR}/piecetype.h"
+    "${DIR}/possiblesets.h"
+    "${DIR}/roundstate.h"
     "${DIR}/walls.h"
 )
+
 target_include_directories(RiichiRoyale PRIVATE "${Dev}/include")

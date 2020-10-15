@@ -60,11 +60,12 @@ auto MahjongGameManager::RoundStart() -> void {
     state.players[i].controller->RoundStart(hand,state.players[i].seat, state.wind);
     state.players[i].hand.live = hand;
   }
-  return PlayerDraw(state.dealer);
+  state.turn = state.dealer;
+  return PlayerTurn();
 }
 
-auto MahjongGameManager::PlayerDraw(int player) -> void {
-  state.players[player].controller->ReceiveEvent(Event{Draw,player,state.walls.TakePiece()});
+auto MahjongGameManager::PlayerTurn() -> void {
+  state.players[state.turn].controller->ReceiveEvent(Event{Draw,state.turn,state.walls.TakePiece()});
   auto decisions = AvailableInHand(player);
   auto response = state.players[player].controller->MakeDecision(decisions);
   bool valid = false;
@@ -138,11 +139,6 @@ auto MahjongGameManager::ScoreHand(std::vector<Event> wins) -> std::array<int,4>
 
 }
 
-inline auto MahjongGameManager::CountPieces(int player, Piece p) const -> int{
-  return std::count(state.players[player].hand.live.begin(),
-                state.players[player].hand.live.end(),
-                p);
-}
 
 auto MahjongGameManager::CanRon(int player, Event e) const -> bool{
   if(e.type != Discard && e.type != ConcealedKan && e.type != Kan){
@@ -188,13 +184,16 @@ auto MahjongGameManager::CanChi(int player, Event e) const -> bool{
   }
 }
 
-auto MahjongGameManager::CanTsumo(int player) const -> bool{
+auto MahjongGameManager::CanTsumo(int player, Event e) const -> bool{
   if(e.type != Discard){
+    return false;
+  }
+  if(CountPieces(player, e.piece) == 0 && ){
 
   }
 }
 
-auto MahjongGameManager::CanConcealedKan(int player) const -> bool{
+auto MahjongGameManager::CanConcealedKan(int player, Event e) const -> bool{
 
 }
 
