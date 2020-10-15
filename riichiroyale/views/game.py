@@ -9,11 +9,13 @@ from .view import View
 class GameView(View):
   def __init__(self, sound_manager, screen, tile_dict, small_tile_dict, screen_width, screen_height, width_ratio, height_ratio):
     super().__init__("game")
+    self.tutorial = None
     self.screen = screen
     self.screen_width = screen_width
     self.screen_height = screen_height
     self.screen_width_ratio = width_ratio
     self.screen_height_ratio = height_ratio
+
 
     # Fill background
     background = surface.Surface(screen.get_size())
@@ -40,13 +42,19 @@ class GameView(View):
     player_area_width = math.floor(h * (float(self.screen_width_ratio)/self.screen_height_ratio))
     return Rect((w - player_area_width)//2, 0, player_area_width, play_area_height)
 
-  def on_match_start(self):
-    self.match.new_board()
+  def on_match_start(self, tutorial_info=None):
+    self.tutorial = tutorial_info
+    wall = None
+    deadwall = None
+    if tutorial_info is not None:
+      wall = tutorial_info.wall
+      deadwall = tutorial_info.deadwall
+    self.match.new_board(wall=wall, deadwall=deadwall)
     self.board_render = BoardRender(self.small_tile_dict, self.tile_dict, self.play_area, self.match.current_board, 0)
     self.match.current_board.on_turn()
 
   def update(self, _):
-    self.board_render.update()
+    self.board_render.update(self.tutorial)
 
   def draw(self, screen):
     self.board_render.draw(self.background)

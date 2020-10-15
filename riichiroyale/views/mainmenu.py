@@ -4,7 +4,7 @@ import pygame
 import pygame_gui
 from pygame import surface
 from pygame.sprite import Group
-from riichiroyale import generate_start_board, TileRender
+from riichiroyale import generate_start_board, TileRender, Tutorial, Tile, get_wall
 from .menuview import MenuView
 
 class MainMenu(MenuView):
@@ -48,17 +48,17 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
                                                       'right': 'left',
                                                   })
 
-    #loadgame_button_rect = pygame.Rect(0, 0, 100, 50)
-    #loadgame_button_rect.bottomleft = (650, -200)
-    #loadgame_button = pygame_gui.elements.UIButton(relative_rect=loadgame_button_rect,
-    #                                               text='Load Game',
-    #                                               manager=ui_manager,
-    #                                               anchors={
-    #                                                   'top': 'bottom',
-    #                                                   'bottom': 'bottom',
-    #                                                   'left': 'left',
-    #                                                   'right': 'left',
-    #                                               })
+    tutorial_button_rect = pygame.Rect(0, 0, 100, 50)
+    tutorial_button_rect.bottomleft = (650, -200)
+    tutorial_button = pygame_gui.elements.UIButton(relative_rect=tutorial_button_rect,
+                                                  text='Start Tutorial',
+                                                  manager=ui_manager,
+                                                  anchors={
+                                                      'top': 'bottom',
+                                                      'bottom': 'bottom',
+                                                      'left': 'left',
+                                                      'right': 'left',
+                                                  })
 
     settings_button_rect = pygame.Rect(0, 0, 100, 50)
     settings_button_rect.bottomleft = (800, -200)
@@ -92,6 +92,18 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
                 print('Pressed new game')
                 game_manager.set_active_view('game')
                 game_manager.get_active_view().on_match_start()
+            if event.ui_element == tutorial_button:
+                print('Pressed new game')
+                game_manager.set_active_view('game')
+                prefered_discards = [
+                  Tile.SOUTH_WIND,
+                  Tile.ONE_BAMBOO,
+                  Tile.SEVEN_BAMBOO,
+                  Tile.SEVEN_PIN
+                ]
+                calls = ['fake']
+                wall, deadwall = get_wall()
+                game_manager.get_active_view().on_match_start(Tutorial(prefered_discards, calls, wall, deadwall)) #HOY
             if event.ui_element == settings_button:
                 print('Switching to settings menu')
                 game_manager.set_active_view('settings')

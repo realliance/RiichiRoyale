@@ -35,7 +35,8 @@ class Player:
         if self.board is None:
           raise "Cannot communicate with board! Is this player registered?"
         self.board.on_discard(self)
-        tutorial_state.discard()
+        if tutorial_state is not None:
+          tutorial_state.discard()
 
   def on_opponent_discard(self, player, chi_avaliable):
     if len(player.discard_pile) == 0:

@@ -25,8 +25,8 @@ class Match():
       self.current_dealer = 0
       self.east_prevalent = False
 
-  def new_board(self):
-    self.current_board = Board(sound_manager=self.sound_manager, current_dealer=self.current_dealer, players=self.players)
+  def new_board(self, wall=None, deadwall=None):
+    self.current_board = Board(sound_manager=self.sound_manager, wall=wall, deadwall=deadwall, current_dealer=self.current_dealer, players=self.players)
     for player in self.players:
       player.board = self.current_board
       player.hand = self.current_board.draw_tile(num=13)
