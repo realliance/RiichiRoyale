@@ -293,13 +293,13 @@ class TestBoardManager(unittest.TestCase):
 
   def test_point_diff(self):
     player1 = Event(EventType.PointDiff, 0, 0, False)
-    player2 = Event(EventType.PointDiff, 1, 100, False)
+    player2 = Event(EventType.PointDiff, 1, -100, False)
     player3 = Event(EventType.PointDiff, 2, 200, False)
     player4 = Event(EventType.PointDiff, 3, 300, False)
 
     process_event_queue(self.game_manager, self.match, [player1, player3, player2, player4])
 
     self.assertEqual(self.match.scores[0], 25000)
-    self.assertEqual(self.match.scores[1], 25100)
+    self.assertEqual(self.match.scores[1], 24900)
     self.assertEqual(self.match.scores[2], 25200)
     self.assertEqual(self.match.scores[3], 25300)
