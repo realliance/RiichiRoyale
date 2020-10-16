@@ -1,11 +1,7 @@
 #include <sys/types.h>  // for int8_t
 #include <algorithm>    // for generate_n, sort, unique
-#include <iostream>     // for operator<<, basic_ostream, endl, cerr, char_t...
 #include <memory>       // for allocator_traits<>::value_type
-#include <string>       // for operator<<, to_string
 #include <vector>       // for vector
-#include <fstream>
-
 #include "handnode.h"   // for Node, ChiSet, Pair, PonSet, Root, Single
 #include "piecetype.h"  // for Piece, ERROR_PIECE
 
@@ -197,20 +193,20 @@ auto breakdownHand(std::vector<Piece> pieces) -> Node*{
 
   //probably still left over pieces TODO
 
-  if(singleCnt > 0){
-    std::cerr << "Failing Piece list: " << std::endl;
-    for(const auto & single : pieces){
-      if(counts[single.toUint8_t()] > 0){
-        std::cerr << single.toStr() << ": " << std::to_string(counts[single.toUint8_t()]) << ", ";
-      }
-    }
-    std::cerr << std::endl;
-    std::ofstream os("hand.gv");
-    rootNode->DumpAsDot(os);
-    os.close();
-    delete rootNode;
-    return nullptr;
-  }
+  // if(singleCnt > 0){
+  //   std::cerr << "Failing Piece list: " << std::endl;
+  //   for(const auto & single : pieces){
+  //     if(counts[single.toUint8_t()] > 0){
+  //       std::cerr << single.toStr() << ": " << std::to_string(counts[single.toUint8_t()]) << ", ";
+  //     }
+  //   }
+  //   std::cerr << std::endl;
+  //   std::ofstream os("hand.gv");
+  //   rootNode->DumpAsDot(os);
+  //   os.close();
+  //   delete rootNode;
+  //   return nullptr;
+  // }
 
   return rootNode;
 }

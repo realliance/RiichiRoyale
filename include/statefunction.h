@@ -1,10 +1,10 @@
 #pragma once
-#include "roundstate.h"
+#include "gamestate.h"
 
 struct stateFunction{
 private:
-    stateFunction (*func)(RoundState&);
+    stateFunction (*func)(GameState&);
 public:
-  stateFunction(stateFunction (*func)(RoundState&) ):func(func){}
-  stateFunction operator()(RoundState& state){ return func(state); }
+  stateFunction(stateFunction (*func)(GameState&) ):func(func){}
+  stateFunction operator()(GameState& state){ return func(state); }
 };

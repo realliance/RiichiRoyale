@@ -1,12 +1,12 @@
 #pragma once
 #include "piecetype.h"
 
-struct RoundState;
+struct GameState;
 
 enum HandState{
   DoesNotSatisfy, //Doesn't satisfy the yaku
   Tenpai, //Is one piece from a yaku
-  Complete, //Has at least one yaku
+  Complete, //Is in a valid form, might have no yaku
   Satisfies 
   /* 
    * satisfies the yaku
@@ -15,86 +15,88 @@ enum HandState{
    */
 };
 
-auto hasAtLeast(const RoundState* state, Piece p, int num) -> bool;
+auto countPiece(const GameState& state, int player, Piece p) -> int;
 
-auto isInStdForm(const RoundState* state) -> HandState;
+auto isComplete(const GameState& state, int player) -> bool;
 
-auto isInAValidFormat(const RoundState* state) -> HandState;
+auto isInStdForm(const GameState& state, int player) -> HandState;
 
-auto isRiichi(const RoundState* state) -> HandState;
+auto isInAValidFormat(const GameState& state, int player) -> HandState;
 
-auto isFullyConcealedHand(const RoundState* state) -> HandState;
+// auto isRiichi(const GameState& state, int player) -> HandState;
 
-auto isPinfu(const RoundState* state) -> HandState;
+auto isFullyConcealedHand(const GameState& state, int player) -> HandState;
 
-auto isPureDoubleChi(const RoundState* state) -> HandState;
+// auto isPinfu(const GameState& state, int player) -> HandState;
 
-auto isAllSimples(const RoundState* state) -> HandState;
+// auto isPureDoubleChi(const GameState& state, int player) -> HandState;
 
-auto isMixedTripleChi(const RoundState* state) -> HandState;
+auto isAllSimples(const GameState& state, int player) -> HandState;
 
-auto isPureStraight(const RoundState* state) -> HandState;
+// auto isMixedTripleChi(const GameState& state, int player) -> HandState;
 
-auto isWhiteDragonPon(const RoundState* state) -> HandState;
+// auto isPureStraight(const GameState& state, int player) -> HandState;
 
-auto isGreenDragonPon(const RoundState* state) -> HandState;
+auto isWhiteDragonPon(const GameState& state, int player) -> HandState;
 
-auto isRedDragonPon(const RoundState* state) -> HandState;
+auto isGreenDragonPon(const GameState& state, int player) -> HandState;
 
-auto isSeatWind(const RoundState* state) -> HandState;
+auto isRedDragonPon(const GameState& state, int player) -> HandState;
 
-auto isPrevalentWind(const RoundState* state) -> HandState;
+auto isSeatWind(const GameState& state, int player) -> HandState;
 
-auto isOutsideHand(const RoundState* state) -> HandState;
+auto isPrevalentWind(const GameState& state, int player) -> HandState;
 
-auto isAfterAKon(const RoundState* state) -> HandState;
+// auto isOutsideHand(const GameState& state, int player) -> HandState;
 
-auto isRobbingAKong(const RoundState* state) -> HandState;
+auto isAfterAKan(const GameState& state, int player) -> HandState;
 
-auto isBottomOfTheSea(const RoundState* state) -> HandState;
+auto isRobbingAKan(const GameState& state, int player) -> HandState;
 
-auto isSevenPairs(const RoundState* state) -> HandState;
+auto isBottomOfTheSea(const GameState& state, int player) -> HandState;
 
-auto isTriplePon(const RoundState* state) -> HandState;
+auto isSevenPairs(const GameState& state, int player) -> HandState;
 
-auto isThreeConcealedPons(const RoundState* state) -> HandState;
+// auto isTriplePon(const GameState& state, int player) -> HandState;
 
-auto isAllPons(const RoundState* state) -> HandState;
+// auto isThreeConcealedPons(const GameState& state, int player) -> HandState;
 
-auto isHalfFlush(const RoundState* state) -> HandState;
+// auto isAllPons(const GameState& state, int player) -> HandState;
 
-auto isLittleThreeDragons(const RoundState* state) -> HandState;
+// auto isHalfFlush(const GameState& state, int player) -> HandState;
 
-auto isAllTerminalsAndHonors(const RoundState* state) -> HandState;
+// auto isLittleThreeDragons(const GameState& state, int player) -> HandState;
 
-auto isTerminalsInAllSets(const RoundState* state) -> HandState;
+// auto isAllTerminalsAndHonors(const GameState& state, int player) -> HandState;
 
-auto isTwicePureDoubleChi(const RoundState* state) -> HandState;
+// auto isTerminalsInAllSets(const GameState& state, int player) -> HandState;
 
-auto isBlessingOfMan(const RoundState* state) -> HandState;
+// auto isTwicePureDoubleChi(const GameState& state, int player) -> HandState;
 
-auto isFullFlush(const RoundState* state) -> HandState;
+// auto isBlessingOfMan(const GameState& state, int player) -> HandState;
 
-auto isThirteenOrphans(const RoundState* state) -> HandState;
+// auto isFullFlush(const GameState& state, int player) -> HandState;
 
-auto isNineGates(const RoundState* state) -> HandState;
+auto isThirteenOrphans(const GameState& state, int player) -> HandState;
 
-auto isBlessingOfHeaven(const RoundState* state) -> HandState;
+// auto isNineGates(const GameState& state, int player) -> HandState;
 
-auto isBlessingOfEarth(const RoundState* state) -> HandState;
+// auto isBlessingOfHeaven(const GameState& state, int player) -> HandState;
 
-auto isFourConcealedPon(const RoundState* state) -> HandState;
+// auto isBlessingOfEarth(const GameState& state, int player) -> HandState;
 
-auto isFourKans(const RoundState* state) -> HandState;
+// auto isFourConcealedPon(const GameState& state, int player) -> HandState;
 
-auto isAllGreen(const RoundState* state) -> HandState;
+// auto isFourKans(const GameState& state, int player) -> HandState;
 
-auto isAllTerminals(const RoundState* state) -> HandState;
+// auto isAllGreen(const GameState& state, int player) -> HandState;
 
-auto isAllHonors(const RoundState* state) -> HandState;
+// auto isAllTerminals(const GameState& state, int player) -> HandState;
 
-auto isBigThreeDragons(const RoundState* state) -> HandState;
+// auto isAllHonors(const GameState& state, int player) -> HandState;
 
-auto isLittleFourWinds(const RoundState* state) -> HandState;
+// auto isBigThreeDragons(const GameState& state, int player) -> HandState;
 
-auto isBigFourWinds(const RoundState* state) -> HandState;
+// auto isLittleFourWinds(const GameState& state, int player) -> HandState;
+
+// auto isBigFourWinds(const GameState& state, int player) -> HandState;

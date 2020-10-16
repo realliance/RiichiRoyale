@@ -1,7 +1,7 @@
 #pragma once
-#include "hand.h"
-
-class MahjongAI;
+#include <iostream>  // for ostream
+#include "winds.h"   // for Wind
+class MahjongAI;  // lines 5-5
 
 struct Player {
   int points;
@@ -9,3 +9,5 @@ struct Player {
   Wind seat;
   MahjongAI* controller;
 };
+
+auto operator<<(std::ostream& os, const Player& player) -> std::ostream&;

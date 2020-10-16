@@ -21,7 +21,7 @@ endif()
 
 pybind11_add_module(RiichiRoyale SHARED)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wmost -Wextra -Werror)
+  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wmost -Wextra)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   target_compile_options(RiichiRoyale PRIVATE -Wall -Wextra)
 endif()

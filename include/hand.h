@@ -1,57 +1,11 @@
 #pragma once
-#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
-#include <algorithm>           // for sort
-#include <iosfwd>              // for ptrdiff_t
-#include <iterator>            // for forward_iterator_tag
-#include <memory>              // for allocator_traits<>::value_type
-#include <vector>              // for vector, vector<>::iterator, vector<>::...
-
-#include "piecetype.h"         // for Piece
-
-//concealed kan, kan, pon, chi
-enum MeldType {
-  ChiMeld,
-  KanMeld,
-  PonMeld,
-  ConcealedKanMeld
-};
-
-struct Meld{
-  MeldType type;
-  std::vector<Piece> pieces;
-  auto inline operator==(Meld other)const -> bool {
-    if(type != other.type){
-      return false;
-    }
-    if(type == ChiMeld){
-      if(pieces[0] == other.pieces[0]){
-        if(pieces[1] == other.pieces[1]){
-          return pieces[2] == other.pieces[2];
-        }else if(pieces[1] == other.pieces[2]){
-          return pieces[2] == other.pieces[1];
-        }
-      }else if(pieces[0] == other.pieces[1]){
-        if(pieces[1] == other.pieces[0]){
-          return pieces[2] == other.pieces[2];
-        }else if(pieces[1] == other.pieces[2]){
-          return pieces[2] == other.pieces[0];
-        }
-      } else if(pieces[0] == other.pieces[2]){
-        if(pieces[1] == other.pieces[0]){
-          return pieces[2] == other.pieces[1];
-        }else if(pieces[1] == other.pieces[1]){
-          return pieces[2] == other.pieces[0];
-        }
-      }
-      return false;
-    }
-    return pieces[0] == other.pieces[0];
-  }
-  auto inline begin() -> std::vector<Piece>::iterator{ return pieces.begin(); }
-  auto inline end() -> std::vector<Piece>::iterator{ return pieces.end(); }
-  auto inline begin() const -> std::vector<Piece>::const_iterator{ return pieces.begin(); }
-  auto inline end() const -> std::vector<Piece>::const_iterator{ return pieces.end(); }
-};
+#include <algorithm>    // for sort
+#include <iosfwd>       // for ostream, ptrdiff_t
+#include <iterator>     // for forward_iterator_tag
+#include <memory>       // for allocator_traits<>::value_type
+#include <vector>       // for vector<>::iterator, vector, vector<>::const_i...
+#include "meld.h"       // for Meld
+#include "piecetype.h"  // for Piece
 
 class Hand{
 public:
@@ -104,3 +58,5 @@ public:
   auto begin() const -> const_iterator;
   auto end() const -> const_iterator;
 };
+
+auto operator<<(std::ostream& os, const Hand& hand) -> std::ostream&;

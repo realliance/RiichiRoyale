@@ -8,6 +8,7 @@ class Walls{
   std::deque<Piece> deadWall;
   int doraCount = 1;
   int replacements = 4;
+  friend auto operator<<(std::ostream& os, const Walls& walls) -> std::ostream&;
   public:
   explicit Walls();
   Piece TakePiece();
@@ -17,3 +18,5 @@ class Walls{
   std::vector<Piece> GetUraDoras() const;
   int GetRemainingPieces() const;
 };
+
+auto operator<<(std::ostream& os, const Walls& walls) -> std::ostream&;
