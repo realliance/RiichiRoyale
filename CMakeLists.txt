@@ -23,7 +23,7 @@ endif()
 
 pybind11_add_module(RiichiRoyale SHARED)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  target_compile_options(RiichiRoyale PRIVATE -Wall -Wmost -Wextra -Werror)
+  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wmost -Wextra)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   target_compile_options(RiichiRoyale PRIVATE -Wall -Wextra)
 endif()
@@ -42,3 +42,6 @@ add_custom_target(
 add_custom_command(TARGET RiichiRoyale POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:RiichiRoyale> ${CMAKE_CURRENT_SOURCE_DIR}/riichiroyale/libmahjong.so
 )
+
+find_program(iwyu_path NAMES include-what-you-use iwyu  REQUIRED)
+set_property(TARGET RiichiRoyale PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})

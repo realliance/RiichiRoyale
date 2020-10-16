@@ -1,0 +1,20 @@
+digraph {
+  0 [label="RootNode: Root",shape=underline,color=black];
+  1 [label="Single: Sou7",shape=box,color=blue];
+  2 [label="Single: Sou7",shape=box,color=blue];
+  3 [label="Pair: Pin1",shape=oval,color=green];
+  4 [label="Pair: Sou5",shape=oval,color=green];
+  5 [label="Pair: Sou6",shape=oval,color=green];
+  6 [label="Pair: Sou5",shape=oval,color=green];
+  7 [label="Pair: Sou6",shape=oval,color=green];
+  8 [label="Pair: Sou6",shape=oval,color=green];
+
+  0 -> 1;
+  1 -> 2;
+  2 -> 3;
+  2 -> 4;
+  2 -> 5;
+  2 -> 6;
+  2 -> 7;
+  2 -> 8;
+}
