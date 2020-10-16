@@ -16,6 +16,7 @@ class Board():
       self.players = players
     self.current_turn = current_turn
     self.current_dealer = current_dealer
+    self.decision_pending = False
 
   def draw_tile(self, num=1):
     if self.wall is None:
@@ -62,15 +63,17 @@ class Board():
     if self.sound_manager is not None:
       self.sound_manager.play_from_set('clack')
     player_index = self.players.index(player)
-    wait_on_decision = False
     for index in range(len(self.players)):
       if index == player_index:
         pass
+      if self.players[index].name != 'Player':
+        pass
       on_left = player_index + 1 == index if index != 0 else player_index - 3 == index
-      result = self.players[index].on_opponent_discard(player, on_left)
-      wait_on_decision = wait_on_decision or result
-    if not wait_on_decision:
+      if self.players[index].on_opponent_discard(player, on_left):
+        self.decision_pending = True
+    if not self.decision_pending:
       self.next_turn()
+      
 
   def on_turn(self):
     self.players[self.current_turn].on_turn(self)

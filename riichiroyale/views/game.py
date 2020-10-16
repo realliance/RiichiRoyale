@@ -6,12 +6,12 @@ import pygame
 from pygame import Rect
 from pygame import surface
 import libmahjong
-from riichiroyale import Player, BoardRender, Match
+from riichiroyale import Player, BoardRender, Match, TutorialBot, Call
 from .menuview import MenuView
 
 class GameView(MenuView):
   def __init__(self, game_manager, sound_manager, screen, tile_dict, small_tile_dict, screen_width, screen_height, width_ratio, height_ratio):
-    ui_manager, process_ui_event = create_game_elements(game_manager, screen_width, screen_height)
+    ui_manager, process_ui_event, self.buttons = self.create_game_elements(game_manager, screen_width, screen_height)
     super().__init__("game", ui_manager)
     self.tutorial = None
     self.screen = screen
@@ -33,10 +33,6 @@ class GameView(MenuView):
     self.play_area = surface.Surface((self.player_area_rect.width, self.player_area_rect.height), flags=pygame.SRCALPHA)
 
     self.match = Match(sound_manager)
-    self.match.register_player(Player("Player"))
-    self.match.register_player(Player("Bot 1"))
-    self.match.register_player(Player("Bot 2"))
-    self.match.register_player(Player("Bot 3"))
 
     self.tile_dict = tile_dict
     self.small_tile_dict = small_tile_dict
@@ -50,11 +46,20 @@ class GameView(MenuView):
 
   def on_match_start(self, tutorial_info=None):
     self.tutorial = tutorial_info
+    self.player = Player("Player")
+    self.match.register_player(self.player)
     wall = None
     deadwall = None
     if tutorial_info is not None:
       wall = tutorial_info.wall
       deadwall = tutorial_info.deadwall
+      self.match.register_player(TutorialBot("Bot 1"))
+      self.match.register_player(TutorialBot("Bot 2"))
+      self.match.register_player(TutorialBot("Bot 3"))
+    else:
+      self.match.register_player(Player("Bot 1"))
+      self.match.register_player(Player("Bot 2"))
+      self.match.register_player(Player("Bot 3"))
     self.match.new_board(wall=wall, deadwall=deadwall)
     random.shuffle(self.sound_manager.music_playlist)
     self.sound_manager.start_playlist()
@@ -62,6 +67,14 @@ class GameView(MenuView):
     self.match.current_board.on_turn()
 
   def update(self, time_delta):
+    if self.player.calls_avaliable:
+      self.buttons["panel"].show()
+      for decision in self.player.calls_avaliable:
+        if decision == Call.Chi:
+          self.buttons["chi"].show()
+        elif decision == Call.Pon:
+          self.buttons["pon"].show()
+
     self.board_render.update(self.tutorial)
     super().update(time_delta)
 
@@ -71,38 +84,50 @@ class GameView(MenuView):
     screen.blit(self.play_area, (self.player_area_rect.x, self.player_area_rect.y))
     super().draw(screen)
 
-def create_game_elements(game_manager, screen_width, screen_height):
-  current_path = os.path.dirname(os.path.realpath(__file__))
-  ui_manager = pygame_gui.UIManager((screen_width, screen_height), os.path.join(current_path, '../resources/theme.json'))
 
-  call_menu_rect = pygame.Rect(screen_width / 2 - 500, screen_height / 2 - 350, 1000, 700)
-  call_menu_panel = pygame_gui.elements.UIPanel(relative_rect=call_menu_rect,
-                                                    starting_layer_height=1,
-                                                    manager=ui_manager,
-                                                    anchors={
-                                                        'top': 'top',
-                                                        'bottom': 'bottom',
-                                                        'left': 'left',
-                                                        'right': 'right'
-                                                    })
+  def create_game_elements(self, game_manager, screen_width, screen_height):
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    ui_manager = pygame_gui.UIManager((screen_width, screen_height), os.path.join(current_path, '../resources/theme.json'))
 
-  pon_button_rect = pygame.Rect(0, 0, 100, 50)
-  pon_button_rect.bottomleft = (10, -10)
-  pon_button = pygame_gui.elements.UIButton(relative_rect=pon_button_rect,
-                                              container=call_menu_panel,
-                                              text='Pon',
-                                              manager=ui_manager,
-                                              anchors={
-                                                  'top': 'bottom',
-                                                  'bottom': 'bottom',
-                                                  'left': 'left',
-                                                  'right': 'left'
-                                              })
+    call_menu_rect = pygame.Rect(screen_width / 2 - 500, screen_height / 2 - 350, 1000, 700)
+    call_menu_panel = pygame_gui.elements.UIPanel(relative_rect=call_menu_rect,
+                                                      starting_layer_height=1,
+                                                      visible=False,
+                                                      manager=ui_manager,
+                                                      anchors={
+                                                          'top': 'top',
+                                                          'bottom': 'bottom',
+                                                          'left': 'left',
+                                                          'right': 'right'
+                                                      })
 
-  def process_ui_event(event):
-    if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-      if event.ui_element == pon_button:
-        print('Pressed pon')
-  
-  return ui_manager, process_ui_event
+    pon_button_rect = pygame.Rect(0, 0, 100, 50)
+    pon_button_rect.bottomleft = (10, -10)
+    pon_button = pygame_gui.elements.UIButton(relative_rect=pon_button_rect,
+                                                container=call_menu_panel,
+                                                visible=True,
+                                                text='Pon',
+                                                manager=ui_manager,
+                                                anchors={
+                                                    'top': 'bottom',
+                                                    'bottom': 'bottom',
+                                                    'left': 'left',
+                                                    'right': 'left'
+                                                })
+
+    buttons = {
+      "panel": call_menu_panel,
+      "pon": pon_button
+    }
+
+    def process_ui_event(event):
+      if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+        if event.ui_element == pon_button:
+          print('Pressed pon')
+          self.player.make_decision(Call.Pon)
+          self.match.current_board.decision_pending = False
+          for button in self.buttons:
+            buttons[button].hide()
+    
+    return ui_manager, process_ui_event, buttons
 

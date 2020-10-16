@@ -1,5 +1,6 @@
 from functools import reduce
-from .call import Call, chi_possible, kan_possible, pon_possible
+from .call import Call, CallDirection, chi_possible, kan_possible, pon_possible
+from .meld import Meld
 
 class Player:
   def __init__(self, name, starting_hand=None, discard_pile=None):
@@ -18,6 +19,7 @@ class Player:
     self.riichi_declared = False
     self.calls_avaliable = None
     self.my_turn = False
+    self.discarder = None
 
   def full_hand(self):
     meld_tiles = len(self.melded_hand) * 3
@@ -51,7 +53,21 @@ class Player:
       self.calls_avaliable = None
       return False
     self.calls_avaliable = calls_possible
+    self.discarder = player
     return True
+
+  def make_decision(self, call):
+    self.calls_avaliable = []
+    if call == Call.Pon:
+      self.my_turn = True
+      pon_tile = self.discarder.discard_pile[-1]
+      self.melded_hand += Meld([pon_tile,pon_tile,pon_tile], CallDirection.get_call_direction(self,self.discarder))
+      removed = 0
+      for tile_index in range (0,len(self.hand)-1):
+        if self.hand[tile_index] == pon_tile:
+          del self.hand[tile_index]
+
+
 
   def on_turn(self, board):
     self.my_turn = True
