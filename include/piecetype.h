@@ -1,8 +1,9 @@
 #pragma once
+#include <string>
 #include <stdint.h>
 #include <map>
-#include "enum.h"
 
+#include "winds.h"
 // TERMINAL_BIT, SUIT_2, RED_FIVE, PIECE_4
 // For honor pieces suit bits are set to 00.
 
@@ -123,7 +124,7 @@ public:
     return Piece(((p+i) & ~uint8_t(RED_FIVE)) & ~uint8_t(TERMINAL_BIT));
   }
 
-  inline auto operator<(Piece other) -> bool{   
+  inline auto operator<(Piece other) const -> bool{   
       if(getSuit() != other.getSuit()){
         return getSuit() > other.getSuit();
       }

@@ -1,7 +1,6 @@
 set(DIR ${CMAKE_CURRENT_LIST_DIR})
 target_sources(RiichiRoyale
     PRIVATE
-    "${DIR}/enum.h"
     "${DIR}/event.h"
     "${DIR}/gamestate.h"
     "${DIR}/hand.h"
@@ -12,7 +11,9 @@ target_sources(RiichiRoyale
     "${DIR}/piecetype.h"
     "${DIR}/possiblesets.h"
     "${DIR}/roundstate.h"
+    "${DIR}/statefunction.h"
     "${DIR}/walls.h"
+    "${DIR}/winds.h"
 )
 
 target_include_directories(RiichiRoyale PRIVATE "${Dev}/include")

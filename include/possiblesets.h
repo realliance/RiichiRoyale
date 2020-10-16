@@ -1,6 +1,5 @@
 #pragma once
-#include <vector>
-
-#include "piecetype.h"
+#include <vector>  // for vector
+class Piece;
 
 auto GetPossibleStdFormHand() -> std::vector<Piece>;

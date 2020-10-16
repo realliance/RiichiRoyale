@@ -1,8 +1,12 @@
 #pragma once
-#include <vector>
-#include <iostream>
+#include <stddef.h>     // for size_t
+#include <stdint.h>     // for uint8_t
+#include <iostream>     // for ostream, ptrdiff_t
+#include <iterator>     // for forward_iterator_tag
+#include <string>       // for string
+#include <vector>       // for vector
 
-#include "piecetype.h"
+#include "piecetype.h"  // for Piece
 
 enum NodeType {
   Error,

@@ -33,9 +33,12 @@ protected:
   Gtk::CheckButton stopButton;
   Gtk::CheckButton loopButton;
   Gtk::Label isStdForm;
+  Gtk::Label errorPercent;
   int dots = 0;
 
   private:
+  int errorRate = 0;
+  int total = 0;
   auto getFilePath(Piece p) -> std::string;
   std::string path;
 };

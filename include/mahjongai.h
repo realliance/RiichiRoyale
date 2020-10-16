@@ -9,7 +9,5 @@ public:
   virtual auto GameStart(int playerID) -> void = 0;
   virtual auto RoundStart(std::vector<Piece> board, Wind seatWind, Wind prevalentWind) -> void = 0;
   virtual auto ReceiveEvent(Event e) -> void;
-  virtual auto DrawEvent(Event e) -> void;
-  virtual auto RoundEnd(std::array<int,4> scoreDiff) -> void = 0;
-  virtual auto GameEnd() -> void = 0;
+  virtual auto RetrieveDecision() -> Event;
 };

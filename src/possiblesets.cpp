@@ -1,6 +1,13 @@
-#include <random>
-
 #include "possiblesets.h"
+
+#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
+#include <stdint.h>            // for uint8_t
+#include <algorithm>           // for shuffle, move
+#include <iterator>            // for back_insert_iterator, back_inserter
+#include <memory>              // for allocator_traits<>::value_type
+#include <random>              // for mt19937, uniform_int_distribution, ran...
+
+#include "piecetype.h"         // for Piece, FIVE_BAMBOO, FIVE_CHARACTER
 
 const std::vector<std::vector<Piece>> TRIPLETS = {
   {ONE_BAMBOO,TWO_BAMBOO,THREE_BAMBOO},

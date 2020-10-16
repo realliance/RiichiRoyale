@@ -1,6 +1,7 @@
 #pragma once
+#include "piecetype.h"
 
-class RoundState;
+struct RoundState;
 
 enum HandState{
   DoesNotSatisfy, //Doesn't satisfy the yaku

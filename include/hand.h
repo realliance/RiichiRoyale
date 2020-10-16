@@ -1,21 +1,29 @@
 #pragma once
-#include <vector>
+#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
+#include <algorithm>           // for sort
+#include <iosfwd>              // for ptrdiff_t
+#include <iterator>            // for forward_iterator_tag
+#include <memory>              // for allocator_traits<>::value_type
+#include <vector>              // for vector, vector<>::iterator, vector<>::...
 
-#include "piecetype.h"
-#include "enum.h"
-#include "hands.h"
+#include "piecetype.h"         // for Piece
 
 //concealed kan, kan, pon, chi
-using CallType = EventType;
+enum MeldType {
+  ChiMeld,
+  KanMeld,
+  PonMeld,
+  ConcealedKanMeld
+};
 
 struct Meld{
-  CallType type;
+  MeldType type;
   std::vector<Piece> pieces;
   auto inline operator==(Meld other)const -> bool {
     if(type != other.type){
       return false;
     }
-    if(type == Chi){
+    if(type == ChiMeld){
       if(pieces[0] == other.pieces[0]){
         if(pieces[1] == other.pieces[1]){
           return pieces[2] == other.pieces[2];
@@ -39,13 +47,24 @@ struct Meld{
     }
     return pieces[0] == other.pieces[0];
   }
+  auto inline begin() -> std::vector<Piece>::iterator{ return pieces.begin(); }
+  auto inline end() -> std::vector<Piece>::iterator{ return pieces.end(); }
+  auto inline begin() const -> std::vector<Piece>::const_iterator{ return pieces.begin(); }
+  auto inline end() const -> std::vector<Piece>::const_iterator{ return pieces.end(); }
 };
 
 class Hand{
 public:
+  explicit Hand(std::vector<Piece> live): live(live){}
+  auto inline sort() -> void { 
+    std::sort(live.begin(),live.end());
+    for(auto & meld : melds){
+      std::sort(meld.begin(),meld.end());
+    } 
+  }
+  std::vector<Piece> live;
   std::vector<Meld> melds;
   std::vector<Piece> discards;
-  std::vector<Piece> live;
   bool open = false;
   bool riichi = false;
   int riichiRound = -1;

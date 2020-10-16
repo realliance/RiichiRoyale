@@ -1,11 +1,13 @@
-#include <algorithm>
+#include <sys/types.h>  // for int8_t
+#include <algorithm>    // for generate_n, sort, unique
+#include <iostream>     // for operator<<, basic_ostream, endl, cerr, char_t...
+#include <memory>       // for allocator_traits<>::value_type
+#include <string>       // for operator<<, to_string
+#include <vector>       // for vector
 #include <fstream>
-#include <iostream>
 
-#include "handnode.h"
-#include "piecetype.h"
-#include "walls.h"
-#include "hand.h"
+#include "handnode.h"   // for Node, ChiSet, Pair, PonSet, Root, Single
+#include "piecetype.h"  // for Piece, ERROR_PIECE
 
 int possibleChis(const int8_t* counts, Piece p){
   if(p.isHonor()){

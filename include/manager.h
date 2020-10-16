@@ -1,48 +1,49 @@
 #pragma once
-#include <string>
-#include <vector>
-#include <map>
-#include <array>
+#include <map>              // for map
+#include <string>           // for string
+#include <vector>           // for vector
 
-#include "gamestate.h"
-struct Event;
-class MahjongAI;
+#include "piecetype.h"      // for Piece
+#include "statefunction.h"  // for stateFunction
+
+class MahjongAI;  // lines 11-11
+struct Event;  // lines 10-10
+struct GameState;
+struct RoundState;
 
 using newMahjongAiInst = MahjongAI* (*)();
 
 class MahjongGameManager{
-  GameState state;
   static std::map<std::string,newMahjongAiInst> availableAIs;
-  auto GameLoop() -> void;
-  auto RoundStart() -> void;
-  auto PlayerTurn() -> void;
-  auto KanState() -> void;
-  auto TsumoState() -> void;
-  auto RoundEnd() -> void;
-  auto DiscardState() -> void;
-  auto PonState() -> void;
-  auto ChiState() -> void;
-  auto RonState() -> void;
+  static auto GameLoop(GameState& state) -> void;
+
+  static auto RoundStart(RoundState& state) -> stateFunction;
+  static auto PlayerTurn(RoundState& state) -> stateFunction;
+  static auto KanState(RoundState& state) -> stateFunction;
+  static auto TsumoState(RoundState& state) -> stateFunction;
+  static auto RoundEnd(RoundState& state) -> stateFunction;
+  static auto DiscardState(RoundState& state) -> stateFunction;
+  static auto PonState(RoundState& state) -> stateFunction;
+  static auto ChiState(RoundState& state) -> stateFunction;
+  static auto RonState(RoundState& state) -> stateFunction;
 
   
-  auto EventPriority(std::vector<Event> decisions) -> std::vector<Event>;
-  auto ScoreHand(std::vector<Event> wins) -> std::array<int,4>;
+  static auto EventPriority(std::vector<Event> decisions) -> std::vector<Event>;
 
+  static auto CanRon(RoundState& state, int player, Piece p) -> bool;
+  static auto CanKan(RoundState& state, int player, Piece p) -> bool;
+  static auto CanPon(RoundState& state, int player, Piece p) -> bool;
+  static auto CanChi(RoundState& state, int player, Piece p) -> bool;
+  static auto CanTsumo(RoundState& state) -> bool;
+  static auto CanConcealedKan(RoundState& state) -> bool;
+  static auto CanRiichi(RoundState& state) -> bool;
 
-  auto CanRon(int player, Event e) const -> bool;
-  auto CanKan(int player, Event e) const -> bool;
-  auto CanPon(int player, Event e) const -> bool;
-  auto CanChi(int player, Event e) const -> bool;
-  auto CanTsumo(int player, Event e) const -> bool;
-  auto CanConcealedKan(int player, Event e) const -> bool;
-  auto CanRiichi(int player, Event e) const -> bool;
-
-  auto inline MahjongGameManager::CountPieces(int player, Piece p) const -> int;
-  auto RemovePiece(int player, Piece p) -> bool;
-  auto RoundEnd(int player, Event e) -> void;
+  static auto CountPieces(RoundState& state, int player, Piece p) -> int;
+  static auto DiscardPiece(RoundState& state, int player, Piece p) -> bool;
+  static auto ValidateDecision(RoundState& state, int player, Event decision, bool inHand) -> bool;
 public:  
   MahjongGameManager();
   static auto GetAvailableAIs() -> std::vector<std::string>;
   static auto RegisterAI(newMahjongAiInst newFunc, std::string Name) -> bool;
-  auto StartGame(std::vector<std::string> seatAIs) -> void;
+  static auto StartGame(std::vector<std::string> seatAIs) -> void;
 };

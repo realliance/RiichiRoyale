@@ -1,16 +1,14 @@
 digraph {
   0 [label="RootNode: Root",shape=underline,color=black];
-  1 [label="Single: Sou6",shape=box,color=blue];
-  2 [label="Single: Sou7",shape=box,color=blue];
-  3 [label="Pon: Sou3",shape=septagon,color=yellow];
-  4 [label="Chi: Sou1",shape=house,color=purple];
-  5 [label="Chi: Sou5",shape=house,color=purple];
-  6 [label="Chi: Sou5",shape=house,color=purple];
+  1 [label="Pon: Sou4",shape=septagon,color=yellow];
+  2 [label="Pon: Red Dragon",shape=septagon,color=yellow];
+  3 [label="Chi: Pin5",shape=house,color=purple];
+  4 [label="Chi: Sou3",shape=house,color=purple];
+  5 [label="Pair: Man3",shape=oval,color=green];
 
   0 -> 1;
   1 -> 2;
   2 -> 3;
   3 -> 4;
   4 -> 5;
-  5 -> 6;
 }

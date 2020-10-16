@@ -26,7 +26,7 @@ MainWindow::MainWindow()
   stdformbutton = Gtk::CheckButton("Standard form");
   stdformbutton.set_active(false);
 
-  
+  errorPercent = Gtk::Label("Error rate: ");
 
   path = "../../build/_deps/riichimahjongtiles-src/Regular";
   auto Hand = walls.TakeHand();
@@ -58,6 +58,7 @@ MainWindow::MainWindow()
   grid.attach(isStdForm,2,1,3);
   grid.attach(stopButton,8,1,1);
   grid.attach(loopButton,9,1,1);
+  grid.attach(errorPercent,12,1,2);
   grid.show_all();
 }
 
@@ -71,7 +72,13 @@ void MainWindow::on_button_clicked()
     return;
   }
   std::vector<Piece> Hand;
+  int i =0;
   do{
+    if(i % 1000 == 0){
+      std::cout << "============== " << i << " ==============" << std::endl;
+    }
+    i++;
+    total++;
     if(stdformbutton.get_active()){
       Hand = GetPossibleStdFormHand();
     }else{
@@ -109,10 +116,12 @@ void MainWindow::on_button_clicked()
       }
       delete root;
     }else{
+      errorRate++;
       isStdForm.set_text("Error Case Found"+dotsStr);
       stopButton.set_active();
     }
-  }while(loopButton.get_active() && !stopButton.get_active());
+  }while(loopButton.get_active() && i< 10000000);
+  errorPercent.set_text("Error rate: " + std::to_string((float)errorRate/total));
   for(int i = 0; i < 14; i ++){
     int width = 100;
     auto top = Gdk::Pixbuf::create_from_file(getFilePath(Hand[i].toUint8_t()));
