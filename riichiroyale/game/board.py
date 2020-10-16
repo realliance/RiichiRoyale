@@ -1,4 +1,6 @@
 import random
+from .call import Call, CallDirection
+from .meld import Meld
 from .wall import generate_start_board
 
 class Board():
@@ -40,7 +42,7 @@ class Board():
       dora.append(self.deadwall[index])
     return dora
 
-  def next_turn(self):
+  def next_turn(self, player=None):
     player_count = len(self.players)
     if player_count == 0:
       raise "Attempted to call next turn with no players!"
@@ -48,6 +50,11 @@ class Board():
     self.current_turn += 1
     if self.current_turn >= player_count:
       self.current_turn = self.current_turn - player_count
+
+    if player is not None:
+      self.current_turn = self.players.index(player)
+      self.on_turn(draw=False)
+      return
 
     if not self.out_of_tiles():
       self.on_turn()
@@ -74,7 +81,22 @@ class Board():
     if not self.decision_pending:
       self.next_turn()
       
+  def on_decision(self, call, player, discarder):
+    if call == Call.Pon:
+      self.my_turn = True
+      pon_tile = discarder.discard_pile[-1]
+      player.melded_hand += [Meld([pon_tile,pon_tile,pon_tile], CallDirection.get_call_direction(self.players.index(player),self.players.index(discarder)))]
+      removed = 0
+      tile_index = len(player.hand)-1
+      while tile_index >= 0:
+        if (player.hand[tile_index] == pon_tile) and (removed < 2):
+          del player.hand[tile_index]
+          removed += 1
+        tile_index -= 1
 
-  def on_turn(self):
-    self.players[self.current_turn].on_turn(self)
+    self.next_turn(player)
+      
+
+  def on_turn(self, draw=True):
+    self.players[self.current_turn].on_turn(self, draw=draw)
 

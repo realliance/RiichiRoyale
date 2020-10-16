@@ -68,12 +68,18 @@ class GameView(MenuView):
 
   def update(self, time_delta):
     if self.player.calls_avaliable:
-      self.buttons["panel"].show()
+      self.buttons["skip"].show()
       for decision in self.player.calls_avaliable:
         if decision == Call.Chi:
           self.buttons["chi"].show()
         elif decision == Call.Pon:
           self.buttons["pon"].show()
+        elif decision == Call.Kan or decision == Call.Concealed_Kan:
+          self.buttons["Kan"].show()
+        elif decision == Call.Ron:
+          self.buttons["ron"].show()
+        elif decision == Call.Tsumo:
+          self.buttons["tsumo"].show()
 
     self.board_render.update(self.tutorial)
     super().update(time_delta)
@@ -105,8 +111,86 @@ class GameView(MenuView):
     pon_button_rect.bottomleft = (10, -10)
     pon_button = pygame_gui.elements.UIButton(relative_rect=pon_button_rect,
                                                 container=call_menu_panel,
-                                                visible=True,
+                                                visible=False,
                                                 text='Pon',
+                                                manager=ui_manager,
+                                                anchors={
+                                                    'top': 'bottom',
+                                                    'bottom': 'bottom',
+                                                    'left': 'left',
+                                                    'right': 'left'
+                                                })
+    chi_button_rect = pygame.Rect(0, 0, 100, 50)
+    chi_button_rect.bottomleft = (110, -10)
+    chi_button = pygame_gui.elements.UIButton(relative_rect=chi_button_rect,
+                                                container=call_menu_panel,
+                                                visible=False,
+                                                text='Chi',
+                                                manager=ui_manager,
+                                                anchors={
+                                                    'top': 'bottom',
+                                                    'bottom': 'bottom',
+                                                    'left': 'left',
+                                                    'right': 'left'
+                                                })
+    kan_button_rect = pygame.Rect(0, 0, 100, 50)
+    kan_button_rect.bottomleft = (210, -10)
+    kan_button = pygame_gui.elements.UIButton(relative_rect=kan_button_rect,
+                                                container=call_menu_panel,
+                                                visible=False,
+                                                text='Kan',
+                                                manager=ui_manager,
+                                                anchors={
+                                                    'top': 'bottom',
+                                                    'bottom': 'bottom',
+                                                    'left': 'left',
+                                                    'right': 'left'
+                                                })
+    riichi_button_rect = pygame.Rect(0, 0, 100, 50)
+    riichi_button_rect.bottomleft = (310, -10)
+    riichi_button = pygame_gui.elements.UIButton(relative_rect=riichi_button_rect,
+                                                container=call_menu_panel,
+                                                visible=False,
+                                                text='Riichi',
+                                                manager=ui_manager,
+                                                anchors={
+                                                    'top': 'bottom',
+                                                    'bottom': 'bottom',
+                                                    'left': 'left',
+                                                    'right': 'left'
+                                                })
+    ron_button_rect = pygame.Rect(0, 0, 100, 50)
+    ron_button_rect.bottomleft = (410, -10)
+    ron_button = pygame_gui.elements.UIButton(relative_rect=ron_button_rect,
+                                                container=call_menu_panel,
+                                                visible=False,
+                                                text='Ron',
+                                                manager=ui_manager,
+                                                anchors={
+                                                    'top': 'bottom',
+                                                    'bottom': 'bottom',
+                                                    'left': 'left',
+                                                    'right': 'left'
+                                                })
+    tsumo_button_rect = pygame.Rect(0, 0, 100, 50)
+    tsumo_button_rect.bottomleft = (510, -10)
+    tsumo_button = pygame_gui.elements.UIButton(relative_rect=tsumo_button_rect,
+                                                container=call_menu_panel,
+                                                visible=False,
+                                                text='Tsumo',
+                                                manager=ui_manager,
+                                                anchors={
+                                                    'top': 'bottom',
+                                                    'bottom': 'bottom',
+                                                    'left': 'left',
+                                                    'right': 'left'
+                                                })
+    skip_button_rect = pygame.Rect(0, 0, 100, 50)
+    skip_button_rect.bottomleft = (610, -10)
+    skip_button = pygame_gui.elements.UIButton(relative_rect=skip_button_rect,
+                                                container=call_menu_panel,
+                                                visible=False,
+                                                text='Skip',
                                                 manager=ui_manager,
                                                 anchors={
                                                     'top': 'bottom',
@@ -117,7 +201,12 @@ class GameView(MenuView):
 
     buttons = {
       "panel": call_menu_panel,
-      "pon": pon_button
+      "pon": pon_button,
+      "chi": chi_button,
+      "kan": kan_button,
+      "ron": ron_button,
+      "tsumo": tsumo_button,
+      "skip": skip_button
     }
 
     def process_ui_event(event):
@@ -125,6 +214,12 @@ class GameView(MenuView):
         if event.ui_element == pon_button:
           print('Pressed pon')
           self.player.make_decision(Call.Pon)
+          self.match.current_board.decision_pending = False
+          for button in self.buttons:
+            buttons[button].hide()
+        if event.ui_element == chi_button:
+          print('Pressed chi')
+          self.player.make_decision(Call.Chi)
           self.match.current_board.decision_pending = False
           for button in self.buttons:
             buttons[button].hide()

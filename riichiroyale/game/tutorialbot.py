@@ -4,9 +4,10 @@ class TutorialBot(Player):
     def __init__(self, name, starting_hand=None, discard_pile=None):
         super().__init__(name, starting_hand=None, discard_pile=None)
 
-    def on_turn(self, board):
+    def on_turn(self, board, draw=True):
         self.my_turn = True
-        self.hand += board.draw_tile()
+        if draw:
+            self.hand += board.draw_tile()
         tile = self.hand[13]
         del self.hand[13]
         self.discard_pile.append(tile)

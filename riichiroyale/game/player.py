@@ -58,17 +58,11 @@ class Player:
 
   def make_decision(self, call):
     self.calls_avaliable = []
-    if call == Call.Pon:
-      self.my_turn = True
-      pon_tile = self.discarder.discard_pile[-1]
-      self.melded_hand += Meld([pon_tile,pon_tile,pon_tile], CallDirection.get_call_direction(self,self.discarder))
-      removed = 0
-      for tile_index in range (0,len(self.hand)-1):
-        if self.hand[tile_index] == pon_tile:
-          del self.hand[tile_index]
+    self.board.on_decision(call, self, self.discarder)
 
 
 
-  def on_turn(self, board):
+  def on_turn(self, board, draw=True):
     self.my_turn = True
-    self.hand += board.draw_tile()
+    if draw:
+      self.hand += board.draw_tile()
