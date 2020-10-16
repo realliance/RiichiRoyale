@@ -1,6 +1,7 @@
 class GameManager:
-  def __init__(self, sound_manager):
+  def __init__(self, board_manager, sound_manager):
     self.views = dict()
+    self.board_manager = board_manager
     self.current_view = None
     self.sound_manager = sound_manager
 

@@ -6,11 +6,12 @@ import pygame
 from pygame import Rect
 from pygame import surface
 import libmahjong
-from riichiroyale import Player, BoardRender, Match
+from riichiroyale.game import Player, Match, Tile
+from riichiroyale import BoardRender
 from .menuview import MenuView
 
 class GameView(MenuView):
-  def __init__(self, game_manager, sound_manager, screen, tile_dict, small_tile_dict, screen_width, screen_height, width_ratio, height_ratio):
+  def __init__(self, game_manager, sound_manager, screen, tile_dict, small_tile_dict, screen_width, screen_height, width_ratio, height_ratio, ai_managed=False):
     ui_manager, process_ui_event = create_game_elements(game_manager, screen_width, screen_height)
     super().__init__("game", ui_manager)
     self.tutorial = None
@@ -19,6 +20,7 @@ class GameView(MenuView):
     self.screen_height = screen_height
     self.screen_width_ratio = width_ratio
     self.screen_height_ratio = height_ratio
+    self.ai_managed = ai_managed
 
     # Fill background
     background = surface.Surface(screen.get_size())
@@ -32,7 +34,7 @@ class GameView(MenuView):
     self.player_area_rect = self.get_play_area_pos(screen)
     self.play_area = surface.Surface((self.player_area_rect.width, self.player_area_rect.height), flags=pygame.SRCALPHA)
 
-    self.match = Match(sound_manager)
+    self.match = Match(sound_manager, ai_managed=ai_managed)
     self.match.register_player(Player("Player"))
     self.match.register_player(Player("Bot 1"))
     self.match.register_player(Player("Bot 2"))
@@ -55,11 +57,15 @@ class GameView(MenuView):
     if tutorial_info is not None:
       wall = tutorial_info.wall
       deadwall = tutorial_info.deadwall
+    elif self.ai_managed:
+      wall = [Tile.ERROR_PIECE] * 70
+      deadwall = [Tile.ERROR_PIECE] * 14
     self.match.new_board(wall=wall, deadwall=deadwall)
     random.shuffle(self.sound_manager.music_playlist)
     self.sound_manager.start_playlist()
     self.board_render = BoardRender(self.small_tile_dict, self.tile_dict, self.play_area, self.match.current_board, 0)
-    self.match.current_board.on_turn()
+    if not self.ai_managed:
+      self.match.current_board.on_turn()
 
   def update(self, time_delta):
     self.board_render.update(self.tutorial)

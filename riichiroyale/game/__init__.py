@@ -5,3 +5,5 @@ from .meld import *
 from .player import *
 from .call import *
 from .match import *
+from .boardmanager import *
+from .gameevent import *

@@ -2,7 +2,7 @@ import random
 from .wall import generate_start_board
 
 class Board():
-  def __init__(self, sound_manager=None, wall=None, deadwall=None, dora_revealed=1, players=None, current_turn=0, current_dealer=0):
+  def __init__(self, sound_manager=None, wall=None, deadwall=None, dora_revealed=1, players=None, ai_managed=False, current_turn=0, current_dealer=0):
     self.sound_manager = sound_manager
     if wall is not None and deadwall is not None:
       self.wall = wall
@@ -16,6 +16,7 @@ class Board():
       self.players = players
     self.current_turn = current_turn
     self.current_dealer = current_dealer
+    self.ai_managed = ai_managed
 
   def draw_tile(self, num=1):
     if self.wall is None:
@@ -48,7 +49,7 @@ class Board():
     if self.current_turn >= player_count:
       self.current_turn = self.current_turn - player_count
 
-    if not self.out_of_tiles():
+    if not self.out_of_tiles() and not self.ai_managed:
       self.on_turn()
 
   def register_player(self, player):

@@ -4,7 +4,9 @@ import pygame
 import pygame_gui
 from pygame import surface
 from pygame.sprite import Group
-from riichiroyale import generate_start_board, TileRender, Tutorial, Tile, get_wall
+from riichiroyale.tutorial import Tutorial, get_wall
+from riichiroyale.sprites import TileRender
+from riichiroyale.game import generate_start_board, Tile
 from .menuview import MenuView
 
 class MainMenu(MenuView):

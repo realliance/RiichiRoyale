@@ -1,4 +1,3 @@
-from functools import reduce
 from .call import Call, chi_possible, kan_possible, pon_possible
 
 class Player:
@@ -16,7 +15,7 @@ class Player:
     self.hand_open = False
     self.board = None
     self.riichi_declared = False
-    self.calls_avaliable = None
+    self.calls_avaliable = []
     self.my_turn = False
 
   def full_hand(self):
@@ -48,7 +47,7 @@ class Player:
     calls_possible += [Call.Pon] if pon_possible(self.hand, tile_discarded) else []
     calls_possible += [Call.Kan] if kan_possible(self.hand, tile_discarded) else []
     if len(calls_possible) == 0:
-      self.calls_avaliable = None
+      self.calls_avaliable = []
       return False
     self.calls_avaliable = calls_possible
     return True
