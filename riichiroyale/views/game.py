@@ -34,7 +34,7 @@ class GameView(MenuView):
     self.player_area_rect = self.get_play_area_pos(screen)
     self.play_area = surface.Surface((self.player_area_rect.width, self.player_area_rect.height), flags=pygame.SRCALPHA)
 
-    self.match = Match(sound_manager, ai_managed=ai_managed)
+    self.match = Match(None, sound_manager=sound_manager, ai_managed=ai_managed)
 
     self.tile_dict = tile_dict
     self.small_tile_dict = small_tile_dict
@@ -206,19 +206,20 @@ class GameView(MenuView):
                                                     'left': 'left',
                                                     'right': 'left'
                                                 })
-    # text_box_rect = pygame.Rect(0, 0, 900, 400)
-    # text_box_rect.bottomleft = (50, -200)
-    # text_box = pygame_gui.elements.UITextBox(relative_rect=text_box_rect,
-    #                                             container=call_menu_panel,
-    #                                             visible=False,
-    #                                             html_text="testsetst",
-    #                                             manager=ui_manager,
-    #                                             anchors={
-    #                                                 'top': 'bottom',
-    #                                                 'bottom': 'bottom',
-    #                                                 'left': 'left',
-    #                                                 'right': 'left'
-    #                                             })
+
+    text_box_rect = pygame.Rect(0, 0, 900, 400)
+    text_box_rect.bottomleft = (50, -200)
+    text_box = pygame_gui.elements.UITextBox(relative_rect=text_box_rect,
+                                                visible=False,
+                                                html_text="testsetst",
+                                                manager=ui_manager,
+                                                anchors={
+                                                    'top': 'bottom',
+                                                    'bottom': 'bottom',
+                                                    'left': 'left',
+                                                    'right': 'left'
+                                                })
+    
     buttons = {
       "panel": call_menu_panel,
       "pon": pon_button,
@@ -226,8 +227,8 @@ class GameView(MenuView):
       "kan": kan_button,
       "ron": ron_button,
       "tsumo": tsumo_button,
-      "skip": skip_button
-      # "text": text_box
+      "skip": skip_button,
+      "text": text_box
     }
 
     def process_ui_event(event):

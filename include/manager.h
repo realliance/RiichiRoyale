@@ -38,7 +38,7 @@ class MahjongGameManager{
   static auto MeldPieces(GameState& state, int player, Event e) -> void;
   static auto ValidateDecision(GameState& state, int player, Event decision, bool inHand) -> bool;
 public:  
-  MahjongGameManager();
+  MahjongGameManager() = delete;
   static auto GetAvailableAIs() -> std::vector<std::string>;
   static auto RegisterAI(newMahjongAiInst newFunc, std::string Name) -> bool;
   static auto StartGame(std::vector<std::string> seatAIs) -> void;

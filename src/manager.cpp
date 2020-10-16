@@ -485,3 +485,72 @@ auto MahjongGameManager::CanConcealedKan(GameState& state, Piece p) -> bool{
 auto MahjongGameManager::CanRiichi(GameState& state) -> bool{
   return isInAValidFormat(state,state.currentPlayer) == Tenpai ? true : false;
 }
+
+// Score given player
+auto MahjongGameManager::ScorePlayer(GameState& state, int player) -> int16_t {
+  return 1000;
+}
+
+// Push Event to Player Queue
+auto MahjongGameManager::AlertPlayers(GameState& state, Event e) -> void {
+  state.players[e.player].controller->ReceiveEvent(e);
+}
+
+// Count number of piece p that are in given players hands
+auto MahjongGameManager::CountPieces(GameState& state, int player, Piece p) -> int {
+  uint8_t i = 0;
+  for(auto& tile : state.hands[player].live) {
+    if (tile == p) {
+      i++;
+    }
+  }
+  return i;
+}
+
+// Remove an instance of piece p from given players hand
+auto MahjongGameManager::DiscardPiece(GameState& state, int player, Piece p) -> void {
+  state.hands[player].live.erase(
+    std::find(state.hands[player].live.begin(),state.hands[player].live.end(),p)
+  );
+
+  state.hands[player].discards.push_back(p);
+}
+
+// Produce a Meld given the Event
+auto MahjongGameManager::MeldPieces(GameState& state, int player, Event e) -> void {
+  if (e.type == Pon) {
+    state.hands[player].melds.push_back({ PonMeld,  { e.piece, e.piece, e.piece } });
+    return;
+  }
+
+  // Needs to be first piece given in event
+  if (e.type == Chi) {
+    state.hands[player].melds.push_back({ ChiMeld,  { e.piece, e.piece + 1, e.piece + 2 } });
+    return;
+  }
+
+  if (e.type == Kan) {
+    state.hands[player].melds.push_back({ KanMeld,  { e.piece, e.piece, e.piece, e.piece } });
+    return;
+  }
+
+  if (e.type == ConcealedKan) {
+    state.hands[player].melds.push_back({ ConcealedKanMeld,  { e.piece, e.piece, e.piece, e.piece } });
+    return;
+  }
+}
+
+// Is the event decision valid?
+auto MahjongGameManager::ValidateDecision(GameState& state, int player, Event decision, bool inHand) -> bool {
+  return true;
+
+  // Complete Others
+  
+  if (decision.type == Ron) {
+    if (inHand) {
+      return false;
+    }
+
+
+  }
+}

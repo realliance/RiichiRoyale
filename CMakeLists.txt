@@ -7,9 +7,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(PACKAGE_TESTS "Build the tests" OFF)
 option(PACKAGE_TOOLS "Build the tools" OFF)
 
-find_package (Python3 COMPONENTS Interpreter Development)
-
 add_subdirectory(${RiichiRoyale_SOURCE_DIR}/libs)
+
+find_package (Python3 COMPONENTS Interpreter Development)
 
 if(PACKAGE_TOOLS)
   add_subdirectory(${RiichiRoyale_SOURCE_DIR}/tools)
@@ -21,7 +21,7 @@ if(PACKAGE_TESTS)
   add_subdirectory(${RiichiRoyale_SOURCE_DIR}/cxxtests)
 endif()
 
-pybind11_add_module(RiichiRoyale SHARED)
+pybind11_add_module(RiichiRoyale)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wmost -Wextra)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

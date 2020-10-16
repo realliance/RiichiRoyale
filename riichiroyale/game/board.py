@@ -68,9 +68,12 @@ class Board():
   def on_call(self, player):
     self.current_turn = self.players.index(player)
 
-  def on_discard(self, player, is_tutorial_winning_tile=False):
+  def play_clack(self):
     if self.sound_manager is not None:
-      self.sound_manager.play_from_set('clack')
+          self.sound_manager.play_from_set('clack')
+
+  def on_discard(self, player, is_tutorial_winning_tile=False):
+    self.play_clack()
     player_index = self.players.index(player)
     for index in range(len(self.players)):
       if index == player_index:
