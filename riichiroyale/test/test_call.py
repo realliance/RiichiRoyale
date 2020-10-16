@@ -68,7 +68,7 @@ class TestGameCalls(unittest.TestCase):
     self.assertEqual(player_two.calls_avaliable, [Call.Chi])
 
     # P3 cannot call chi, as P1 is not sitting on their immediate left
-    self.assertEqual(player_three.calls_avaliable, None)
+    self.assertEqual(player_three.calls_avaliable, [])
 
     # P2 has a call decision, so don't auto increment the turn
     self.assertEqual(board.current_turn, 0)

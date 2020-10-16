@@ -6,3 +6,5 @@ from .player import *
 from .tutorialbot import *
 from .call import *
 from .match import *
+from .boardmanager import *
+from .gameevent import *

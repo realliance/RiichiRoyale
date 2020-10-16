@@ -3,7 +3,7 @@ import sys
 import math
 from pygame import surface, Rect
 import pygame
-from riichiroyale import GameManager, MainMenu, Settings, create_settings_menu, GameView, build_tile_surface_dict, Tile, TILE_SIZE, SMALL_TILE_SIZE, SoundManager
+from riichiroyale import GameManager, MainMenu, Settings, create_settings_menu, GameView, build_tile_surface_dict, Tile, TILE_SIZE, SMALL_TILE_SIZE, SoundManager, BoardManager
 
 SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO = 16, 9
 
@@ -54,8 +54,11 @@ def main():
 
   sound_manager.music_playlist = ['game1', 'game2', 'game3']
 
+  # Init Board Manager
+  board_manager = BoardManager()
+
   # Initialize Game Manager and Menus
-  game_manager = GameManager(sound_manager)
+  game_manager = GameManager(board_manager, sound_manager)
 
   main_menu = MainMenu(game_manager, tile_dictionary, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT)
   settings_menu = Settings(game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT)

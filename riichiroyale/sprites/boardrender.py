@@ -23,7 +23,7 @@ class StatefulBoardElement():
     self.rendered.draw(surface)
 
   def update(self, tutorial_state=None):
-    self.rendered.update(tutorial_state=tutorial_state)
+    self.rendered.update(tutorial_state)
 
 class BoardRender():
   def __init__(self, small_dictionary, dictionary, surface, board, player_pov):

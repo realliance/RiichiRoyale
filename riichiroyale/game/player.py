@@ -1,6 +1,5 @@
 from functools import reduce
-from .call import Call, CallDirection, chi_possible, kan_possible, pon_possible
-from .meld import Meld
+from .call import Call, chi_possible, kan_possible, pon_possible
 
 class Player:
   def __init__(self, name, starting_hand=None, discard_pile=None):
@@ -17,7 +16,7 @@ class Player:
     self.hand_open = False
     self.board = None
     self.riichi_declared = False
-    self.calls_avaliable = None
+    self.calls_avaliable = []
     self.my_turn = False
     self.discarder = None
 
@@ -40,7 +39,7 @@ class Player:
         if tutorial_state is not None:
           tutorial_state.discard()
 
-  def on_opponent_discard(self, player, chi_avaliable):
+  def on_opponent_discard(self, player, chi_avaliable, ron_available=False):
     if len(player.discard_pile) == 0:
       raise "Player does not have a discard pile even though on_opponent_discard was drawn!"
     tile_discarded = player.discard_pile[-1]
@@ -49,8 +48,10 @@ class Player:
       calls_possible += [Call.Chi] if chi_possible(self.hand, tile_discarded) else []
     calls_possible += [Call.Pon] if pon_possible(self.hand, tile_discarded) else []
     calls_possible += [Call.Kan] if kan_possible(self.hand, tile_discarded) else []
+    if ron_available:
+      calls_possible += [Call.Ron]
     if len(calls_possible) == 0:
-      self.calls_avaliable = None
+      self.calls_avaliable = []
       return False
     self.calls_avaliable = calls_possible
     self.discarder = player
