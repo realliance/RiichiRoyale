@@ -85,20 +85,28 @@ auto MahjongGameManager::RoundStart(RoundState& state) -> stateFunction {
 }
 
 auto MahjongGameManager::PlayerTurn(RoundState& state) -> stateFunction {
-  Piece draw = state.walls.TakePiece();
+  Piece draw;
+  if(state.currentState == AfterDraw){
+    draw = state.walls.TakePiece();
+  }else{
+    draw = state.walls.TakeReplacementTile();
+  }
   state.hands[state.currentPlayer].live.push_back(draw);
   state.hands[state.currentPlayer].sort();
-  state.currentState = AfterDraw;
   Event decision;
+  bool needDecision = false;
   do{
-    state.players[state.currentPlayer]->controller->ReceiveEvent(
-      Event{
-        Discard, // type
-        state.currentPlayer, // player
-        static_cast<int16_t>(draw.toUint8_t()), // piece
-        true, // decision
-      }
-    );
+    if(!state.hands[state.currentPlayer].riichi){
+      state.players[state.currentPlayer]->controller->ReceiveEvent(
+        Event{
+          Discard, // type
+          state.currentPlayer, // player
+          static_cast<int16_t>(draw.toUint8_t()), // piece
+          true, // decision
+        }
+      );
+      needDecision = true;
+    }
     if(CanConcealedKan(state)){
       state.players[state.currentPlayer]->controller->ReceiveEvent(
         Event{
@@ -108,35 +116,83 @@ auto MahjongGameManager::PlayerTurn(RoundState& state) -> stateFunction {
           true, // decision
         }
       );
+      needDecision = true;
+    }
+    if(CanConvertedKan(state)){
+      state.players[state.currentPlayer]->controller->ReceiveEvent(
+        Event{
+          Kan, // type
+          state.currentPlayer, // player
+          static_cast<int16_t>(draw.toUint8_t()), // piece
+          true, // decision
+        }
+      );
+      needDecision = true;
     }
     if(CanRiichi(state)){
       state.players[state.currentPlayer]->controller->ReceiveEvent(
         Event{
-          ConcealedKan, // type
+          Riichi, // type
           state.currentPlayer, // player
           static_cast<int16_t>(draw.toUint8_t()), // piece
           true, // decision
         }
       );
+      needDecision = true;
     }
     if(CanTsumo(state)){
       state.players[state.currentPlayer]->controller->ReceiveEvent(
         Event{
-          ConcealedKan, // type
+          Tsumo, // type
           state.currentPlayer, // player
           static_cast<int16_t>(draw.toUint8_t()), // piece
           true, // decision
         }
       );
+      needDecision = true;
     }
-    decision = state.players[state.currentPlayer]->controller->RetrieveDecision();
-  }while(ValidateDecision(state,state.currentPlayer, decision,true));
+    if(needDecision){
+      decision = state.players[state.currentPlayer]->controller->RetrieveDecision();
+    }
+  }while(needDecision && ValidateDecision(state,state.currentPlayer, decision,true));
+
+  if(!needDecision){
+    DiscardPiece(state, state.currentPlayer, draw);
+    AlertPlayers(state, {
+      Event{
+        Discard, // type
+        state.currentPlayer, // player
+        static_cast<int16_t>(draw.toUint8_t()), // piece
+        false, // decision
+      }
+    });
+    state.currentState = AfterDiscard;
+    return DiscardState;
+  }
 
   if(decision.type == Discard){
     DiscardPiece(state, state.currentPlayer, decision.piece);
+    AlertPlayers(state,decision);
+    state.currentState = AfterDiscard;
     return DiscardState;
   }
-  throw 0;
+
+  if(decision.type == Riichi){
+    state.hands[state.currentPlayer].riichiRound = state.turnCount;
+    state.hands[state.currentPlayer].riichiPieceDiscard = true;
+    state.hands[state.currentPlayer].riichi = true;
+    DiscardPiece(state, state.currentPlayer, decision.piece);
+    AlertPlayers(state,decision);
+    state.currentState = AfterRiichi;
+    return DiscardState;
+  }
+
+  if(decision.type == Kan){
+    MeldPieces(state, state.currentPlayer, decision);
+    AlertPlayers(state,decision);
+    state.currentState = AfterKanDiscard;
+    return DiscardState;
+  }
 }
 
 // auto MahjongGameManager::EventPriority(std::vector<Event> decisions) -> std::vector<Event>{

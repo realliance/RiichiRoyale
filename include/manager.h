@@ -19,27 +19,24 @@ class MahjongGameManager{
 
   static auto RoundStart(RoundState& state) -> stateFunction;
   static auto PlayerTurn(RoundState& state) -> stateFunction;
-  static auto KanState(RoundState& state) -> stateFunction;
-  static auto TsumoState(RoundState& state) -> stateFunction;
   static auto RoundEnd(RoundState& state) -> stateFunction;
   static auto DiscardState(RoundState& state) -> stateFunction;
-  static auto PonState(RoundState& state) -> stateFunction;
-  static auto ChiState(RoundState& state) -> stateFunction;
-  static auto RonState(RoundState& state) -> stateFunction;
-
   
   static auto EventPriority(std::vector<Event> decisions) -> std::vector<Event>;
 
   static auto CanRon(RoundState& state, int player, Piece p) -> bool;
   static auto CanKan(RoundState& state, int player, Piece p) -> bool;
   static auto CanPon(RoundState& state, int player, Piece p) -> bool;
-  static auto CanChi(RoundState& state, int player, Piece p) -> bool;
+  static auto CanChi(RoundState& state, int player, Piece p) -> std::vector<Piece>;
+  static auto CanConvertedKan(RoundState& state) -> bool;
   static auto CanTsumo(RoundState& state) -> bool;
   static auto CanConcealedKan(RoundState& state) -> bool;
   static auto CanRiichi(RoundState& state) -> bool;
 
+  static auto AlertPlayers(RoundState& state, Event e) -> void;
   static auto CountPieces(RoundState& state, int player, Piece p) -> int;
-  static auto DiscardPiece(RoundState& state, int player, Piece p) -> bool;
+  static auto DiscardPiece(RoundState& state, int player, Piece p) -> void;
+  static auto MeldPieces(RoundState& state, int player, Event e) -> void;
   static auto ValidateDecision(RoundState& state, int player, Event decision, bool inHand) -> bool;
 public:  
   MahjongGameManager();

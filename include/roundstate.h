@@ -9,7 +9,8 @@ enum RoundStates{
   AfterDraw,
   AfterReplacementDraw,
   AfterKanDiscard,
-  AfterDiscard
+  AfterDiscard,
+  AfterRiichi,
 };
 
 struct RoundState{

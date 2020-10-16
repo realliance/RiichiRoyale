@@ -67,6 +67,7 @@ public:
   std::vector<Piece> discards;
   bool open = false;
   bool riichi = false;
+  bool riichiPieceDiscard = false;
   int riichiRound = -1;
   class const_iterator {
     const Hand* hand;
