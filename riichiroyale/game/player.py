@@ -1,3 +1,4 @@
+from functools import reduce
 from .call import Call, chi_possible, kan_possible, pon_possible
 
 class Player:
@@ -17,6 +18,7 @@ class Player:
     self.riichi_declared = False
     self.calls_avaliable = []
     self.my_turn = False
+    self.discarder = None
 
   def full_hand(self):
     meld_tiles = len(self.melded_hand) * 3
@@ -37,7 +39,7 @@ class Player:
         if tutorial_state is not None:
           tutorial_state.discard()
 
-  def on_opponent_discard(self, player, chi_avaliable):
+  def on_opponent_discard(self, player, chi_avaliable, ron_available=False):
     if len(player.discard_pile) == 0:
       raise "Player does not have a discard pile even though on_opponent_discard was drawn!"
     tile_discarded = player.discard_pile[-1]
@@ -46,12 +48,22 @@ class Player:
       calls_possible += [Call.Chi] if chi_possible(self.hand, tile_discarded) else []
     calls_possible += [Call.Pon] if pon_possible(self.hand, tile_discarded) else []
     calls_possible += [Call.Kan] if kan_possible(self.hand, tile_discarded) else []
+    if ron_available:
+      calls_possible += [Call.Ron]
     if len(calls_possible) == 0:
       self.calls_avaliable = []
       return False
     self.calls_avaliable = calls_possible
+    self.discarder = player
     return True
 
-  def on_turn(self, board):
+  def make_decision(self, call):
+    self.calls_avaliable = []
+    self.board.on_decision(call, self, self.discarder)
+
+
+
+  def on_turn(self, board, draw=True):
     self.my_turn = True
-    self.hand += board.draw_tile()
+    if draw:
+      self.hand += board.draw_tile()

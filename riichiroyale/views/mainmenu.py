@@ -102,12 +102,13 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
                   Tile.SOUTH_WIND,
                   Tile.ONE_BAMBOO,
                   Tile.SEVEN_BAMBOO,
-                  Tile.SEVEN_PIN
+                  Tile.SEVEN_PIN,
+                  Tile.ERROR_PIECE
                 ]
-                calls = ['fake']
+                calls = ['pon', 'chi', 'skip', 'ron']
                 wall, deadwall = get_wall()
                 
-                game_manager.get_active_view().on_match_start(Tutorial(prefered_discards, calls, wall, deadwall)) #HOY
+                game_manager.get_active_view().on_match_start(Tutorial(prefered_discards, calls, Tile.THREE_PIN, wall, deadwall)) #HOY
             if event.ui_element == settings_button:
                 print('Switching to settings menu')
                 game_manager.set_active_view('settings')

@@ -9,6 +9,7 @@ class Call(Enum):
   Concealed_Kan = 4
   Riichi = 5
   Tsumo = 6
+  Skip = 7
 
 class CallDirection(IntEnum):
   Left = 1

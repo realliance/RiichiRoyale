@@ -23,7 +23,7 @@ class StatefulBoardElement():
     self.rendered.draw(surface)
 
   def update(self, tutorial_state=None):
-    self.rendered.update(tutorial_state=tutorial_state)
+    self.rendered.update(tutorial_state)
 
 class BoardRender():
   def __init__(self, small_dictionary, dictionary, surface, board, player_pov):
@@ -46,9 +46,9 @@ class BoardRender():
     self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].melded_hand, lambda: render_meld_hand(self, self.board.players[player_pov].melded_hand)))
 
     # Opponent Melds
-    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].melded_hand, lambda: render_meld_hand(self, self.board.players[player_pov].melded_hand, seat=1)))
-    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].melded_hand, lambda: render_meld_hand(self, self.board.players[player_pov].melded_hand, seat=2)))
-    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].melded_hand, lambda: render_meld_hand(self, self.board.players[player_pov].melded_hand, seat=3)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].melded_hand, lambda: render_meld_hand(self, self.board.players[1].melded_hand, seat=1)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].melded_hand, lambda: render_meld_hand(self, self.board.players[2].melded_hand, seat=2)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].melded_hand, lambda: render_meld_hand(self, self.board.players[3].melded_hand, seat=3)))
 
 
     # Discard Piles
