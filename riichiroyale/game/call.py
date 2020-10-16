@@ -8,12 +8,21 @@ class Call(Enum):
   Ron = 3
   Concealed_Kan = 4
   Riichi = 5
+  Tsumo = 6
 
 class CallDirection(IntEnum):
-  Left = 0
-  Forward = 1
-  Right = 2
-  Concealed = 3
+  Left = 1
+  Forward = 2
+  Right = 3
+  Concealed = 0
+
+  @staticmethod
+  def get_call_direction(you, opponent):
+    if you == 0 and opponent == 3:
+      return CallDirection.Left
+    elif you == 3 and opponent == 0:
+      return CallDirection.Right
+    return CallDirection(abs(opponent - you))
 
   @staticmethod
   def should_rotate_tile(i, meld):
