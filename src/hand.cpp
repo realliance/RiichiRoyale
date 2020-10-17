@@ -12,38 +12,7 @@ auto Hand::end() const -> const_iterator{
 
 
 auto Hand::const_iterator::operator++() -> const_iterator&{
-  if( ( !hand->melds.empty() && position == meldPosition->pieces.end()) ||
-    (position == hand->live.end() && hand->melds.empty()))
-  {
-    return *this;
-  }
-  ++position;
-
-  //Iterator is valid
-  if(position != hand->live.end() || position != meldPosition->pieces.end()){
-    return *this;
-  }
-
-  //Iterator is at end;
-  if(hand->melds.empty()){
-    return *this;
-  }
-
-  //Set Iterator to the start of the melds
-  if(!inMelds){
-    position = meldPosition->pieces.begin();
-    inMelds = true;
-    return *this;
-  }
-
-  //Check to see if iterator is at the end of the melds
-  if((meldPosition+1) == hand->melds.end()){
-    return *this;
-  }
-
-  //Move Forward a meld
-  meldPosition++;
-  position = meldPosition->pieces.begin();
+  itrBegin++;
   return *this;
 }
 
@@ -54,17 +23,11 @@ auto Hand::const_iterator::operator++(int) -> const_iterator{
 }
 
 auto Hand::const_iterator::operator*() const -> Piece{
-  if(inMelds && position != meldPosition->pieces.end()){
-    return *position;
-  }
-  if(position != hand->live.end()){
-    return *position;
-  }
-  return ERROR_PIECE;
+  return *itrBegin;
 }
 
 auto Hand::const_iterator::operator!=(const Hand::const_iterator& other) const -> bool {
-  return position != other.position;
+  return itrBegin != other.itrBegin;
 }
 
 auto operator<<(std::ostream& os, const Hand& hand) -> std::ostream&{

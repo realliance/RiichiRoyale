@@ -3,16 +3,21 @@
 #include <iostream>  // for ostream
 #include <string>    // for allocator, string
 
+//Do not rearrange -Alice
 enum EventType{
+  // out of hand events
   Ron,
   Kan,
   Pon,
   Chi,
+  Decline,
+  // in hand events
   Tsumo,
   ConcealedKan,
+  ConvertedKan,
   Riichi,
   Discard,
-  Decline,
+  // other game events
   Dora,
   PointDiff,
   ExhaustiveDraw,
@@ -28,6 +33,7 @@ struct Event {
 auto operator<<(std::ostream& os, const Event& e) -> std::ostream&;
 
 const Event END_EVENT = {End,0,0,false};
+const Event DECLINE_EVENT = {Decline,0,0,false};
 
 inline auto EventTypeToStr(EventType s) -> std::string{
   switch(s){
@@ -43,6 +49,8 @@ inline auto EventTypeToStr(EventType s) -> std::string{
       return "Tsumo";
     case ConcealedKan:
       return "ConcealedKan";
+    case ConvertedKan:
+      return "ConvertedKan";
     case Riichi:
       return "Riichi";
     case Discard:
