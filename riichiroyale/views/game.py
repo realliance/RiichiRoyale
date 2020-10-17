@@ -46,8 +46,13 @@ class GameView(MenuView):
     player_area_width = math.floor(h * (float(self.screen_width_ratio)/self.screen_height_ratio))
     return Rect((w - player_area_width)//2, 0, player_area_width, play_area_height)
 
-  def on_match_start(self, tutorial_info=None):
+  def on_match_start(self, tutorial_info=None, dialogue_manager=None):
     self.tutorial = tutorial_info
+    self.pons = 0 #counting for tutorial
+    self.dialogue_manager = dialogue_manager
+    if dialogue_manager is not None:
+      self.dialogue_manager.start_event("intro")
+
     self.player = Player("Player")
     self.match.register_player(self.player)
     wall = None
@@ -72,22 +77,43 @@ class GameView(MenuView):
       self.match.current_board.on_turn()
 
   def update(self, time_delta):
+    
     if self.player.calls_avaliable:
       self.buttons["skip"].show()
       #self.buttons["text"].show()
       for decision in self.player.calls_avaliable:
         if decision == Call.Chi:
           self.buttons["chi"].show()
+          if self.dialogue_manager is not None and self.dialogue_manager.current_event is None:
+            self.dialogue_manager.start_event('chi')
         elif decision == Call.Pon:
           self.buttons["pon"].show()
+          if self.dialogue_manager is not None and self.dialogue_manager.current_event is None:
+            if self.pons < 1:
+              self.dialogue_manager.start_event('pon')
+            else:
+              self.dialogue_manager.start_event('skip_pon')
         elif decision == Call.Kan or decision == Call.Concealed_Kan:
           self.buttons["Kan"].show()
         elif decision == Call.Riichi:
           self.buttons["riichi"].show()
         elif decision == Call.Ron:
           self.buttons["ron"].show()
+          if self.dialogue_manager is not None and self.dialogue_manager.current_event is None:
+            self.dialogue_manager.start_event('ron')
         elif decision == Call.Tsumo:
           self.buttons["tsumo"].show()
+      
+    if self.dialogue_manager is not None and self.dialogue_manager.current_event is not None:
+      if self.dialogue_manager.get_current_page() != self.buttons["text"].html_text:
+        self.buttons["text"].kill()
+        self.new_text_box(self.dialogue_manager.get_current_page())
+      self.match.current_board.decision_pending = True
+      self.buttons["text"].show()
+      if len(self.player.calls_avaliable) != 0 and self.dialogue_manager.is_last_page():
+        self.buttons['advance_text'].hide()
+      else:
+        self.buttons["advance_text"].show()
 
     self.board_render.update(self.tutorial)
     super().update(time_delta)
@@ -207,11 +233,24 @@ class GameView(MenuView):
                                                     'right': 'left'
                                                 })
 
-    text_box_rect = pygame.Rect(0, 0, 900, 400)
-    text_box_rect.bottomleft = (50, -200)
+    text_box_rect = pygame.Rect(0, 0, 600, 200)
+    text_box_rect.bottomleft = (400, -290)
     text_box = pygame_gui.elements.UITextBox(relative_rect=text_box_rect,
                                                 visible=False,
-                                                html_text="testsetst",
+                                                html_text="",
+                                                manager=ui_manager,
+                                                anchors={
+                                                    'top': 'bottom',
+                                                    'bottom': 'bottom',
+                                                    'left': 'left',
+                                                    'right': 'left'
+                                                })
+    text_next_button_rect = pygame.Rect(0, 0, 100, 50)
+    text_next_button_rect.bottomleft = (725, -190)
+    text_next = pygame_gui.elements.UIButton(relative_rect=text_next_button_rect,
+                                                container=call_menu_panel,
+                                                visible=False,
+                                                text='Next',
                                                 manager=ui_manager,
                                                 anchors={
                                                     'top': 'bottom',
@@ -225,17 +264,22 @@ class GameView(MenuView):
       "pon": pon_button,
       "chi": chi_button,
       "kan": kan_button,
+      "riichi": riichi_button,
       "ron": ron_button,
       "tsumo": tsumo_button,
       "skip": skip_button,
-      "text": text_box
+      "text": text_box,
+      "advance_text": text_next
     }
 
     def process_ui_event(event):
       if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
         if event.ui_element == pon_button:
           if (self.tutorial is None) or (self.tutorial.next_call == 'pon'):
-            self.tutorial.call()
+            if self.tutorial is not None:
+              self.tutorial.call()
+              self.pons += 1
+              self.dialogue_manager.start_event('after_pon')
             print('Pressed pon')
             self.match.current_board.decision_pending = False
             self.player.make_decision(Call.Pon)
@@ -243,7 +287,9 @@ class GameView(MenuView):
               buttons[button].hide()
         if event.ui_element == chi_button:
           if (self.tutorial is None) or (self.tutorial.next_call == 'chi'):
-            self.tutorial.call()
+            if self.tutorial is not None:
+              self.tutorial.call()
+              self.dialogue_manager.start_event('after_chi')
             print('Pressed chi')
             self.match.current_board.decision_pending = False
             self.player.make_decision(Call.Chi)
@@ -251,7 +297,9 @@ class GameView(MenuView):
               buttons[button].hide()
         if event.ui_element == ron_button:
           if (self.tutorial is None) or (self.tutorial.next_call == 'ron'):
-            self.tutorial.call()
+            if self.tutorial is not None:
+              self.tutorial.call()
+              self.dialogue_manager.start_event('end')
             print('Pressed ron')
             self.match.current_board.decision_pending = False
             self.player.make_decision(Call.Ron)
@@ -265,6 +313,32 @@ class GameView(MenuView):
             self.player.make_decision(Call.Skip)
             for button in self.buttons:
               buttons[button].hide()
+        if event.ui_element == text_next:
+          if not self.dialogue_manager.is_last_page():
+            self.dialogue_manager.next_page()
+            #self.match.current_board.decision_pending = False
+          else:
+            if self.dialogue_manager.current_event == 'end':
+              game_manager.set_active_view('main_menu')
+            self.dialogue_manager.current_event = None
+            self.match.current_board.decision_pending = False
+            text_next.hide()
+            self.buttons["text"].kill()
+
     
     return ui_manager, process_ui_event, buttons
-
+  
+  def new_text_box(self, text):
+    text_box_rect = pygame.Rect(0, 0, 600, 200)
+    text_box_rect.bottomleft = (400, -290)
+    text_box = pygame_gui.elements.UITextBox(relative_rect=text_box_rect,
+                                                visible=False,
+                                                html_text=text,
+                                                manager=self.manager,
+                                                anchors={
+                                                    'top': 'bottom',
+                                                    'bottom': 'bottom',
+                                                    'left': 'left',
+                                                    'right': 'left'
+                                                })
+    self.buttons["text"] = text_box

@@ -28,7 +28,7 @@ class Player:
     if self.my_turn:
       # Discard Tile
       tile = self.hand[tile_index]
-      if (tutorial_state is None) or (tutorial_state.next_discard == tile):
+      if (not self.board.decision_pending) and ((tutorial_state is None) or (tutorial_state.next_discard == tile)):
         del self.hand[tile_index]
         self.board.play_clack()
         self.hand.sort()
