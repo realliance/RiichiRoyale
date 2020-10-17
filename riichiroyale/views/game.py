@@ -89,9 +89,9 @@ class GameView(MenuView):
         elif decision == Call.Pon:
           self.buttons["pon"].show()
           if self.dialogue_manager is not None and self.dialogue_manager.current_event is None:
-            if self.pons < 1:
+            if self.pons == 0:
               self.dialogue_manager.start_event('pon')
-            else:
+            elif self.pons == 1:
               self.dialogue_manager.start_event('skip_pon')
         elif decision == Call.Kan or decision == Call.Concealed_Kan:
           self.buttons["Kan"].show()
@@ -320,10 +320,14 @@ class GameView(MenuView):
           else:
             if self.dialogue_manager.current_event == 'end':
               game_manager.set_active_view('main_menu')
-            self.dialogue_manager.current_event = None
-            self.match.current_board.decision_pending = False
-            text_next.hide()
-            self.buttons["text"].kill()
+            if self.dialogue_manager.current_event == 'skip_pon':
+              self.dialogue_manager.start_event('discard_tip')
+              self.match.current_board.decision_pending = False
+            else:
+              self.dialogue_manager.current_event = None
+              self.match.current_board.decision_pending = False
+              text_next.hide()
+              self.buttons["text"].kill()
 
     
     return ui_manager, process_ui_event, buttons
