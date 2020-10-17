@@ -1,5 +1,7 @@
 #pragma once
+#include <features.h>       // for _Noreturn
 #include <stdint.h>         // for int16_t
+#include <array>            // for array
 #include <map>              // for map
 #include <string>           // for string
 #include <vector>           // for vector
@@ -29,7 +31,7 @@ class MahjongGameManager{
   static auto CanKan(const GameState& state, int player) -> bool;
   static auto CanPon(const GameState& state, int player) -> bool;
   static auto CanChi(const GameState& state, int player) -> bool;
-  static auto GetChiStart(const GameState& state, int player) -> bool;
+  static auto GetChiStart(const GameState& state, int player) -> Piece;
   static auto CanRon( GameState& state, int player) -> bool;
 
   static auto CanConvertedKan(const GameState& state, Piece p) -> bool;
@@ -38,7 +40,7 @@ class MahjongGameManager{
   static auto CanRiichi(const GameState& state) -> bool;
 
 
-  static auto ScorePlayer(const GameState& state, int player) -> int16_t;
+  static auto ScorePlayers(const GameState& state) -> std::array<int16_t,4>;
   static auto AlertPlayers(const GameState& state, Event e) -> void;
   static auto CountPieces(const GameState& state, int player, Piece p) -> int;
   static auto ValidateDecision(GameState& state, int player, Event decision, bool inHand, Piece p) -> bool;

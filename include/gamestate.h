@@ -21,19 +21,20 @@ enum GameStates{
 };
 
 struct GameState{
-  Walls walls;
-  std::vector<Player> players;
-  std::vector<Hand> hands;
-  std::vector<Event> winners;
-  Wind prevalentWind = East;
-  int turnCount = 0;
   int currentPlayer = 0;
+  GameStates currentState = AfterDraw;
   int lastCall = -1;
   int dealer = 0;
-  int counters = 0;
-  int roundCounter = 0;
   Piece lastDiscard = ERROR_PIECE;
-  GameStates currentState = AfterDraw;
+  int lastPlayerDiscard = -1;
+  Wind prevalentWind = East;
+  int turnCount = 0;
+  int riichiSticks = 0;
+  int roundCounter = 0;
+  std::vector<Hand> hands;
+  std::vector<Player> players;
+  std::vector<Event> winners;
+  Walls walls;
 };
 
 auto operator<<(std::ostream& os, const GameState& state) -> std::ostream&;

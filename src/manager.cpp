@@ -1,4 +1,5 @@
 #include "manager.h"
+
 #include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
 #include <stddef.h>            // for size_t
 #include <algorithm>           // for find
@@ -9,6 +10,7 @@
 #include <memory>              // for allocator_traits<>::value_type
 #include <string>              // for string
 #include <vector>              // for vector
+
 #include "event.h"             // for Event, Kan, Discard, Chi, ConcealedKan
 #include "gamestate.h"         // for GameState, AfterCall, AfterDraw, opera...
 #include "hand.h"              // for Hand
@@ -84,6 +86,7 @@ auto MahjongGameManager::RoundStart(GameState& state) -> stateFunction {
   );
   return PlayerTurn;
 }
+
 
 auto MahjongGameManager::PlayerTurn(GameState& state) -> stateFunction {
   if(state.walls.GetRemainingPieces() == 0){
@@ -165,6 +168,8 @@ auto MahjongGameManager::PlayerTurn(GameState& state) -> stateFunction {
   }
 
   if(!needDecision){
+    state.lastDiscard = draw;
+    state.currentState = AfterDiscard;
     DiscardPiece(state, state.currentPlayer, draw);
     AlertPlayers(state, {
       Event{
@@ -174,46 +179,57 @@ auto MahjongGameManager::PlayerTurn(GameState& state) -> stateFunction {
         false, // decision
       }
     });
-    state.lastDiscard = draw;
-    state.currentState = AfterDiscard;
     return DiscardState;
   }
 
-  AlertPlayers(state,decision);
-
   if(decision.type == Tsumo){
+    decision.piece = static_cast<int16_t>(draw.toUint8_t());
+    state.winners.push_back(decision);
+    AlertPlayers(state,decision);
     return RoundEnd;
   }
 
-  state.lastDiscard = decision.piece;
 
   if(decision.type == ConcealedKan){
+    state.lastDiscard = decision.piece;
     decision.piece = static_cast<int16_t>(draw.toUint8_t());
-    MeldPieces(state, state.currentPlayer, decision);
     state.currentState = AfterConcealedKanDiscard;
+    state.lastPlayerDiscard = state.currentPlayer;
+    MeldPieces(state, state.currentPlayer, decision);
+    AlertPlayers(state,decision);
     return DiscardState;
   }
 
   if(decision.type == ConvertedKan){
+    state.lastDiscard = decision.piece;
     decision.piece = static_cast<int16_t>(draw.toUint8_t());
-    MeldPieces(state, state.currentPlayer, decision);
     state.currentState = AfterKanDiscard;
+    state.lastPlayerDiscard = state.currentPlayer;
+    MeldPieces(state, state.currentPlayer, decision);
+    AlertPlayers(state,decision);
     return DiscardState;
   }
 
-  DiscardPiece(state, state.currentPlayer, decision.piece);
+
 
   if(decision.type == Discard){
+    state.lastDiscard = decision.piece;
     state.currentState = AfterDiscard;
+    state.lastPlayerDiscard = state.currentPlayer;
+    DiscardPiece(state, state.currentPlayer, decision.piece);
+    AlertPlayers(state,decision);
     return DiscardState;
   }
 
   if(decision.type == Riichi){
+    state.lastDiscard = decision.piece;
     state.hands[state.currentPlayer].riichiRound = state.turnCount;
     state.hands[state.currentPlayer].riichiPieceDiscard = true;
     state.hands[state.currentPlayer].riichi = true;
-
     state.currentState = AfterRiichi;
+    state.lastPlayerDiscard = state.currentPlayer;
+    DiscardPiece(state, state.currentPlayer, decision.piece);
+    AlertPlayers(state,decision);
     return DiscardState;
   }
 
@@ -287,57 +303,79 @@ auto MahjongGameManager::DiscardState(GameState& state) -> stateFunction{
     return PlayerTurn;
   }
 
-  Event decision;
-  decision.type = Decline;
+  std::vector<Event> decision;
+  decision.push_back(DECLINE_EVENT);
   for(int i = 0; i < 4; i++){
     while(needDecision[i]){
       Event tempDecision = state.players[i].controller->RetrieveDecision();
-      if(ValidateDecision(state,i,decision,false,state.lastDiscard)){
+      if(ValidateDecision(state,i,tempDecision,false,state.lastDiscard)){
         needDecision[i] = false;
-        if(tempDecision.type < decision.type){ // lower is higher priority
+        if(tempDecision.type < decision[0].type){ // lower is higher priority
           tempDecision.player = i;
           tempDecision.piece = static_cast<int16_t>(state.lastDiscard.toUint8_t());
-          decision = tempDecision;
+          decision[0] = tempDecision;
+        }else if(tempDecision.type == Ron){
+          tempDecision.player = i;
+          tempDecision.piece = static_cast<int16_t>(state.lastDiscard.toUint8_t());
+          decision.push_back(tempDecision);
         }
       }
     }
   }
-  if(decision.type == Decline){
+  if(decision[0].type == Decline){
     state.currentPlayer = (state.currentPlayer + 1) % 4;
     state.currentState = AfterDraw;
     state.turnCount++;
     return PlayerTurn;
   }
   
-  state.currentPlayer = decision.player;
-  state.hands[decision.player].live.push_back(decision.piece);
-  state.hands[decision.player].sort();
-  state.lastCall = state.turnCount;
-  state.turnCount++;
-
-  if(decision.type == Chi){
-    decision.piece = GetChiStart(state,decision.player);
-    state.currentState = AfterCall;
-    return PlayerTurn;
-  }
-
-  AlertPlayers(state,decision);
-
-
-  if(decision.type == Ron){
+  if(decision[0].type == Ron){
+    for(auto & d : decision){
+      state.hands[d.player].live.push_back(decision[0].piece);
+      state.winners.push_back(d);
+      AlertPlayers(state,d);
+    }
     return RoundEnd;
   }
 
-  state.hands[decision.player].open = true;
-  MeldPieces(state, state.currentPlayer, decision);
-
-  if(decision.type == Pon){
+  if(decision[0].type == Chi){
+    state.currentPlayer = decision[0].player;
+    state.hands[decision[0].player].live.push_back(decision[0].piece);
+    state.hands[decision[0].player].sort();
+    state.lastCall = state.turnCount;
+    state.turnCount++;
+    decision[0].piece = static_cast<int16_t>(GetChiStart(state,decision[0].player).toUint8_t());
     state.currentState = AfterCall;
+    MeldPieces(state, state.currentPlayer, decision[0]);
+    AlertPlayers(state,decision[0]);
     return PlayerTurn;
   }
 
-  if(decision.type == Kan){
+
+  if(decision[0].type == Pon){
+    state.hands[decision[0].player].open = true;
+    state.hands[decision[0].player].live.push_back(decision[0].piece);
+    state.hands[decision[0].player].sort();
+    state.currentPlayer = decision[0].player;
+    state.lastCall = state.turnCount;
+    state.turnCount++;
+    state.currentState = AfterCall;
+    MeldPieces(state, state.currentPlayer, decision[0]);
+    AlertPlayers(state,decision[0]);
+    return PlayerTurn;
+  }
+
+  if(decision[0].type == Kan){
+    state.hands[decision[0].player].open = true;
+    state.currentPlayer = decision[0].player;
+    state.hands[decision[0].player].live.push_back(decision[0].piece);
+    state.hands[decision[0].player].sort();
+    state.lastCall = state.turnCount;
+    state.turnCount++;
     state.currentState = AfterKanDiscard;
+    state.lastPlayerDiscard = state.currentPlayer;
+    MeldPieces(state, state.currentPlayer, decision[0]);
+    AlertPlayers(state,decision[0]);
     return DiscardState;
   }
 
@@ -345,9 +383,8 @@ auto MahjongGameManager::DiscardState(GameState& state) -> stateFunction{
 }
 
 auto MahjongGameManager::RoundEnd(GameState& state) -> stateFunction {
-  std::vector<int16_t> scores;
+  std::array<int16_t,4> scores = ScorePlayers(state);
   for(int i = 0; i < 4; i++){
-    scores.push_back(ScorePlayer(state,i));
     state.players[i].points += scores[i];
   }
   if(state.currentState == AfterExhaustiveDraw){
@@ -443,11 +480,24 @@ auto MahjongGameManager::CanPon(const GameState& state, int player) -> bool{
   return false;
 }
 
+auto MahjongGameManager::GetChiStart(const GameState& state, int player) -> Piece{
+  if(CountPieces(state,player,state.lastDiscard-2) > 0 && CountPieces(state,player,state.lastDiscard-1) > 0){
+    return state.lastDiscard-2;
+  }
+  if(CountPieces(state,player,state.lastDiscard-1) > 0 && CountPieces(state,player,state.lastDiscard+1) > 0){
+    return state.lastDiscard-1;
+  }
+  if(CountPieces(state,player,state.lastDiscard+1) > 0 && CountPieces(state,player,state.lastDiscard+2) > 0){
+    return state.lastDiscard;
+  }
+  return ERROR_PIECE;
+}
+
 auto MahjongGameManager::CanChi(const GameState& state, int player) -> bool{
   if(state.lastDiscard.isHonor()){
     return false;
   }
-  if(state.currentPlayer-1 != player || !(player == 0 && state.currentPlayer == 4)){
+  if(state.lastPlayerDiscard-1 != player || !(player == 0 && state.lastPlayerDiscard == 4)){
     return false;
   }
   if(CountPieces(state,player,state.lastDiscard-2) > 0 && CountPieces(state,player,state.lastDiscard-1) > 0){
@@ -494,8 +544,26 @@ auto MahjongGameManager::CanRiichi(const GameState& state) -> bool{
 }
 
 // Score given player
-auto MahjongGameManager::ScorePlayer(const GameState& state, int player) -> int16_t {
-
+auto MahjongGameManager::ScorePlayers(const GameState& state) -> std::array<int16_t,4> {
+  std::array<bool,4> isWinner = {false,false,false,false};
+  std::array<int16_t,4> points = {0,0,0,0};
+  for(const auto & winner : state.winners){
+    int16_t handValue;
+    if(state.currentState == AfterExhaustiveDraw){
+      handValue = (30/state.winners.size())*(state.winners.size()<4);
+    }else{
+      handValue = 30; // placeholder for actual score calcuation later
+    }
+    points[winner.player] += handValue;
+    points[state.lastPlayerDiscard] -= handValue;
+    isWinner[winner.player] = true;
+  }
+  for(int i = 0; i < 4; i++){
+    if(state.hands[i].riichi && !isWinner[i]){
+      points[i] -= 10;
+    }
+  }
+  return points;
 }
 
 // Push Event to Player Queue
@@ -513,7 +581,6 @@ auto MahjongGameManager::CountPieces(const GameState& state, int player, Piece p
 // Remove an instance of piece p from given players hand
 auto MahjongGameManager::RemovePieces(GameState& state, int player, Piece p, int count) -> Piece {
   count = std::min(CountPieces(state,player,p),count);
-  int deleteCnt = 0;
   state.hands[player].live.erase(
     std::remove_if(state.hands[player].live.begin(), state.hands[player].live.end(),
       [&](Piece _p){
@@ -521,6 +588,7 @@ auto MahjongGameManager::RemovePieces(GameState& state, int player, Piece p, int
           count++;
           return true;
         }
+        return false;
       }
     ),
     state.hands[player].live.end()
@@ -599,7 +667,7 @@ auto MahjongGameManager::ValidateDecision(GameState& state, int player, Event de
     case ConvertedKan:
       return CanConvertedKan(state,piece);
     case Riichi:
-      return CanRiichi(state);
+      return CanRiichi(state) && CountPieces(state,player,decision.piece) > 0;
     case Discard:
       return CountPieces(state,player,decision.piece) > 0;
     case Decline:

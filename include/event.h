@@ -33,6 +33,7 @@ struct Event {
 auto operator<<(std::ostream& os, const Event& e) -> std::ostream&;
 
 const Event END_EVENT = {End,0,0,false};
+const Event DECLINE_EVENT = {Decline,0,0,false};
 
 inline auto EventTypeToStr(EventType s) -> std::string{
   switch(s){

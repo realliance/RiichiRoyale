@@ -1,9 +1,7 @@
 #pragma once
-#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
-#include <iosfwd>              // for ostream
-#include <string>              // for string
-#include <vector>              // for vector, allocator, vector<>::const_ite...
-#include "piecetype.h"         // for Piece
+#include <iosfwd>       // for ostream
+#include <string>       // for allocator, string
+#include "piecetype.h"  // for Piece
 
 //concealed kan, kan, pon, chi
 enum MeldType {

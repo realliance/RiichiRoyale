@@ -1,7 +1,8 @@
 #pragma once
-#include <deque>
-#include <vector>
-#include "piecetype.h"
+#include <deque>        // for deque
+#include <iosfwd>       // for ostream
+#include <vector>       // for vector
+#include "piecetype.h"  // for Piece
 
 class Walls{
   std::deque<Piece> livingWalls;

@@ -1,8 +1,9 @@
-#include <random>
-#include <iostream>
-#include <iterator>
-#include <algorithm>
 #include "walls.h"
+#include <algorithm>  // for copy_n, move, shuffle
+#include <iostream>   // for operator<<, ostream, basic_ostream, endl, basic...
+#include <iterator>   // for back_insert_iterator, back_inserter
+#include <random>     // for random_device, mt19937
+#include <string>     // for operator<<
 
 const std::vector<Piece> PIECE_SET = {
   ONE_BAMBOO, TWO_BAMBOO, THREE_BAMBOO, FOUR_BAMBOO,
