@@ -12,9 +12,6 @@ public:
   explicit Hand(std::vector<Piece> live): live(live){}
   auto inline sort() -> void { 
     std::sort(live.begin(),live.end());
-    for(auto & meld : melds){
-      std::sort(meld.begin(),meld.end());
-    } 
   }
   std::vector<Piece> live;
   std::vector<Meld> melds;
@@ -24,26 +21,14 @@ public:
   bool riichiPieceDiscard = false;
   int riichiRound = -1;
   class const_iterator {
-    const Hand* hand;
-    std::vector<Meld>::const_iterator meldPosition;
-    std::vector<Piece>::const_iterator position;
-    bool inMelds;
+    std::vector<Piece>::const_iterator itrBegin;
+    std::vector<Piece>::const_iterator itrEnd;
     friend Hand;
-    explicit const_iterator(const Hand* hand, bool end):
-      hand(hand),meldPosition(hand->melds.begin()),
-      position(hand->live.begin()),inMelds(false)
-    {
-        if(!end){
-          return;
-        }
-        if(hand->melds.empty()){
-          position = hand->live.end();
-          return;
-        }
-        meldPosition = --hand->melds.end();
-        inMelds = true;
-        position = hand->melds.back().pieces.end();
+    explicit const_iterator(const Hand* hand, bool end):itrBegin(hand->live.begin()),itrEnd(hand->live.end()) {
+      if(end){
+        itrBegin = itrEnd;
       }
+    }
    public:
     auto operator++() -> const_iterator&;
     auto operator++(int) -> const_iterator;
