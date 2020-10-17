@@ -11,9 +11,9 @@ from riichiroyale.game import Player, Match, TutorialBot, Call
 from .menuview import MenuView
 
 class GameView(MenuView):
-  def __init__(self, game_manager, sound_manager, screen, tile_dict, small_tile_dict, screen_width, screen_height, width_ratio, height_ratio, ai_managed=False):
+  def __init__(self, game_manager, sound_manager, screen, tile_dict, small_tile_dict, screen_width, screen_height, width_ratio, height_ratio, ai_managed=False, name="game"):
     ui_manager, process_ui_event, self.buttons = self.create_game_elements(game_manager, screen_width, screen_height)
-    super().__init__("game", ui_manager)
+    super().__init__(name, ui_manager)
     self.tutorial = None
     self.screen = screen
     self.screen_width = screen_width

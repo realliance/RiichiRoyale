@@ -96,7 +96,7 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
                 game_manager.get_active_view().on_match_start()
             if event.ui_element == tutorial_button:
                 print('Pressed tutorial')
-                game_manager.set_active_view('game')
+                game_manager.set_active_view('tutorial')
 
                 prefered_discards = [
                   Tile.SOUTH_WIND,
