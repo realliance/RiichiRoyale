@@ -527,7 +527,7 @@ auto MahjongGameManager::CanChi(const GameState& state, int player) -> bool{
   if(state.lastDiscard.isHonor()){
     return false;
   }
-  if(state.currentPlayer-1 != player || !(player == 0 && state.currentPlayer == 4)){
+  if(((state.currentPlayer+1)%4) != player){
     return false;
   }
   if(CountPieces(state,player,state.lastDiscard-2) > 0 && CountPieces(state,player,state.lastDiscard-1) > 0){
