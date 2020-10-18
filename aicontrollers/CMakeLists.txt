@@ -6,5 +6,3 @@ target_sources(RiichiRoyale
     "${DIR}/pythonaiinterface.cpp"
     "${DIR}/pythonaiinterface.h"
 )
-
-target_include_directories(RiichiRoyale PRIVATE "${Dev}/include")

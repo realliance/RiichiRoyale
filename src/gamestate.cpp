@@ -7,7 +7,6 @@ auto operator<<(std::ostream& os, const GameState& state) -> std::ostream&{
   os << "lastCall: " << state.lastCall << std::endl;
   os << "dealer: " << state.dealer << std::endl;
   os << "lastDiscard: " << state.lastDiscard.toStr() << std::endl;
-  os << "lastPlayerDiscard: " << state.lastPlayerDiscard << std::endl;
   os << "prevalentWind: " << WindToStr(state.prevalentWind) << std::endl;
   os << "turnCount: " << state.turnCount << std::endl;
   os << "roundCounter: " << state.roundCounter << std::endl;

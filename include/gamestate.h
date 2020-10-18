@@ -27,7 +27,6 @@ struct GameState{
   int lastCall = -1;
   int dealer = 0;
   Piece lastDiscard = ERROR_PIECE;
-  int lastPlayerDiscard = -1;
   Wind prevalentWind = East;
   int turnCount = 0;
   int riichiSticks = 0;

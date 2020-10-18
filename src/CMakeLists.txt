@@ -12,6 +12,5 @@ target_sources(RiichiRoyale
     "${DIR}/piecetype.cpp"
     "${DIR}/player.cpp"
     "${DIR}/possiblesets.cpp"
-    "${DIR}/python.cpp"
     "${DIR}/walls.cpp"
 )

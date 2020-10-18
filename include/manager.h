@@ -19,8 +19,6 @@ public:
   static auto RegisterAI(newMahjongAiInst newFunc, std::string Name) -> bool;
   static auto StartGame(std::vector<std::string> seatAIs, bool async) -> void;
 
-private:
-  static std::map<std::string,newMahjongAiInst> availableAIs;
   static auto GameLoop(std::vector<std::string> seatAIs) -> void;
 
   static auto RoundStart(GameState& state) -> stateFunction;
@@ -45,9 +43,10 @@ private:
   static auto CanTsumo(const GameState& state) -> bool;
   static auto CanRiichi(const GameState& state) -> bool;
 
-
   static auto ScorePlayers(const GameState& state) -> std::array<int16_t,4>;
   static auto AlertPlayers(const GameState& state, Event e) -> void;
   static auto CountPieces(const GameState& state, int player, Piece p) -> int;
   static auto ValidateDecision(GameState& state, int player, Event decision, bool inHand, Piece p) -> bool;
+private:
+  static std::map<std::string,newMahjongAiInst> availableAIs;
 };
