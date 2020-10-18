@@ -19,11 +19,11 @@ public:
   MahjongGameManager() = delete;
   static auto GetAvailableAIs() -> std::vector<std::string>;
   static auto RegisterAI(newMahjongAiInst newFunc, std::string Name) -> bool;
-  static auto StartGame(std::vector<std::string> seatAIs, bool async) -> std::vector<MahjongAI*>;
+  static auto StartGame(std::vector<std::string> seatAIs, bool async) -> void;
 
 private:
   static std::map<std::string,newMahjongAiInst> availableAIs;
-  static auto GameLoop(GameState& state) -> void;
+  static auto GameLoop(std::vector<std::string> seatAIs) -> void;
 
   static auto RoundStart(GameState& state) -> stateFunction;
   static auto PlayerTurn(GameState& state) -> stateFunction;

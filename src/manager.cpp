@@ -24,20 +24,11 @@
 #include "walls.h"             // for Walls
 #include "winds.h"             // for Wind, South
 
-auto MahjongGameManager::StartGame(std::vector<std::string> playerAIs, bool async) -> std::vector<MahjongAI*> {
-  GameState state;
-  std::vector<MahjongAI*> aiinstances;
-  for(size_t i = 0; i < 4; i++){
-    state.players[i].controller = availableAIs[playerAIs[i]]();
-    if(async){
-      aiinstances.push_back(state.players[i].controller);
-    }
-  }
+auto MahjongGameManager::StartGame(std::vector<std::string> playerAIs, bool async) -> void {
   if(async){
   }else{
-    GameLoop(state);
+    GameLoop(playerAIs);
   }
-  return aiinstances;
 }
 
 std::map<std::string,newMahjongAiInst> MahjongGameManager::availableAIs = {
@@ -61,7 +52,11 @@ auto MahjongGameManager::RegisterAI(newMahjongAiInst newFunc, std::string name) 
   return true;
 }
 
-auto MahjongGameManager::GameLoop(GameState& state) -> void{
+auto MahjongGameManager::GameLoop(std::vector<std::string> seatAIs) -> void{
+  GameState state;
+  for(size_t i = 0; i < 4; i++){
+    state.players[i].controller = availableAIs[seatAIs[i]]();
+  }
   for(int i = 0; i < 4; i++){
     state.players[i].points = 25000;
     state.players[i].position = i;

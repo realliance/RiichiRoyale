@@ -3,6 +3,12 @@
 #include "piecetype.h"  // for Piece
 #include "winds.h"      // for Wind
 
+PythonAIInterface* PythonAIInterface::inst;
+
+PythonAIInterface::PythonAIInterface(){
+  inst = this;
+}
+
 PythonAIInterface::~PythonAIInterface(){
   while(!emptyEvents){}
   const std::lock_guard<std::mutex> lock(class_mutex);

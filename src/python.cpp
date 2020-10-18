@@ -107,7 +107,8 @@ PYBIND11_MODULE(libmahjong, m) {
     .def("RoundStart", &PythonAIInterface::PyRoundStart)
     .def("ReceiveEvent", &PythonAIInterface::PyReceiveEvents)
     .def("RetrieveDecision", &PythonAIInterface::PyRetrieveDecision)
-    .def("Name", &PythonAIInterface::Name);
+    .def("Name", &PythonAIInterface::Name)
+    .def("Inst", &PythonAIInterface::Inst);
 
   py::class_<MahjongGameManager>(m, "MahjongGameManager")
     .def("avaliable_ais", &MahjongGameManager::GetAvailableAIs)

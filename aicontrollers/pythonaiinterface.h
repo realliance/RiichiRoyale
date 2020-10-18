@@ -16,6 +16,7 @@ struct RoundStartStruct{
 
 class PythonAIInterface : public MahjongAI{
 public:
+  PythonAIInterface();
   auto PyGameStart() -> int; // Returns playerID
   auto PyRoundStart() -> RoundStartStruct;
   auto PyReceiveEvents() -> std::vector<Event>;
@@ -26,7 +27,9 @@ public:
   auto RoundStart(std::vector<Piece> board, Wind seatWind, Wind prevalentWind) -> void;
   auto ReceiveEvent(Event e) -> void;
   auto RetrieveDecision() -> Event;
+  auto static Inst() -> PythonAIInterface*;
 private:
+  static PythonAIInterface* inst;
   std::mutex class_mutex;
   int playerID = -1;
   Event decision;
