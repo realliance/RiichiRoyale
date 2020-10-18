@@ -23,17 +23,29 @@ endif()
 
 pybind11_add_module(RiichiRoyale)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wmost -Wextra -flto -fvisibility=hidden)
+  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wmost -Wextra)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wextra -flto -fvisibility=hidden)
+  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wextra)
 endif()
 
 add_subdirectory(${RiichiRoyale_SOURCE_DIR}/include)
 add_subdirectory(${RiichiRoyale_SOURCE_DIR}/aicontrollers)
 add_subdirectory(${RiichiRoyale_SOURCE_DIR}/src)
 
+if(PACKAGE_TESTS)
+  get_target_property(_sources RiichiRoyale SOURCES)
+  add_library(TestRiichiRoyale ${_sources})
+  target_include_directories(TestRiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/include")
+  target_include_directories(TestRiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/aicontrollers")
+endif()
+
+target_sources(RiichiRoyale PRIVATE "src/python.cpp")
+
 target_include_directories(RiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/include")
 target_include_directories(RiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/aicontrollers")
+
+
+
 
 add_custom_target(
   check
