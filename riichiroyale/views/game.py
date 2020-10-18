@@ -319,8 +319,9 @@ class GameView(MenuView):
             #self.match.current_board.decision_pending = False
           else:
             if self.dialogue_manager.current_event == 'end':
+              self.delete()
               game_manager.set_active_view('main_menu')
-            if self.dialogue_manager.current_event == 'skip_pon':
+            elif self.dialogue_manager.current_event == 'skip_pon':
               self.dialogue_manager.start_event('discard_tip')
               self.match.current_board.decision_pending = False
             else:
@@ -346,3 +347,14 @@ class GameView(MenuView):
                                                     'right': 'left'
                                                 })
     self.buttons["text"] = text_box
+
+  def delete(self):
+    self.tutorial = None
+    
+    self.match.delete()
+    self.dialogue_manager = None
+    self.draw(self.screen)
+    self.board_render = None
+
+    
+

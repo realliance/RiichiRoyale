@@ -38,3 +38,16 @@ class Match():
   def should_end(self):
     # Game should end if the dealer has revolved and either a) it is a single wind game or b) it is a two wind game and south is the prevalent wind
     return not self.east_prevalent and not self.two_wind_game or (self.current_dealer > 3 and not self.east_prevalent and self.two_wind_game)
+
+  def delete(self):
+    for player in self.players:
+      player.discard_pile = []
+      player.melded_hand = []
+      player.hand = []
+  
+    self.players = []
+    self.scores = []
+    self.current_board = None
+    self.east_prevalent = True
+
+    
