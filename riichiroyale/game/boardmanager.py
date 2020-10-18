@@ -210,7 +210,7 @@ def on_game_event(game_manager, event, match):
 
       game_manager.board_manager.last_decision_event = event
       game_manager.board_manager.waiting_on_decision = True
-      extra_player.calls_avaliable += [Call.Chi]
+      actual_player.calls_avaliable += [Call.Chi]
     else:
       del extra_player.hand[-2:]
       chi_tile = event.extra_piece

@@ -643,14 +643,15 @@ auto MahjongGameManager::MeldPieces(GameState& state, int player, Event e) -> vo
 
   // Needs to be first piece given in event
   if (e.type == Chi) {
+    std::cout << state.hands[player] << std::endl;
     if(RemovePieces(state,player,e.piece,1) != 1){
       ErrorState(state,"Not enough pieces to meld into a chi[0] player: " + std::to_string(player) + " Event: " + Piece(e.piece).toStr());
     }
     if(RemovePieces(state,player,e.piece+1,1) != 1){
-      ErrorState(state,"Not enough pieces to meld into a chi[1]: " + std::to_string(player) + " Event: " + Piece(e.piece).toStr());
+      ErrorState(state,"Not enough pieces to meld into a chi[1]: " + std::to_string(player) + " Event: " + Piece(e.piece+1).toStr());
     }
     if(RemovePieces(state,player,e.piece+2,1) != 1){
-      ErrorState(state,"Not enough pieces to meld into a chi[2]: " + std::to_string(player) + " Event: " + Piece(e.piece).toStr());
+      ErrorState(state,"Not enough pieces to meld into a chi[2]: " + std::to_string(player) + " Event: " + Piece(e.piece+2).toStr());
     }
     state.hands[player].melds.push_back({ ChiMeld,  e.piece });
     return;

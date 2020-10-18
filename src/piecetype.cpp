@@ -10,7 +10,7 @@ auto Piece::raw_value() const -> uint8_t {
 }
 
 auto Piece::isHonor() const -> bool{
-  return (p & CHARACTER_SUIT) == ERROR_PIECE;
+  return (p & CHARACTER_SUIT) == HONOR_SUIT;
 }
 
 auto Piece::isTerminal() const -> bool{
