@@ -6,11 +6,13 @@
 #include "event.h"
 #include "piecetype.h"
 
+class MahjongGameManager;
 class MahjongAI{
 public:
+  virtual ~MahjongAI(){}
   virtual auto GameStart(int playerID) -> void = 0;
   virtual auto RoundStart(std::vector<Piece> board, Wind seatWind, Wind prevalentWind) -> void = 0;
-  virtual auto ReceiveEvent(Event e) -> void;
-  virtual auto RetrieveDecision() -> Event;
-  virtual auto Name() -> std::string;
+  virtual auto ReceiveEvent(Event e) -> void = 0;
+  virtual auto RetrieveDecision() -> Event = 0;
+  virtual auto Name() -> std::string = 0;
 };

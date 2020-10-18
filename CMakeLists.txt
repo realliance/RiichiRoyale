@@ -9,7 +9,8 @@ option(PACKAGE_TOOLS "Build the tools" OFF)
 
 add_subdirectory(${RiichiRoyale_SOURCE_DIR}/libs)
 
-find_package (Python3 COMPONENTS Interpreter Development)
+find_package(Python3 COMPONENTS Interpreter Development)
+find_package(Threads REQUIRED)
 
 if(PACKAGE_TOOLS)
   add_subdirectory(${RiichiRoyale_SOURCE_DIR}/tools)
@@ -21,17 +22,21 @@ if(PACKAGE_TESTS)
   add_subdirectory(${RiichiRoyale_SOURCE_DIR}/cxxtests)
 endif()
 
-pybind11_add_module(RiichiRoyale)
+add_library(RiichiRoyale)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wmost -Wextra)
+  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wmost -Wextra -flto -fvisibility=hidden)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  target_compile_options(RiichiRoyale PRIVATE -Wall -Wextra)
+  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wextra -flto -fvisibility=hidden)
 endif()
 
 add_subdirectory(${RiichiRoyale_SOURCE_DIR}/include)
+add_subdirectory(${RiichiRoyale_SOURCE_DIR}/aicontrollers)
 add_subdirectory(${RiichiRoyale_SOURCE_DIR}/src)
 
 target_include_directories(RiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/include")
+target_include_directories(RiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/aicontrollers")
+target_link_libraries(RiichiRoyale PRIVATE pybind11::module ${CMAKE_THREAD_LIBS_INIT})
+set_target_properties(RiichiRoyale PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}" SUFFIX "${PYTHON_MODULE_EXTENSION}")
 
 add_custom_target(
   check

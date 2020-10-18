@@ -16,4 +16,3 @@ target_sources(RiichiRoyale
     "${DIR}/winds.h"
 )
 
-target_include_directories(RiichiRoyale PRIVATE "${Dev}/include")

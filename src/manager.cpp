@@ -10,6 +10,8 @@
 #include <memory>              // for allocator_traits<>::value_type
 #include <string>              // for string
 #include <vector>              // for vector
+#include <angrydiscardobot.h>
+#include <pythonaiinterface.h>
 
 #include "event.h"             // for Event, Kan, Discard, Chi, ConcealedKan
 #include "gamestate.h"         // for GameState, AfterCall, AfterDraw, opera...
@@ -22,15 +24,26 @@
 #include "walls.h"             // for Walls
 #include "winds.h"             // for Wind, South
 
-auto MahjongGameManager::StartGame(std::vector<std::string> playerAIs) -> void {
+auto MahjongGameManager::StartGame(std::vector<std::string> playerAIs, bool async) -> std::vector<MahjongAI*> {
   GameState state;
+  std::vector<MahjongAI*> aiinstances;
   for(size_t i = 0; i < 4; i++){
     state.players[i].controller = availableAIs[playerAIs[i]]();
+    if(async){
+      aiinstances.push_back(state.players[i].controller);
+    }
   }
-  GameLoop(state);
+  if(async){
+  }else{
+    GameLoop(state);
+  }
+  return aiinstances;
 }
 
-std::map<std::string,newMahjongAiInst> MahjongGameManager::availableAIs = {};
+std::map<std::string,newMahjongAiInst> MahjongGameManager::availableAIs = {
+  {"AngryDiscardoBot",[]() -> MahjongAI* {return new AngryDiscardoBot;}},
+  {"PythonAIInterface",[]() -> MahjongAI* {return new PythonAIInterface;}}
+};
 
 auto MahjongGameManager::GetAvailableAIs() -> std::vector<std::string> {
   std::vector<std::string> names;
@@ -62,6 +75,7 @@ auto MahjongGameManager::GameLoop(GameState& state) -> void{
   }
   for(auto & player : state.players){
     player.controller->ReceiveEvent(END_EVENT);
+    delete player.controller;
   }
 }
 
@@ -540,7 +554,7 @@ auto MahjongGameManager::CanConcealedKan(const GameState& state, Piece p) -> boo
 }
 
 auto MahjongGameManager::CanRiichi(const GameState& state) -> bool{
-  return isInAValidFormat(state,state.currentPlayer) == Tenpai ? true : false;
+  return !state.hands[state.currentPlayer].riichi && isInAValidFormat(state,state.currentPlayer) == Tenpai ? true : false;
 }
 
 // Score given player

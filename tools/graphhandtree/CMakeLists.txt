@@ -7,6 +7,13 @@ set(DIR ${CMAKE_CURRENT_LIST_DIR})
 
 add_executable(graphHandTree "")
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  target_compile_options(graphHandTree PRIVATE -Wall -Wmost -Wextra -Werror)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  target_compile_options(graphHandTree PRIVATE -Wall -Wextra)
+endif()
+
+
 target_sources(graphHandTree
     PRIVATE
     "${DIR}/main.cpp"

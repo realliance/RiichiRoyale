@@ -7,6 +7,52 @@ namespace py = pybind11;
 #include "player.h"
 #include "manager.h"
 #include "event.h"
+#include "mahjongai.h"
+#include "pythonaiinterface.h"
+
+class PyMahjongAI: public MahjongAI {
+public:
+  auto GameStart(int playerID) -> void{
+    PYBIND11_OVERLOAD_PURE(
+      void,
+      MahjongAI,
+      GameStart,
+      playerID
+    );
+  }
+  auto RoundStart(std::vector<Piece> board, Wind seatWind, Wind prevalentWind) -> void{
+    PYBIND11_OVERLOAD_PURE(
+      void,
+      MahjongAI,
+      RoundStart,
+      board,
+      seatWind,
+      prevalentWind
+    );
+  }
+  auto ReceiveEvent(Event e) -> void{
+    PYBIND11_OVERLOAD_PURE(
+      void,
+      MahjongAI,
+      ReceiveEvent,
+      e
+    );
+  }
+  auto RetrieveDecision() -> Event{
+    PYBIND11_OVERLOAD_PURE(
+      Event,
+      MahjongAI,
+      RetrieveDecision,
+    );
+  }
+  auto Name() -> std::string{
+    PYBIND11_OVERLOAD_PURE(
+      std::string,
+      MahjongAI,
+      Name,
+    );
+  }
+};
 
 PYBIND11_MODULE(libmahjong, m) {
   m.doc() = "Mahjong Game Driver";
@@ -46,6 +92,22 @@ PYBIND11_MODULE(libmahjong, m) {
     .def_readonly("player", &Event::player)
     .def_readonly("piece", &Event::piece)
     .def_readonly("decision", &Event::decision);
+
+  py::class_<MahjongAI,PyMahjongAI>(m, "MahjongAI")
+    .def(py::init<>())
+    .def("GameStart", &MahjongAI::GameStart)
+    .def("RoundStart", &MahjongAI::RoundStart)
+    .def("ReceiveEvent", &MahjongAI::ReceiveEvent)
+    .def("RetrieveDecision", &MahjongAI::RetrieveDecision)
+    .def("Name", &MahjongAI::Name);
+
+  py::class_<PythonAIInterface>(m, "PythonAIInterface")
+    .def(py::init<>())
+    .def("GameStart", &PythonAIInterface::PyGameStart)
+    .def("RoundStart", &PythonAIInterface::PyRoundStart)
+    .def("ReceiveEvent", &PythonAIInterface::PyReceiveEvents)
+    .def("RetrieveDecision", &PythonAIInterface::PyRetrieveDecision)
+    .def("Name", &PythonAIInterface::Name);
 
   py::class_<MahjongGameManager>(m, "MahjongGameManager")
     .def("avaliable_ais", &MahjongGameManager::GetAvailableAIs)

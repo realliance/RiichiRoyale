@@ -7,6 +7,7 @@
 #include <vector>           // for vector
 #include "piecetype.h"      // for Piece
 #include "statefunction.h"  // for stateFunction
+
 class MahjongAI;  // lines 9-9
 struct Event;  // lines 10-10
 struct GameState;  // lines 11-11
@@ -14,6 +15,13 @@ struct GameState;  // lines 11-11
 using newMahjongAiInst = MahjongAI* (*)();
 
 class MahjongGameManager{
+public:  
+  MahjongGameManager() = delete;
+  static auto GetAvailableAIs() -> std::vector<std::string>;
+  static auto RegisterAI(newMahjongAiInst newFunc, std::string Name) -> bool;
+  static auto StartGame(std::vector<std::string> seatAIs, bool async) -> std::vector<MahjongAI*>;
+
+private:
   static std::map<std::string,newMahjongAiInst> availableAIs;
   static auto GameLoop(GameState& state) -> void;
 
@@ -44,9 +52,4 @@ class MahjongGameManager{
   static auto AlertPlayers(const GameState& state, Event e) -> void;
   static auto CountPieces(const GameState& state, int player, Piece p) -> int;
   static auto ValidateDecision(GameState& state, int player, Event decision, bool inHand, Piece p) -> bool;
-public:  
-  MahjongGameManager() = delete;
-  static auto GetAvailableAIs() -> std::vector<std::string>;
-  static auto RegisterAI(newMahjongAiInst newFunc, std::string Name) -> bool;
-  static auto StartGame(std::vector<std::string> seatAIs) -> void;
 };

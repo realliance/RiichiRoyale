@@ -1,7 +1,6 @@
 set(DIR ${CMAKE_CURRENT_LIST_DIR})
 target_sources(RiichiRoyale
   PRIVATE
-    "${DIR}/python.cpp"
     "${DIR}/event.cpp"
     "${DIR}/gamestate.cpp"
     "${DIR}/hand.cpp"
@@ -13,5 +12,6 @@ target_sources(RiichiRoyale
     "${DIR}/piecetype.cpp"
     "${DIR}/player.cpp"
     "${DIR}/possiblesets.cpp"
+    "${DIR}/python.cpp"
     "${DIR}/walls.cpp"
 )
