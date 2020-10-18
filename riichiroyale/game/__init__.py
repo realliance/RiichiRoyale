@@ -8,3 +8,4 @@ from .call import *
 from .match import *
 from .boardmanager import *
 from .gameevent import *
+from .dialogmanager import *

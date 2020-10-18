@@ -32,8 +32,7 @@ class Player:
         return
       # Discard Tile
       tile = self.hand[tile_index]
-      print(tile)
-      if (tutorial_state is None) or (tutorial_state.next_discard == tile):
+      if (not self.board.decision_pending) and ((tutorial_state is None) or (tutorial_state.next_discard == tile)):
         self.board.play_clack()
         if self.ai_managed:
           event = EngineEvent()
