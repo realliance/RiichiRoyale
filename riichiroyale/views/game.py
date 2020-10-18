@@ -51,6 +51,7 @@ class GameView(MenuView):
     return Rect((w - player_area_width)//2, 0, player_area_width, play_area_height)
 
   def on_match_start(self, tutorial_info=None, dialogue_manager=None):
+    self.match = Match(None, sound_manager=self.game_manager.sound_manager, ai_managed=self.ai_managed)
     self.tutorial = tutorial_info
     self.pons = 0 #counting for tutorial
     self.dialogue_manager = dialogue_manager
@@ -68,6 +69,13 @@ class GameView(MenuView):
       self.match.register_player(TutorialBot("Bot 1", self.tutorial.winning_tile))
       self.match.register_player(TutorialBot("Bot 2", self.tutorial.winning_tile))
       self.match.register_player(TutorialBot("Bot 3", self.tutorial.winning_tile))
+      for p in self.match.players:
+        p.hand = []
+        p.melded_hand = []
+        p.riichi_declared = False
+        p.calls_avaliable = []
+        p.hand_open = False
+        p.discard_pile = []
     elif self.ai_managed:
       MahjongGameManager.start_game(["PythonAIInterface"] + ["AngryDiscardoBot"] * 3, True)
       self.match.player_ai_inst = PythonAIInterface.Inst()
@@ -82,7 +90,10 @@ class GameView(MenuView):
     self.match.new_board(wall=wall, deadwall=deadwall)
     random.shuffle(self.sound_manager.music_playlist)
     self.sound_manager.start_playlist()
+    self.play_area = surface.Surface((self.player_area_rect.width, self.player_area_rect.height), flags=pygame.SRCALPHA)
     self.board_render = BoardRender(self.small_tile_dict, self.tile_dict, self.play_area, self.match.current_board, self.match.player_id)
+    self.board_render.update()
+    self.board_render.force_redraw()
     if not self.ai_managed:
       self.match.current_board.on_turn()
 
@@ -292,7 +303,7 @@ class GameView(MenuView):
         if event.ui_element == pon_button:
           if self.ai_managed:
             self.match.player_ai_inst.RetrieveDecision(self.game_manager.board_manager.last_decision_event.raw_event_b)
-          elif (self.tutorial is None) and (self.tutorial.next_call == 'pon'):
+          elif (self.tutorial is not None) and (self.tutorial.next_call == 'pon'):
             self.tutorial.call()
             self.pons += 1
             self.dialogue_manager.start_event('after_pon')
@@ -364,6 +375,7 @@ class GameView(MenuView):
           else:
             if self.dialogue_manager.current_event == 'end':
               game_manager.set_active_view('main_menu')
+              game_manager.sound_manager.play_music('lobby')
             if self.dialogue_manager.current_event == 'skip_pon':
               self.dialogue_manager.start_event('discard_tip')
               self.match.current_board.decision_pending = False

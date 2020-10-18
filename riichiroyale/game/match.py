@@ -30,6 +30,7 @@ class Match():
       self.east_prevalent = False
 
   def new_board(self, wall=None, deadwall=None):
+    self.current_board = None
     self.current_board = Board(sound_manager=self.sound_manager, wall=wall, deadwall=deadwall, current_dealer=self.current_dealer, players=self.players, dora_revealed=0 if self.ai_managed else 1, ai_managed=self.ai_managed)
     for player in self.players:
       player.board = self.current_board
