@@ -1,4 +1,5 @@
 #pragma once
+#include <array>        // for array
 #include <iostream>     // for ostream
 #include <string>       // for allocator, string
 #include <vector>       // for vector

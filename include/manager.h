@@ -1,5 +1,4 @@
 #pragma once
-#include <features.h>       // for _Noreturn
 #include <stdint.h>         // for int16_t
 #include <array>            // for array
 #include <map>              // for map
@@ -7,10 +6,9 @@
 #include <vector>           // for vector
 #include "piecetype.h"      // for Piece
 #include "statefunction.h"  // for stateFunction
-
-class MahjongAI;  // lines 9-9
-struct Event;  // lines 10-10
-struct GameState;  // lines 11-11
+class MahjongAI;  // lines 11-11
+struct Event;  // lines 12-12
+struct GameState;  // lines 13-13
 
 using newMahjongAiInst = MahjongAI* (*)();
 

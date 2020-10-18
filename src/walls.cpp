@@ -1,9 +1,10 @@
 #include "walls.h"
+#include <stddef.h>   // for size_t
 #include <algorithm>  // for copy_n, move, shuffle
-#include <iostream>   // for operator<<, ostream, basic_ostream, endl, basic...
+#include <iostream>   // for operator<<, basic_ostream, endl, basic_ostream:...
 #include <iterator>   // for back_insert_iterator, back_inserter
 #include <random>     // for random_device, mt19937
-#include <string>     // for operator<<
+#include <string>     // for operator<<, char_traits
 
 const std::vector<Piece> PIECE_SET = {
   ONE_BAMBOO, TWO_BAMBOO, THREE_BAMBOO, FOUR_BAMBOO,
@@ -25,13 +26,18 @@ Walls::Walls(){
   std::mt19937 g(rd());
   std::shuffle(livingWalls.begin(), livingWalls.end(), g);
   std::move(livingWalls.begin(), livingWalls.begin()+14, std::back_inserter(deadWall));
+  for(size_t i = 0; i < 14; i++){
+    livingWalls.erase(livingWalls.begin());
+  }
 }
 
 Piece Walls::TakePiece(){
   if(livingWalls.size() > 0){
     Piece p = livingWalls.front();
     livingWalls.erase(livingWalls.begin());
-    std::cout << "DAMN THAT'S A BEEFY WALL: " << livingWalls.size() << std::endl;
+    for(size_t i = 0; i < 14; i++){
+      livingWalls.erase(livingWalls.begin());
+    }
     return p;
   }
   return PieceType::ERROR_PIECE;
@@ -43,7 +49,9 @@ std::vector<Piece> Walls::TakeHand(){
   }
   std::vector<Piece> hand;
   std::move(livingWalls.begin(), livingWalls.begin()+13, std::back_inserter(hand));
-  std::cout << "DAMN THAT'S A BEEFY WALL: " << livingWalls.size() << std::endl;
+  for(size_t i = 0; i < 14; i++){
+    livingWalls.erase(livingWalls.begin());
+  }
   return hand;
 }
 
@@ -57,7 +65,6 @@ Piece Walls::TakeReplacementTile() {
   deadWall.push_back(livingWalls.back());
 
   livingWalls.pop_back();
-  std::cout << "DAMN THAT'S A BEEFY WALL: " << livingWalls.size() << std::endl;
   return p;
 }
 

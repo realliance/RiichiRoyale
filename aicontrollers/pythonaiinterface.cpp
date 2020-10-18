@@ -1,5 +1,6 @@
 #include "pythonaiinterface.h"
-#include <event.h>      // for Event, END_EVENT
+#include <event.h>      // for Event, operator<<, PointDiff
+#include <iostream>     // for endl, operator<<, ostream, cout, basic_ostream
 #include "piecetype.h"  // for Piece
 #include "winds.h"      // for Wind
 

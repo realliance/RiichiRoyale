@@ -1,12 +1,13 @@
 #pragma once
 #include <event.h>      // for Event
 #include <mahjongai.h>  // for MahjongAI
-#include <piecetype.h>  // for Piece
 #include <winds.h>      // for Wind
 #include <atomic>       // for atomic
+#include <cstdint>      // for int16_t
 #include <mutex>        // for mutex
 #include <string>       // for string
 #include <vector>       // for vector
+class Piece;
 
 struct RoundStartStruct{
   std::vector<int16_t> hand;

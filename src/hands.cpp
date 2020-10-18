@@ -1,13 +1,14 @@
 #include "hands.h"
-#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
-#include <stddef.h>            // for size_t
-#include <map>                 // for map
-#include <memory>              // for allocator_traits<>::value_type
-#include <vector>              // for vector
-#include "gamestate.h"         // for GameState, AfterConcealedKanDiscard
-#include "handnode.h"          // for Node, Single
-#include "handtree.h"          // for breakdownHand
-#include "walls.h"             // for Walls
+#include <stddef.h>     // for size_t
+#include <array>        // for array, array<>::value_type
+#include <map>          // for map
+#include <vector>       // for vector
+#include "gamestate.h"  // for GameState, AfterConcealedKanDiscard, AfterKan...
+#include "hand.h"       // for Hand
+#include "handnode.h"   // for Node, Single
+#include "handtree.h"   // for breakdownHand
+#include "player.h"     // for Player
+#include "walls.h"      // for Walls
 
 auto countPiece(const GameState& state, int player, Piece p) -> int{
   int count = 0;
