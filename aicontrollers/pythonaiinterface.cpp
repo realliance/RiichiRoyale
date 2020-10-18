@@ -4,9 +4,17 @@
 #include "winds.h"      // for Wind
 
 PythonAIInterface* PythonAIInterface::inst;
+std::atomic<bool> PythonAIInterface::instSet = false;
 
 PythonAIInterface::PythonAIInterface(){
+  instSet = true;
   inst = this;
+}
+
+auto PythonAIInterface::Inst() -> PythonAIInterface*{
+  while(!instSet){}
+  std::cout << "==================" << inst << std::endl;
+  return inst;
 }
 
 PythonAIInterface::~PythonAIInterface(){
@@ -20,9 +28,11 @@ auto PythonAIInterface::GameStart(int _playerID) -> void{
   playerIDRecieved = true;
 }
 
-auto PythonAIInterface::RoundStart(std::vector<Piece> board, Wind seatWind, Wind prevalentWind) -> void{
+auto PythonAIInterface::RoundStart(std::vector<Piece> hand, Wind seatWind, Wind prevalentWind) -> void{
   const std::lock_guard<std::mutex> lock(class_mutex);
-  roundStart.board = board;
+  for(const auto & piece : hand){
+    roundStart.hand.push_back(static_cast<int16_t>(piece.toUint8_t()));
+  }
   roundStart.seatWind = seatWind;
   roundStart.prevalentWind = prevalentWind;
   roundStartRecieved = true;
@@ -42,6 +52,8 @@ auto PythonAIInterface::ReceiveEvent(Event e) -> void{
 auto PythonAIInterface::RetrieveDecision() -> Event{
   while(!decisionRecieved){}
   const std::lock_guard<std::mutex> lock(class_mutex);
+  std::cout << decision << std::endl;
+  decisionRecieved = false;
   return decision;
 }
 

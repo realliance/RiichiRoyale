@@ -1,6 +1,7 @@
 import os
 import sys
 import math
+import asyncio
 from pygame import surface, Rect
 import pygame
 from riichiroyale import GameManager, MainMenu, Settings, create_settings_menu, GameView, build_tile_surface_dict, Tile, TILE_SIZE, SMALL_TILE_SIZE, SoundManager, BoardManager

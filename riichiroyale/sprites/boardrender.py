@@ -25,6 +25,9 @@ class StatefulBoardElement():
   def update(self, tutorial_state=None):
     self.rendered.update(tutorial_state)
 
+def calculate_against_player_pov(player_pov, offset):
+  return (player_pov + offset) % 4
+
 class BoardRender():
   def __init__(self, small_dictionary, dictionary, surface, board, player_pov):
     self.board = board
@@ -37,25 +40,29 @@ class BoardRender():
     # Player Hand
     self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].hand, lambda: render_hand(self, player_pov)))
 
+    player_to_right = calculate_against_player_pov(player_pov, 1)
+    player_across = calculate_against_player_pov(player_pov, 2)
+    player_to_left = calculate_against_player_pov(player_pov, 3)
+
     # Opponent Hands
-    self.elements.append(StatefulBoardElement([], lambda: self.board.players[1].hand, lambda: render_hidden_hand(self, 1, 1)))
-    self.elements.append(StatefulBoardElement([], lambda: self.board.players[2].hand, lambda: render_hidden_hand(self, 2, 2)))
-    self.elements.append(StatefulBoardElement([], lambda: self.board.players[3].hand, lambda: render_hidden_hand(self, 3, 3)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[1].hand, lambda: render_hidden_hand(self, player_to_right, 1)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[2].hand, lambda: render_hidden_hand(self, player_across, 2)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[3].hand, lambda: render_hidden_hand(self, player_to_left, 3)))
 
     # Player Melds
-    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].melded_hand, lambda: render_meld_hand(self, self.board.players[player_pov].melded_hand)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].melded_hand, lambda: render_meld_hand(self, self.board.players[player_pov].melded_hand, seat=0)))
 
     # Opponent Melds
-    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].melded_hand, lambda: render_meld_hand(self, self.board.players[1].melded_hand, seat=1)))
-    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].melded_hand, lambda: render_meld_hand(self, self.board.players[2].melded_hand, seat=2)))
-    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].melded_hand, lambda: render_meld_hand(self, self.board.players[3].melded_hand, seat=3)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_to_right].melded_hand, lambda: render_meld_hand(self, self.board.players[player_to_right].melded_hand, seat=1)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_across].melded_hand, lambda: render_meld_hand(self, self.board.players[player_across].melded_hand, seat=2)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_to_left].melded_hand, lambda: render_meld_hand(self, self.board.players[player_to_left].melded_hand, seat=3)))
 
 
     # Discard Piles
-    self.elements.append(StatefulBoardElement([], lambda: self.board.players[0].discard_pile, lambda: render_discard_pile(self, 0)))
-    self.elements.append(StatefulBoardElement([], lambda: self.board.players[1].discard_pile, lambda: render_vertical_discard_pile(self, 1)))
-    self.elements.append(StatefulBoardElement([], lambda: self.board.players[2].discard_pile, lambda: render_discard_pile(self, 2)))
-    self.elements.append(StatefulBoardElement([], lambda: self.board.players[3].discard_pile, lambda: render_vertical_discard_pile(self, 3)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_pov].discard_pile, lambda: render_discard_pile(self, player_pov, 0)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_to_right].discard_pile, lambda: render_vertical_discard_pile(self, player_to_right, 1)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_across].discard_pile, lambda: render_discard_pile(self, player_across, 2)))
+    self.elements.append(StatefulBoardElement([], lambda: self.board.players[player_to_left].discard_pile, lambda: render_vertical_discard_pile(self, player_to_left, 3)))
 
     # Center Info
     self.elements.append(StatefulBoardElement([], lambda: center_info_state(self.board), lambda: render_center_info(self)))

@@ -1,4 +1,5 @@
 import random
+import asyncio
 from .call import Call, CallDirection
 from .meld import Meld
 from .wall import generate_start_board
@@ -63,6 +64,7 @@ class Board():
 
   def register_player(self, player):
     player.board = self
+    player.player_id = len(self.players)
     self.players.append(player)
 
   def on_call(self, player):

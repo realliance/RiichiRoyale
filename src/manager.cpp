@@ -10,6 +10,7 @@
 #include <memory>              // for allocator_traits<>::value_type
 #include <string>              // for string
 #include <vector>              // for vector
+#include <thread>
 #include <angrydiscardobot.h>
 #include <pythonaiinterface.h>
 
@@ -26,6 +27,8 @@
 
 auto MahjongGameManager::StartGame(std::vector<std::string> playerAIs, bool async) -> void {
   if(async){
+    std::thread gameloop(&MahjongGameManager::GameLoop, playerAIs);
+    gameloop.detach();
   }else{
     GameLoop(playerAIs);
   }
@@ -66,7 +69,7 @@ auto MahjongGameManager::GameLoop(std::vector<std::string> seatAIs) -> void{
   state.currentPlayer = 0;
   stateFunction newState = RoundStart;
   while(state.roundCounter < 8){
-    newState(state);
+    newState = newState(state);
   }
   for(auto & player : state.players){
     player.controller->ReceiveEvent(END_EVENT);
@@ -78,12 +81,13 @@ auto MahjongGameManager::RoundStart(GameState& state) -> stateFunction {
   state.walls = Walls();
   for(size_t i = 0; i < 4; i++){
     auto hand = state.walls.TakeHand();
+    std::cout << hand.size() << std::endl;
     state.players[i].controller->RoundStart(
       hand,
       state.players[i].seat,
       state.prevalentWind
     );
-    state.hands.push_back(Hand(hand));
+    state.hands[i] = Hand(hand);
   }
   state.players[state.currentPlayer].controller->ReceiveEvent(
     Event{
@@ -98,6 +102,7 @@ auto MahjongGameManager::RoundStart(GameState& state) -> stateFunction {
 
 
 auto MahjongGameManager::PlayerTurn(GameState& state) -> stateFunction {
+  std::cout << "It is currently this player hours: " << state.currentPlayer << std::endl;
   if(state.walls.GetRemainingPieces() == 0){
     state.currentState = AfterExhaustiveDraw;
     return RoundEnd;
@@ -107,11 +112,21 @@ auto MahjongGameManager::PlayerTurn(GameState& state) -> stateFunction {
     draw = state.lastDiscard;
   }else if(state.currentState == AfterReplacementDraw){
     draw = state.walls.TakeReplacementTile();
+    AlertPlayers(state,
+      Event{
+        Dora, // type
+        -1, // player
+        static_cast<int16_t>(state.walls.GetDoras().back().toUint8_t()), // piece
+        false, // decision
+      }
+    );
+    state.hands[state.currentPlayer].live.push_back(draw);
+    state.hands[state.currentPlayer].sort();
   }else{
     draw = state.walls.TakePiece();
+    state.hands[state.currentPlayer].live.push_back(draw);
+    state.hands[state.currentPlayer].sort();
   }
-  state.hands[state.currentPlayer].live.push_back(draw);
-  state.hands[state.currentPlayer].sort();
 
   bool needDecision = false;
   if(!state.hands[state.currentPlayer].riichi){
@@ -136,7 +151,7 @@ auto MahjongGameManager::PlayerTurn(GameState& state) -> stateFunction {
     );
     needDecision = true;
   }
-  if(CanConvertedKan(state,draw)){
+  if(CanConvertedKan(state)){
     state.players[state.currentPlayer].controller->ReceiveEvent(
       Event{
         ConvertedKan, // type
@@ -158,7 +173,7 @@ auto MahjongGameManager::PlayerTurn(GameState& state) -> stateFunction {
     );
     needDecision = true;
   }
-  if(CanTsumo(state,draw)){
+  if(CanTsumo(state)){
     state.players[state.currentPlayer].controller->ReceiveEvent(
       Event{
         Tsumo, // type
@@ -168,12 +183,6 @@ auto MahjongGameManager::PlayerTurn(GameState& state) -> stateFunction {
       }
     );
     needDecision = true;
-  }
-
-  Event decision;
-  while(needDecision){
-    decision = state.players[state.currentPlayer].controller->RetrieveDecision();
-    needDecision = !ValidateDecision(state,state.currentPlayer, decision, true, draw);
   }
 
   if(!needDecision){
@@ -189,6 +198,12 @@ auto MahjongGameManager::PlayerTurn(GameState& state) -> stateFunction {
       }
     });
     return DiscardState;
+  }
+
+  Event decision;
+  while(needDecision){
+    decision = state.players[state.currentPlayer].controller->RetrieveDecision();
+    needDecision = !ValidateDecision(state,state.currentPlayer, decision, true, draw);
   }
 
   if(decision.type == Tsumo){
@@ -255,7 +270,7 @@ auto MahjongGameManager::DiscardState(GameState& state) -> stateFunction{
       continue;
     }
     if(CanChi(state,i)){
-      state.players[state.currentPlayer].controller->ReceiveEvent(
+      state.players[i].controller->ReceiveEvent(
         Event{
           Chi, // type
           state.currentPlayer, // player
@@ -267,7 +282,7 @@ auto MahjongGameManager::DiscardState(GameState& state) -> stateFunction{
       anyDecisionNeeded = true;
     }
     if(CanPon(state,i)){
-      state.players[state.currentPlayer].controller->ReceiveEvent(
+      state.players[i].controller->ReceiveEvent(
         Event{
           Pon, // type
           state.currentPlayer, // player
@@ -279,7 +294,7 @@ auto MahjongGameManager::DiscardState(GameState& state) -> stateFunction{
       anyDecisionNeeded = true;
     }
     if(CanKan(state,i)){
-      state.players[state.currentPlayer].controller->ReceiveEvent(
+      state.players[i].controller->ReceiveEvent(
         Event{
           Kan, // type
           state.currentPlayer, // player
@@ -291,7 +306,7 @@ auto MahjongGameManager::DiscardState(GameState& state) -> stateFunction{
       anyDecisionNeeded = true;
     }
     if(CanRon(state,i)){
-      state.players[state.currentPlayer].controller->ReceiveEvent(
+      state.players[i].controller->ReceiveEvent(
         Event{
           Ron, // type
           state.currentPlayer, // player
@@ -328,6 +343,8 @@ auto MahjongGameManager::DiscardState(GameState& state) -> stateFunction{
           tempDecision.piece = static_cast<int16_t>(state.lastDiscard.toUint8_t());
           decision.push_back(tempDecision);
         }
+      }else{
+        std::cerr << "Decision Validation Failed: " << tempDecision << std::endl;
       }
     }
   }
@@ -371,6 +388,7 @@ auto MahjongGameManager::DiscardState(GameState& state) -> stateFunction{
     state.currentState = AfterCall;
     MeldPieces(state, state.currentPlayer, decision[0]);
     AlertPlayers(state,decision[0]);
+    std::cout << "PON HAND: " << state.hands[decision[0].player] << std::endl;
     return PlayerTurn;
   }
 
@@ -445,7 +463,6 @@ auto MahjongGameManager::RoundEnd(GameState& state) -> stateFunction {
   state.lastCall = -1;
   state.lastDiscard = ERROR_PIECE;
   state.currentState = AfterDraw;
-  state.hands.clear();
   return RoundStart;
 }
 
@@ -476,6 +493,9 @@ auto MahjongGameManager::CanRon(GameState& state, int player) -> bool{
 }
 
 auto MahjongGameManager::CanKan(const GameState& state, int player) -> bool{
+  if(state.currentState == AfterConcealedKanDiscard || state.currentState == AfterKanDiscard ){
+    return false;
+  }
   if(CountPieces(state,player,state.lastDiscard) == 3){
     return true;
   }
@@ -483,6 +503,9 @@ auto MahjongGameManager::CanKan(const GameState& state, int player) -> bool{
 }
 
 auto MahjongGameManager::CanPon(const GameState& state, int player) -> bool{
+  if(state.currentState == AfterConcealedKanDiscard || state.currentState == AfterKanDiscard ){
+    return false;
+  }
   if(CountPieces(state,player,state.lastDiscard) == 2){
     return true;
   }
@@ -503,6 +526,9 @@ auto MahjongGameManager::GetChiStart(const GameState& state, int player) -> Piec
 }
 
 auto MahjongGameManager::CanChi(const GameState& state, int player) -> bool{
+  if(state.currentState == AfterConcealedKanDiscard || state.currentState == AfterKanDiscard ){
+    return false;
+  }
   if(state.lastDiscard.isHonor()){
     return false;
   }
@@ -521,23 +547,17 @@ auto MahjongGameManager::CanChi(const GameState& state, int player) -> bool{
   return false;
 }
 
-auto MahjongGameManager::CanTsumo(GameState& state, Piece p) -> bool{
-  state.hands[state.currentPlayer].live.push_back(p);
-  state.hands[state.currentPlayer].sort();
+auto MahjongGameManager::CanTsumo(const GameState& state) -> bool{
   bool canTsumo = isComplete(state,state.currentPlayer);
-  state.hands[state.currentPlayer].live.erase(
-    std::find(
-      state.hands[state.currentPlayer].live.begin(),
-      state.hands[state.currentPlayer].live.end(),
-      p
-    )
-  );
   return canTsumo;
 }
 
-auto MahjongGameManager::CanConvertedKan(const GameState& state, Piece p) -> bool{
+auto MahjongGameManager::CanConvertedKan(const GameState& state) -> bool{
+  if(state.currentState == AfterCall){
+    return false;
+  }
   for(const auto & meld: state.hands[state.currentPlayer].melds){
-    if(meld.type == PonMeld && meld.start == p){
+    if(meld.type == PonMeld && CountPieces(state,state.currentPlayer,meld.start)==1){
       return true;
     }
   }
@@ -577,6 +597,8 @@ auto MahjongGameManager::ScorePlayers(const GameState& state) -> std::array<int1
 
 // Push Event to Player Queue
 auto MahjongGameManager::AlertPlayers(const GameState& state, Event e) -> void {
+  e.decision = false;
+  std::cout << "ALERT PLAYERS: " << e << std::endl;
   for(const auto & player : state.players){
     player.controller->ReceiveEvent(e);
   }
@@ -588,13 +610,15 @@ auto MahjongGameManager::CountPieces(const GameState& state, int player, Piece p
 }
 
 // Remove an instance of piece p from given players hand
-auto MahjongGameManager::RemovePieces(GameState& state, int player, Piece p, int count) -> Piece {
+auto MahjongGameManager::RemovePieces(GameState& state, int player, Piece p, int count) -> int {
   count = std::min(CountPieces(state,player,p),count);
+  std::cout << "BIG COUNTO: " << count << std::endl;
+  int removed = 0;
   state.hands[player].live.erase(
     std::remove_if(state.hands[player].live.begin(), state.hands[player].live.end(),
       [&](Piece _p){
-        if(count > 0 && p == _p){
-          count++;
+        if(count > removed && p == _p){
+          removed++;
           return true;
         }
         return false;
@@ -602,45 +626,61 @@ auto MahjongGameManager::RemovePieces(GameState& state, int player, Piece p, int
     ),
     state.hands[player].live.end()
   );
-  return p;
+  return removed;
 }
 
 // Discard an instance of piece p from given players hand
 auto MahjongGameManager::DiscardPiece(GameState& state, int player, Piece p) -> void {
-  state.hands[player].discards.push_back(RemovePieces(state,player,p,1));
+  RemovePieces(state,player,p,1);
+  state.hands[player].discards.push_back(p);
 }
 
 // Produce a Meld given the Event
 auto MahjongGameManager::MeldPieces(GameState& state, int player, Event e) -> void {
   if (e.type == Pon) {
-    RemovePieces(state,player,e.piece,3);
+    std::cout << "PON TIME =================: " << state.hands[player] << std::endl;
+    if(RemovePieces(state,player,e.piece,3) != 3){
+      ErrorState(state,"Not enough pieces to meld into a Pon: Player: " + std::to_string(player) + " Event: " + Piece(e.piece).toStr());
+    }
     state.hands[player].melds.push_back({ PonMeld,  e.piece });
     return;
   }
 
   // Needs to be first piece given in event
   if (e.type == Chi) {
-    RemovePieces(state,player,e.piece,1);
-    RemovePieces(state,player,e.piece+1,1);
-    RemovePieces(state,player,e.piece+2,1);
+    if(RemovePieces(state,player,e.piece,1) != 1){
+      ErrorState(state,"Not enough pieces to meld into a chi[0] player: " + std::to_string(player) + " Event: " + Piece(e.piece).toStr());
+    }
+    if(RemovePieces(state,player,e.piece+1,1) != 1){
+      ErrorState(state,"Not enough pieces to meld into a chi[1]: " + std::to_string(player) + " Event: " + Piece(e.piece).toStr());
+    }
+    if(RemovePieces(state,player,e.piece+2,1) != 1){
+      ErrorState(state,"Not enough pieces to meld into a chi[2]: " + std::to_string(player) + " Event: " + Piece(e.piece).toStr());
+    }
     state.hands[player].melds.push_back({ ChiMeld,  e.piece });
     return;
   }
 
   if (e.type == Kan) {
-    RemovePieces(state,player,e.piece,4);
+    if(RemovePieces(state,player,e.piece,4) != 4){
+      ErrorState(state,"Not enough pieces to meld into a Kan: " + std::to_string(player) + " Event: " + Piece(e.piece).toStr());
+    }
     state.hands[player].melds.push_back({ KanMeld,  e.piece });
     return;
   }
 
   if (e.type == ConcealedKan) {
-    RemovePieces(state,player,e.piece,4);
+    if(RemovePieces(state,player,e.piece,4) != 4){
+      ErrorState(state,"Not enough pieces to meld into a ConcealedKan: " + std::to_string(player) + " Event: " + Piece(e.piece).toStr());
+    }
     state.hands[player].melds.push_back({ ConcealedKanMeld,  e.piece });
     return;
   }
 
   if (e.type == ConvertedKan) {
-    RemovePieces(state,player,e.piece,1);
+    if(RemovePieces(state,player,e.piece,1) != 1){
+      ErrorState(state,"Not enough pieces to meld into a ConvertedKan: " + std::to_string(player) + " Event: " + Piece(e.piece).toStr());
+    }
     for(auto& meld : state.hands[player].melds){
       if(meld.type == PonMeld && meld.start == e.piece){
         meld.type = KanMeld;
@@ -651,7 +691,7 @@ auto MahjongGameManager::MeldPieces(GameState& state, int player, Event e) -> vo
 }
 
 auto MahjongGameManager::ValidateDecision(GameState& state, int player, Event decision, bool inHand, Piece piece) -> bool {
-  if(decision.type > Decline){
+  if(decision.type > Discard){
     return false;
   }
   if(decision.type > Decline && !inHand){
@@ -670,11 +710,11 @@ auto MahjongGameManager::ValidateDecision(GameState& state, int player, Event de
     case Chi:
       return CanChi(state,player);
     case Tsumo:
-      return CanTsumo(state,piece);
+      return CanTsumo(state);
     case ConcealedKan:
       return CanConcealedKan(state,piece);
     case ConvertedKan:
-      return CanConvertedKan(state,piece);
+      return CanConvertedKan(state);
     case Riichi:
       return CanRiichi(state) && CountPieces(state,player,decision.piece) > 0;
     case Discard:

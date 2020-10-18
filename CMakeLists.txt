@@ -10,7 +10,6 @@ option(PACKAGE_TOOLS "Build the tools" OFF)
 add_subdirectory(${RiichiRoyale_SOURCE_DIR}/libs)
 
 find_package(Python3 COMPONENTS Interpreter Development)
-find_package(Threads REQUIRED)
 
 if(PACKAGE_TOOLS)
   add_subdirectory(${RiichiRoyale_SOURCE_DIR}/tools)
@@ -22,7 +21,7 @@ if(PACKAGE_TESTS)
   add_subdirectory(${RiichiRoyale_SOURCE_DIR}/cxxtests)
 endif()
 
-add_library(RiichiRoyale)
+pybind11_add_module(RiichiRoyale)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wmost -Wextra -flto -fvisibility=hidden)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -35,8 +34,6 @@ add_subdirectory(${RiichiRoyale_SOURCE_DIR}/src)
 
 target_include_directories(RiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/include")
 target_include_directories(RiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/aicontrollers")
-target_link_libraries(RiichiRoyale PRIVATE pybind11::module ${CMAKE_THREAD_LIBS_INIT})
-set_target_properties(RiichiRoyale PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}" SUFFIX "${PYTHON_MODULE_EXTENSION}")
 
 add_custom_target(
   check
@@ -45,7 +42,7 @@ add_custom_target(
 )
 
 add_custom_command(TARGET RiichiRoyale POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:RiichiRoyale> ${CMAKE_CURRENT_SOURCE_DIR}/riichiroyale/libmahjong.so
+  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:RiichiRoyale> ${CMAKE_CURRENT_SOURCE_DIR}/./libmahjong.so
 )
 
 find_program(iwyu_path NAMES include-what-you-use iwyu  REQUIRED)

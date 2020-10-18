@@ -30,9 +30,9 @@ private:
   static auto DiscardState(GameState& state) -> stateFunction;
   static auto RoundEnd(GameState& state) -> stateFunction;
 
-  _Noreturn static auto ErrorState(const GameState& state, std::string info) -> void;
+  [[noreturn]] static auto ErrorState(const GameState& state, std::string info) -> void;
 
-  static auto RemovePieces(GameState& state, int player, Piece p, int count) -> Piece;
+  static auto RemovePieces(GameState& state, int player, Piece p, int count) -> int;
   static auto DiscardPiece(GameState& state, int player, Piece p) -> void;
   static auto MeldPieces(GameState& state, int player, Event e) -> void;
 
@@ -42,9 +42,9 @@ private:
   static auto GetChiStart(const GameState& state, int player) -> Piece;
   static auto CanRon( GameState& state, int player) -> bool;
 
-  static auto CanConvertedKan(const GameState& state, Piece p) -> bool;
+  static auto CanConvertedKan(const GameState& state) -> bool;
   static auto CanConcealedKan(const GameState& state, Piece p) -> bool;
-  static auto CanTsumo( GameState& state, Piece p) -> bool;
+  static auto CanTsumo(const GameState& state) -> bool;
   static auto CanRiichi(const GameState& state) -> bool;
 
 

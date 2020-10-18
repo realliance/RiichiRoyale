@@ -57,12 +57,6 @@ public:
 PYBIND11_MODULE(libmahjong, m) {
   m.doc() = "Mahjong Game Driver";
 
-  py::class_<Player>(m, "Player")
-    .def(py::init<>())
-    .def_readonly("points", &Player::points)
-    .def_readonly("position", &Player::position)
-    .def_readonly("seat", &Player::seat);
-
   py::enum_<Wind>(m, "Wind")
     .value("East", Wind::East)
     .value("South", Wind::South)
@@ -80,18 +74,19 @@ PYBIND11_MODULE(libmahjong, m) {
     .value("Riichi", EventType::Riichi)
     .value("Discard", EventType::Discard)
     .value("Decline", EventType::Decline)
+    .value("ConvertedKan", EventType::ConvertedKan)
     .value("Dora", EventType::Dora)
     .value("PointDiff", EventType::PointDiff)
     .value("ExhaustiveDraw", EventType::ExhaustiveDraw)
     .value("End", EventType::End)
     .export_values();
 
-  py::class_<Event>(m, "Event")
+  py::class_<Event>(m, "EngineEvent")
     .def(py::init<>())
-    .def_readonly("type", &Event::type)
-    .def_readonly("player", &Event::player)
-    .def_readonly("piece", &Event::piece)
-    .def_readonly("decision", &Event::decision);
+    .def_readwrite("type", &Event::type)
+    .def_readwrite("player", &Event::player)
+    .def_readwrite("piece", &Event::piece)
+    .def_readwrite("decision", &Event::decision);
 
   py::class_<MahjongAI,PyMahjongAI>(m, "MahjongAI")
     .def(py::init<>())
@@ -109,6 +104,12 @@ PYBIND11_MODULE(libmahjong, m) {
     .def("RetrieveDecision", &PythonAIInterface::PyRetrieveDecision)
     .def("Name", &PythonAIInterface::Name)
     .def("Inst", &PythonAIInterface::Inst);
+
+  py::class_<RoundStartStruct>(m, "RoundStartInfo")
+    .def(py::init<>())
+    .def_readonly("hand", &RoundStartStruct::hand)
+    .def_readonly("seat_wind", &RoundStartStruct::seatWind)
+    .def_readonly("prevalent_wind", &RoundStartStruct::prevalentWind);
 
   py::class_<MahjongGameManager>(m, "MahjongGameManager")
     .def("avaliable_ais", &MahjongGameManager::GetAvailableAIs)

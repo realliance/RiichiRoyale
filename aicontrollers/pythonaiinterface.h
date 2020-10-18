@@ -9,7 +9,7 @@
 #include <vector>       // for vector
 
 struct RoundStartStruct{
-  std::vector<Piece> board;
+  std::vector<int16_t> hand;
   Wind seatWind;
   Wind prevalentWind;
 };
@@ -17,14 +17,18 @@ struct RoundStartStruct{
 class PythonAIInterface : public MahjongAI{
 public:
   PythonAIInterface();
+
+  // Python Interface Functions
   auto PyGameStart() -> int; // Returns playerID
   auto PyRoundStart() -> RoundStartStruct;
   auto PyReceiveEvents() -> std::vector<Event>;
   auto PyRetrieveDecision(Event e) -> void;
   auto Name() -> std::string;
+
+  // Engine Functions
   ~PythonAIInterface();
   auto GameStart(int _playerID) -> void;
-  auto RoundStart(std::vector<Piece> board, Wind seatWind, Wind prevalentWind) -> void;
+  auto RoundStart(std::vector<Piece> hand, Wind seatWind, Wind prevalentWind) -> void;
   auto ReceiveEvent(Event e) -> void;
   auto RetrieveDecision() -> Event;
   auto static Inst() -> PythonAIInterface*;
@@ -39,4 +43,5 @@ private:
   std::atomic<bool> decisionRecieved = false;
   std::atomic<bool> roundStartRecieved = false;
   std::atomic<bool> emptyEvents = true;
+  static std::atomic<bool> instSet;
 };

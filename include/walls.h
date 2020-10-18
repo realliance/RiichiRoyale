@@ -1,12 +1,11 @@
 #pragma once
-#include <deque>        // for deque
 #include <iosfwd>       // for ostream
 #include <vector>       // for vector
 #include "piecetype.h"  // for Piece
 
 class Walls{
-  std::deque<Piece> livingWalls;
-  std::deque<Piece> deadWall;
+  std::vector<Piece> livingWalls;
+  std::vector<Piece> deadWall;
   int doraCount = 1;
   int replacements = 4;
   friend auto operator<<(std::ostream& os, const Walls& walls) -> std::ostream&;

@@ -1,9 +1,10 @@
-from functools import reduce
+from libmahjong import PythonAIInterface, EngineEvent, EventType
 from .call import Call, chi_possible, kan_possible, pon_possible
 
 class Player:
-  def __init__(self, name, starting_hand=None, discard_pile=None):
+  def __init__(self, name, starting_hand=None, discard_pile=None, ai_managed=False):
     self.name = name
+    self.player_id = None
     if starting_hand is None:
       self.hand = []
     else:
@@ -19,6 +20,7 @@ class Player:
     self.calls_avaliable = []
     self.my_turn = False
     self.discarder = None
+    self.ai_managed = ai_managed
 
   def full_hand(self):
     meld_tiles = len(self.melded_hand) * 3
@@ -26,19 +28,30 @@ class Player:
 
   def on_tile_click(self, tile_index, tutorial_state=None):
     if self.my_turn:
+      if len(self.calls_avaliable) != 0:
+        return
       # Discard Tile
       tile = self.hand[tile_index]
+      print(tile)
       if (tutorial_state is None) or (tutorial_state.next_discard == tile):
-        del self.hand[tile_index]
         self.board.play_clack()
-        self.hand.sort()
-        self.discard_pile.append(tile)
+        if self.ai_managed:
+          event = EngineEvent()
+          event.type = EventType.Discard
+          event.piece = int(tile)
+          event.player = self.player_id
+          event.decision = True
+          PythonAIInterface.Inst().RetrieveDecision(event)
+        else:
+          del self.hand[tile_index]
+          self.hand.sort()
+          self.discard_pile.append(tile)
+          if self.board is None:
+            raise "Cannot communicate with board! Is this player registered?"
+          self.board.on_discard(self)
+          if tutorial_state is not None:
+            tutorial_state.discard()
         self.my_turn = False
-        if self.board is None:
-          raise "Cannot communicate with board! Is this player registered?"
-        self.board.on_discard(self)
-        if tutorial_state is not None:
-          tutorial_state.discard()
 
   def on_opponent_discard(self, player, chi_avaliable, ron_available=False):
     if len(player.discard_pile) == 0:

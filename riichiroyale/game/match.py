@@ -1,3 +1,4 @@
+from libmahjong import PythonAIInterface, Wind
 from .board import Board
 
 class Match():
@@ -19,6 +20,7 @@ class Match():
       self.players[seat] = player
     else:
       self.players += [player]
+      player.player_id = len(self.players) - 1
     self.scores += [starting_score]
 
   def increment_match(self):
@@ -34,6 +36,12 @@ class Match():
       if not self.ai_managed:
         player.hand = self.current_board.draw_tile(num=13)
         player.hand.sort()
+      else:
+        round_info = PythonAIInterface.Inst().RoundStart()
+        player.hand = round_info.hand
+        player.hand.sort()
+        self.current_board.current_dealer = round_info.seat_wind
+        self.east_prevalent = round_info.prevalent_wind == Wind.East
 
   def should_end(self):
     # Game should end if the dealer has revolved and either a) it is a single wind game or b) it is a two wind game and south is the prevalent wind

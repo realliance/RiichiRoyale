@@ -1,5 +1,6 @@
 import unittest
-from riichiroyale.game import Player, BoardManager, Match, Event, EventType, Tile, process_event_queue, Call, CallDirection
+from libmahjong import EventType
+from riichiroyale.game import Player, BoardManager, Match, Event, Tile, process_event_queue, Call, CallDirection
 from riichiroyale.views import GameManager
 
 class TestBoardManager(unittest.TestCase):

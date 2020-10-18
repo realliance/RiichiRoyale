@@ -8,6 +8,7 @@
 
 class Hand{
 public:
+  Hand() = default;
   explicit Hand(std::vector<Piece> live): live(live){}
   auto inline sort() -> void { 
     std::sort(live.begin(),live.end());

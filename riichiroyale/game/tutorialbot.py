@@ -1,3 +1,4 @@
+import asyncio
 from .player import Player
 
 class TutorialBot(Player):

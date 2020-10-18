@@ -30,7 +30,8 @@ Walls::Walls(){
 Piece Walls::TakePiece(){
   if(livingWalls.size() > 0){
     Piece p = livingWalls.front();
-    livingWalls.pop_front();
+    livingWalls.erase(livingWalls.begin());
+    std::cout << "DAMN THAT'S A BEEFY WALL: " << livingWalls.size() << std::endl;
     return p;
   }
   return PieceType::ERROR_PIECE;
@@ -41,7 +42,8 @@ std::vector<Piece> Walls::TakeHand(){
     return {};
   }
   std::vector<Piece> hand;
-  std::move(livingWalls.begin(), livingWalls.begin() + 13, std::back_inserter(hand));
+  std::move(livingWalls.begin(), livingWalls.begin()+13, std::back_inserter(hand));
+  std::cout << "DAMN THAT'S A BEEFY WALL: " << livingWalls.size() << std::endl;
   return hand;
 }
 
@@ -51,9 +53,11 @@ Piece Walls::TakeReplacementTile() {
   }
   replacements--;
   Piece p = deadWall.front();
-  deadWall.pop_front();
+  deadWall.erase(deadWall.begin());
   deadWall.push_back(livingWalls.back());
+
   livingWalls.pop_back();
+  std::cout << "DAMN THAT'S A BEEFY WALL: " << livingWalls.size() << std::endl;
   return p;
 }
 

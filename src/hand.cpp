@@ -35,7 +35,7 @@ auto operator<<(std::ostream& os, const Hand& hand) -> std::ostream&{
   os << " riichi: " << hand.riichi;
   os << " riichiPieceDiscard: " << hand.riichiPieceDiscard;
   os << " riichiRound: " << hand.riichiRound;
-  os << "live: [" << std::endl;;
+  os << " live: [" << std::endl;;
   for(const auto & piece : hand.live){
     os << piece.toStr() << ", ";
   }

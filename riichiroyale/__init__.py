@@ -1,5 +1,3 @@
-import libmahjong
-
 from .audio import *
 from .sprites import *
 from .utils import *

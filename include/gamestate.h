@@ -31,8 +31,8 @@ struct GameState{
   int turnCount = 0;
   int riichiSticks = 0;
   int roundCounter = 0;
-  std::vector<Hand> hands;
-  std::vector<Player> players;
+  std::array<Hand,4> hands;
+  std::array<Player,4> players;
   std::vector<Event> winners;
   Walls walls;
 };

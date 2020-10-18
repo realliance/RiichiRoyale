@@ -14,7 +14,7 @@ setuptools.setup(
     url="https://github.com/HartleyAHartley/RiichiRoyale",
     packages=['libmahjong', 'riichiroyale'],
     package_dir={'libmahjong': '.'},
-    package_data={'libmahjong': ['riichiroyale/libmahjong.so'], 'riichiroyale': ['riichiroyale/libmahjong.so', 'riichiroyale/resources/theme.json', 'riichiroyale/*', 'riichiroyale/**/*', 'riichiroyale/**/**/*', 'riichiroyale/resources/**/**/*']},
+    package_data={'libmahjong': ['libmahjong.so'], 'riichiroyale': ['riichiroyale/resources/theme.json', 'riichiroyale/*', 'riichiroyale/**/*', 'riichiroyale/**/**/*', 'riichiroyale/resources/**/**/*']},
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: Microsoft :: Windows",

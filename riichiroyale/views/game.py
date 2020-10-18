@@ -3,11 +3,12 @@ import math
 import random
 import pygame_gui
 import pygame
+import asyncio
 from pygame import Rect
 from pygame import surface
-import libmahjong
+from libmahjong import MahjongGameManager, MahjongAI, PythonAIInterface, EngineEvent, EventType
 from riichiroyale import BoardRender, Tile
-from riichiroyale.game import Player, Match, TutorialBot, Call
+from riichiroyale.game import Player, Match, TutorialBot, Call, process_event_queue
 from .menuview import MenuView
 
 class GameView(MenuView):
@@ -15,12 +16,15 @@ class GameView(MenuView):
     ui_manager, process_ui_event, self.buttons = self.create_game_elements(game_manager, screen_width, screen_height)
     super().__init__("game", ui_manager)
     self.tutorial = None
+    self.ai_game_active = False
     self.screen = screen
     self.screen_width = screen_width
     self.screen_height = screen_height
     self.screen_width_ratio = width_ratio
     self.screen_height_ratio = height_ratio
+    self.game_manager = game_manager
     self.ai_managed = ai_managed
+    self.player_ai_inst = None
 
     # Fill background
     background = surface.Surface(screen.get_size())
@@ -55,23 +59,34 @@ class GameView(MenuView):
     if tutorial_info is not None:
       wall = tutorial_info.wall
       deadwall = tutorial_info.deadwall
+      self.match.player_id = 0
       self.match.register_player(TutorialBot("Bot 1", self.tutorial.winning_tile))
       self.match.register_player(TutorialBot("Bot 2", self.tutorial.winning_tile))
       self.match.register_player(TutorialBot("Bot 3", self.tutorial.winning_tile))
     elif self.ai_managed:
-      self.match.register_player(Player("Bot 1"))
-      self.match.register_player(Player("Bot 2"))
-      self.match.register_player(Player("Bot 3"))
+      MahjongGameManager.start_game(["PythonAIInterface"] + ["AngryDiscardoBot"] * 3, True)
+      self.match.player_ai_inst = PythonAIInterface.Inst()
+      self.match.player_id = self.match.player_ai_inst.GameStart()
+      self.match.players[0].ai_managed = True
+      self.match.register_player(Player("Bot 1", ai_managed=True))
+      self.match.register_player(Player("Bot 2", ai_managed=True))
+      self.match.register_player(Player("Bot 3", ai_managed=True))
       wall = [Tile.ERROR_PIECE] * 70
       deadwall = [Tile.ERROR_PIECE] * 14
+      self.ai_game_active = True
     self.match.new_board(wall=wall, deadwall=deadwall)
     random.shuffle(self.sound_manager.music_playlist)
     self.sound_manager.start_playlist()
-    self.board_render = BoardRender(self.small_tile_dict, self.tile_dict, self.play_area, self.match.current_board, 0)
+    self.board_render = BoardRender(self.small_tile_dict, self.tile_dict, self.play_area, self.match.current_board, self.match.player_id)
     if not self.ai_managed:
       self.match.current_board.on_turn()
 
   def update(self, time_delta):
+    if self.ai_game_active:
+      queued_events = self.match.player_ai_inst.ReceiveEvent()
+      if len(queued_events) != 0:
+        print(queued_events)
+        process_event_queue(self.game_manager, self.match, queued_events)
     if self.player.calls_avaliable:
       self.buttons["skip"].show()
       #self.buttons["text"].show()
@@ -81,7 +96,7 @@ class GameView(MenuView):
         elif decision == Call.Pon:
           self.buttons["pon"].show()
         elif decision == Call.Kan or decision == Call.Concealed_Kan:
-          self.buttons["Kan"].show()
+          self.buttons["kan"].show()
         elif decision == Call.Riichi:
           self.buttons["riichi"].show()
         elif decision == Call.Ron:
@@ -226,6 +241,7 @@ class GameView(MenuView):
       "chi": chi_button,
       "kan": kan_button,
       "ron": ron_button,
+      "riichi": riichi_button,
       "tsumo": tsumo_button,
       "skip": skip_button,
       "text": text_box
@@ -234,37 +250,69 @@ class GameView(MenuView):
     def process_ui_event(event):
       if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
         if event.ui_element == pon_button:
-          if (self.tutorial is None) or (self.tutorial.next_call == 'pon'):
+          if self.ai_managed:
+            self.match.player_ai_inst.RetrieveDecision(self.game_manager.board_manager.last_decision_event.raw_event_b)
+          elif (self.tutorial is None) and (self.tutorial.next_call == 'pon'):
             self.tutorial.call()
             print('Pressed pon')
             self.match.current_board.decision_pending = False
             self.player.make_decision(Call.Pon)
-            for button in self.buttons:
-              buttons[button].hide()
+          for button in self.buttons:
+            buttons[button].hide()
         if event.ui_element == chi_button:
-          if (self.tutorial is None) or (self.tutorial.next_call == 'chi'):
+          if self.ai_managed:
+            self.match.player_ai_inst.RetrieveDecision(self.game_manager.board_manager.last_decision_event.raw_event_b)
+          elif (self.tutorial is None) or (self.tutorial.next_call == 'chi'):
             self.tutorial.call()
             print('Pressed chi')
             self.match.current_board.decision_pending = False
             self.player.make_decision(Call.Chi)
-            for button in self.buttons:
-              buttons[button].hide()
+          for button in self.buttons:
+            buttons[button].hide()
+        if event.ui_element == kan_button:
+          if self.ai_managed:
+            if self.game_manager.board_manager.last_decision_event.type == EventType.ConvertedKan:
+              self.match.player_ai_inst.RetrieveDecision(self.game_manager.board_manager.last_decision_event)
+            else:
+              self.match.player_ai_inst.RetrieveDecision(self.game_manager.board_manager.last_decision_event.raw_event_b)
+          for button in self.buttons:
+            buttons[button].hide()
+        if event.ui_element == tsumo_button:
+          if self.ai_managed:
+            self.match.player_ai_inst.RetrieveDecision(self.game_manager.board_manager.last_decision_event.raw_event_b)
+          for button in self.buttons:
+            buttons[button].hide()
+        if event.ui_element == riichi_button:
+          if self.ai_managed:
+            self.match.player_ai_inst.RetrieveDecision(self.game_manager.board_manager.last_decision_event)
+          for button in self.buttons:
+            buttons[button].hide()
         if event.ui_element == ron_button:
-          if (self.tutorial is None) or (self.tutorial.next_call == 'ron'):
+          if self.ai_managed:
+            self.match.player_ai_inst.RetrieveDecision(self.game_manager.board_manager.last_decision_event.raw_event_b)
+          elif (self.tutorial is None) or (self.tutorial.next_call == 'ron'):
             self.tutorial.call()
             print('Pressed ron')
             self.match.current_board.decision_pending = False
             self.player.make_decision(Call.Ron)
-            for button in self.buttons:
-              buttons[button].hide()
+          for button in self.buttons:
+            buttons[button].hide()
         if event.ui_element == skip_button:
-          if (self.tutorial is None) or (self.tutorial.next_call == 'skip'):
+          if self.ai_managed and self.game_manager.board_manager.last_decision_event.type not in (EventType.ConvertedKan, EventType.ConcealedKan):
+            event = EngineEvent()
+            event.type = EventType.Decline
+            event.piece = -1
+            event.player = -1
+            event.decision = True
+            PythonAIInterface.Inst().RetrieveDecision(event)
+          elif (self.tutorial is None) or (self.tutorial.next_call == 'skip'):
             self.tutorial.call()
             print('Pressed skip')
             self.match.current_board.decision_pending = False
             self.player.make_decision(Call.Skip)
-            for button in self.buttons:
-              buttons[button].hide()
+          for button in self.buttons:
+            buttons[button].hide()
+          self.player.calls_avaliable = []
     
     return ui_manager, process_ui_event, buttons
 
