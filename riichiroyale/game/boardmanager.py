@@ -160,15 +160,18 @@ def on_game_event(game_manager, event, match):
     if is_decision:
       if game_manager.board_manager.last_event is None or game_manager.board_manager.last_event.type not in (EventType.Chi, EventType.Pon, EventType.Kan):
         player.hand += [event.piece]
+        if len(match.current_board.wall) > 0:
+          del match.current_board.wall[-1]
       player.my_turn = True
       game_manager.board_manager.waiting_on_decision = True
     else:
       if not is_ai:
         player.hand.remove(event.piece)
         player.hand.sort()
+      else:
+        if len(match.current_board.wall) > 0:
+          del match.current_board.wall[-1]
       player.discard_pile += [event.piece]
-      if len(match.current_board.wall) > 0:
-        del match.current_board.wall[-1]
 
   elif (event_type == EventType.ConcealedKan):
     if is_decision:
@@ -196,6 +199,7 @@ def on_game_event(game_manager, event, match):
 
   elif (event_type == EventType.PointDiff):
     match.scores[event.player] += event.piece
+    game_manager.board_manager.round_should_end = True
 
   elif (event_type == EventType.End):
     game_manager.board_manager.game_should_end = True

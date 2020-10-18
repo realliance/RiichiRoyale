@@ -35,9 +35,7 @@ Piece Walls::TakePiece(){
   if(livingWalls.size() > 0){
     Piece p = livingWalls.front();
     livingWalls.erase(livingWalls.begin());
-    for(size_t i = 0; i < 14; i++){
-      livingWalls.erase(livingWalls.begin());
-    }
+    std::cout << "We now at " << livingWalls.size() << std::endl;
     return p;
   }
   return PieceType::ERROR_PIECE;
@@ -49,7 +47,7 @@ std::vector<Piece> Walls::TakeHand(){
   }
   std::vector<Piece> hand;
   std::move(livingWalls.begin(), livingWalls.begin()+13, std::back_inserter(hand));
-  for(size_t i = 0; i < 14; i++){
+  for(size_t i = 0; i < 13; i++){
     livingWalls.erase(livingWalls.begin());
   }
   return hand;
