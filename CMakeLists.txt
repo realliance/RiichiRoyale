@@ -58,6 +58,6 @@ add_custom_command(TARGET RiichiRoyale POST_BUILD
 )
 
 find_program(iwyu_path NAMES include-what-you-use iwyu)
-if(NOT ${iwyu_path} STREQUAL "")
+if(iwyu_path)
   set_property(TARGET RiichiRoyale PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
 endif()

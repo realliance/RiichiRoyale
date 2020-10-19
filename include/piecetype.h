@@ -94,7 +94,7 @@ public:
     return (p | RED_FIVE) != (rhs.p | RED_FIVE);
   }
 
-  inline auto operator-(uint i) const -> Piece{
+  inline auto operator-(uint8_t i) const -> Piece{
     if(i == 0){
       return Piece(p);
     }
@@ -107,7 +107,7 @@ public:
     return Piece(((p-i) & ~uint8_t(RED_FIVE)) & ~uint8_t(TERMINAL_BIT));
   }
 
-  inline auto operator+(uint i) const -> Piece{
+  inline auto operator+(uint8_t i) const -> Piece{
     if(i == 0){
       return Piece(p);
     }
