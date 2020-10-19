@@ -7,7 +7,7 @@ from pygame.font import Font
 
 def create_wind_markers(board, parent_rect, group):
   current_path = os.path.dirname(os.path.realpath(__file__))
-  font_path = os.path.join(current_path, '..', '..', 'resources/fonts/SourceSans3-Semibold.ttf')
+  font_path = os.path.join(current_path, '..', '..', 'resources', 'fonts', 'SourceSans3-Semibold.ttf')
   font = Font(font_path, 40)
   MARKER_SIZE = (40, 40)
   MARKER_SIZE_HALF = (MARKER_SIZE[0] / 2, MARKER_SIZE[1] / 2)
@@ -123,7 +123,7 @@ def render_center_info(board_render):
   pygame.draw.rect(center_info_surface, (0, 0, 0), info_rect)
 
   current_path = os.path.dirname(os.path.realpath(__file__))
-  font_path = os.path.join(current_path, '..', '..', 'resources/fonts/SourceSans3-Semibold.ttf')
+  font_path = os.path.join(current_path, '..', '..', 'resources', 'fonts', 'SourceSans3-Semibold.ttf')
   font = Font(font_path, 60)
 
   # Tiles Left in Wall
