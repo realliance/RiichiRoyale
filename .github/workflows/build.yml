@@ -18,8 +18,10 @@ jobs:
       with:
         lfs: true
 
-    - name: Set usage of Python 3.8
-      run: setx PY_PYTHON 3.8
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.8.x'
+        architecture: 'x64'
 
     - name: Install Python Dependencies
       run: py -m pip install -r requirements.txt --user
