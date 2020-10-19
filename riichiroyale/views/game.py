@@ -410,7 +410,7 @@ class GameView(MenuView):
             buttons[button].hide()
           return
         if event.ui_element == text_next:
-          if hasattr(self, 'round_dialogue_manager'):
+          if hasattr(self, 'round_dialogue_manager') and self.round_dialogue_manager is not None:
             if self.round_dialogue_manager.is_last_page() and self.round_dialogue_manager.current_event == 'round_end':
               game_manager.set_active_view('main_menu')
               game_manager.sound_manager.play_music('lobby')
