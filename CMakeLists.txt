@@ -4,10 +4,12 @@ include(FetchContent)
 project(RiichiRoyale)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-option(PACKAGE_TESTS "Build the tests" ON)
+option(PACKAGE_TESTS "Build the tests" OFF)
 option(PACKAGE_TOOLS "Build the tools" OFF)
 
 add_subdirectory(${RiichiRoyale_SOURCE_DIR}/libs)
+
+find_package(Python3 COMPONENTS Interpreter Development)
 
 if(PACKAGE_TOOLS)
   add_subdirectory(${RiichiRoyale_SOURCE_DIR}/tools)
@@ -19,17 +21,31 @@ if(PACKAGE_TESTS)
   add_subdirectory(${RiichiRoyale_SOURCE_DIR}/cxxtests)
 endif()
 
-pybind11_add_module(RiichiRoyale SHARED)
+pybind11_add_module(RiichiRoyale)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  target_compile_options(RiichiRoyale PRIVATE -Wall -Wmost -Wextra -Werror)
+  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wmost -Wextra)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  target_compile_options(RiichiRoyale PRIVATE -Wall -Wextra)
+  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wextra)
 endif()
 
 add_subdirectory(${RiichiRoyale_SOURCE_DIR}/include)
+add_subdirectory(${RiichiRoyale_SOURCE_DIR}/aicontrollers)
 add_subdirectory(${RiichiRoyale_SOURCE_DIR}/src)
 
+if(PACKAGE_TESTS)
+  get_target_property(_sources RiichiRoyale SOURCES)
+  add_library(TestRiichiRoyale ${_sources})
+  target_include_directories(TestRiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/include")
+  target_include_directories(TestRiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/aicontrollers")
+endif()
+
+target_sources(RiichiRoyale PRIVATE "src/python.cpp")
+
 target_include_directories(RiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/include")
+target_include_directories(RiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/aicontrollers")
+
+
+
 
 add_custom_target(
   check
@@ -38,5 +54,10 @@ add_custom_target(
 )
 
 add_custom_command(TARGET RiichiRoyale POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:RiichiRoyale> ${CMAKE_CURRENT_SOURCE_DIR}/libmahjong.so
+  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:RiichiRoyale> ${CMAKE_CURRENT_SOURCE_DIR}/libmahjong/libmahjong.so
 )
+
+find_program(iwyu_path NAMES include-what-you-use iwyu)
+if(iwyu_path)
+  set_property(TARGET RiichiRoyale PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
+endif()
