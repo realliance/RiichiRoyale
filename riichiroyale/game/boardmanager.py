@@ -143,6 +143,7 @@ def on_game_event(game_manager, event, match):
   elif (event_type == EventType.Riichi):
     if is_decision:
       game_manager.board_manager.waiting_on_decision = True
+      game_manager.board_manager.last_decision_event = event
       player.calls_avaliable += [Call.Riichi]
     else:
       if is_ai:
@@ -150,6 +151,7 @@ def on_game_event(game_manager, event, match):
       else:
         player.hand.remove(event.piece)
       game_manager.board_manager.waiting_on_decision = False
+      game_manager.board_manager.last_decision_event = None
       player.calls_avaliable += []
       player.discard_pile += [event.piece]
       player.riichi_declared = True
