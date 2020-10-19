@@ -68,8 +68,14 @@ jobs:
     - name: Rename Windows Pyd
       run: mv libmahjong/libmahjong.so libmahjong/libmahjong.pyd
 
+    - name: Display Build Folder 1
+      run: ls libmahjong
+
     - name: Build Library
       run: cmake --build build
+
+    - name: Display Build Folder 2
+      run: ls libmahjong
 
     - name: Package Project
       run: python3 setup.py sdist
