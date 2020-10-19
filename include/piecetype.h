@@ -86,9 +86,12 @@ public:
     return *this;
   }
 
-
-  inline auto operator==(Piece rhs) const -> bool{
+  inline auto operator==(const Piece rhs) const -> bool{
     return (p | RED_FIVE) == (rhs.p | RED_FIVE);
+  }
+  
+  inline auto operator!=(const Piece rhs) const -> bool{
+    return (p | RED_FIVE) != (rhs.p | RED_FIVE);
   }
 
   inline auto operator-(uint i) const -> Piece{

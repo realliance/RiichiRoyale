@@ -12,7 +12,9 @@ TEST(MeldPieces, EnoughToPon){
 }
 
 TEST(MeldPieces, NotEnoughToPon){
-  
+  GameState state;
+  state.hands[0].live = { TWO_PIN, TWO_PIN };
+  ASSERT_ANY_THROW(MahjongGameManager::MeldPieces(state,0,TWO_PIN,Pon));
 }
 
 TEST(MeldPieces, EnoughToChi){
