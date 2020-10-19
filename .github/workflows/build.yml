@@ -3,11 +3,9 @@ name: Build and Release Pipelines
 
 on:
   push:
-    branches: [ feature/packaging ]
+    branches: [ mainline ]
   pull_request:
     branches: [ mainline ]
-
-# SWAP TO FINAL JOB UPLOADING BOTH
 
 jobs:
 
@@ -28,22 +26,20 @@ jobs:
       run: py -m pip install -U twine --user
 
     - name: Create CMake Environment
-      run: cmake -G"MinGW Makefiles" -DCMAKE_C_COMPILER="C:/ProgramData/chocolatey/bin/gcc.exe" -DCMAKE_CXX_COMPILER="C:/ProgramData/chocolatey/bin/g++.exe" -S . -B build -DPACKAGE_TESTS=OFF
+      run: cmake -G"Vistual Studio 16 2019" -S . -B build -DPACKAGE_TESTS=OFF
 
     - name: Build Library
       run: cmake --build build
 
-    - name: Package Project
-      run: py setup.py bdist --format=msi
-
-    - name: Show Built Distributions
-      run: ls dist/
-
-    - name: Upload build
-      run: py -m twine upload -u __token__ -p ${{ secrets.pypi_password }} dist/*
+    - name: Upload built artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: windowsbuild
+        path: libmahjong/libmahjong.so
 
   linux-build:
     name: Linux Build
+    needs: windows-build
     runs-on: ubuntu-20.04
 
     steps:
@@ -57,6 +53,12 @@ jobs:
 
     - name: Install Python Packages
       run: pip install -r requirements.txt --user
+
+    - name: Download Windows Build
+      uses: actions/download-artifact@v2
+      with:
+        name: windowsbuild
+        path: libmahjong/libmahjong.pyd
 
     - name: Build Library
       run: cmake --build build
@@ -72,7 +74,3 @@ jobs:
       with:
         user: __token__
         password: ${{ secrets.pypi_password }}
-
-  linux-build:
-    name: Upload Packages
-    runs-on: ubuntu-20.04
