@@ -57,11 +57,11 @@ add_custom_target(
   VERBATIM
 )
 
-if (OS_NAME STREQUAL "Linux")
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   add_custom_command(TARGET RiichiRoyale POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:RiichiRoyale> ${CMAKE_CURRENT_SOURCE_DIR}/libmahjong/libmahjong.so
   )
-elseif(OS_NAME STREQUAL "Windows")
+elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
   add_custom_command(TARGET RiichiRoyale POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:RiichiRoyale> ${CMAKE_CURRENT_SOURCE_DIR}/libmahjong/libmahjong.pyd
   )
