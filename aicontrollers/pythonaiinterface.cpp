@@ -21,6 +21,8 @@ auto PythonAIInterface::Inst() -> PythonAIInterface*{
 PythonAIInterface::~PythonAIInterface(){
   while(!emptyEvents){}
   const std::lock_guard<std::mutex> lock(class_mutex);
+  instSet = false;
+  inst = nullptr;
 }
 
 auto PythonAIInterface::GameStart(int _playerID) -> void{
@@ -42,7 +44,6 @@ auto PythonAIInterface::RoundStart(std::vector<Piece> hand, Wind seatWind, Wind 
 auto PythonAIInterface::ReceiveEvent(Event e) -> void{
   const std::lock_guard<std::mutex> lock(class_mutex);
   if(e.type == PointDiff){
-    playerIDRecieved = false;
     roundStartRecieved = false;
     decisionRecieved = false;
   }
@@ -80,7 +81,7 @@ auto PythonAIInterface::PyReceiveEvents() -> std::vector<Event>{
   const std::lock_guard<std::mutex> lock(class_mutex);
   std::vector<Event> eventCopy;
   std::swap(eventCopy,events);
-  emptyEvents = false;
+  emptyEvents = true;
   return eventCopy;
 }
 

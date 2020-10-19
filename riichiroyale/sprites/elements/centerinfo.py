@@ -5,6 +5,8 @@ import pygame
 from pygame.sprite import LayeredUpdates, Sprite
 from pygame.font import Font
 
+WIND_ORDERS = [["E", "S","W","N"], ["N", "E","S","W"], ["W", "N","E","S"], ["S", "W","N","E"]]
+
 def create_wind_markers(board, parent_rect, group):
   current_path = os.path.dirname(os.path.realpath(__file__))
   font_path = os.path.join(current_path, '..', '..', 'resources/fonts/SourceSans3-Semibold.ttf')
@@ -20,7 +22,6 @@ def create_wind_markers(board, parent_rect, group):
     (0, -parent_half_height + MARKER_SIZE_HALF[1] + MARKER_OFFSET),
     (-parent_half_width + MARKER_SIZE_HALF[0] + MARKER_OFFSET, 0),
   ]
-  WIND_ORDERS = [["E", "S","W","N"], ["N", "E","S","W"], ["W", "N","E","S"], ["S", "W","N","E"]]
   current_east_seat = board.current_dealer
   wind_order = WIND_ORDERS[current_east_seat]
 

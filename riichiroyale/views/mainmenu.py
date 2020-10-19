@@ -95,7 +95,7 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
                 game_manager.set_active_view('game')
                 game_manager.get_active_view().ai_managed = True
                 game_manager.get_active_view().match.ai_managed = True
-                game_manager.get_active_view().on_match_start()
+                game_manager.get_active_view().on_match_start(round_dialogue_manager=DialogManager())
             if event.ui_element == tutorial_button:
                 print('Pressed tutorial')
                 game_manager.set_active_view('tutorial')
@@ -115,7 +115,7 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
                 for item in dialogue:
                   dialogue_manager.register_dialog_event(item)
                   dialogue_manager.append_dialog_event(item, dialogue[item])
-                
+
                 game_manager.get_active_view().on_match_start(Tutorial(prefered_discards, calls, Tile.THREE_PIN, wall, deadwall), dialogue_manager) #HOY
             if event.ui_element == settings_button:
                 print('Switching to settings menu')

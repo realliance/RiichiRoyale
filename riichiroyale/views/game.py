@@ -50,16 +50,26 @@ class GameView(MenuView):
     player_area_width = math.floor(h * (float(self.screen_width_ratio)/self.screen_height_ratio))
     return Rect((w - player_area_width)//2, 0, player_area_width, play_area_height)
 
-  def on_match_start(self, tutorial_info=None, dialogue_manager=None):
+  def on_match_start(self, tutorial_info=None, dialogue_manager=None, round_dialogue_manager=None):
+    print('on_match_start')
+    if self.match is not None:
+      if self.match.player_ai_inst is not None:
+        print('clearing queue...')
+        self.match.player_ai_inst.ReceiveEvent()
+    self.match = None
+    print('on_match_start')
     self.match = Match(None, sound_manager=self.game_manager.sound_manager, ai_managed=self.ai_managed)
+    print('1')
     self.tutorial = tutorial_info
     self.pons = 0 #counting for tutorial
+    self.round_dialogue_manager = round_dialogue_manager # TODO: Merge with below dialogue manager.
     self.dialogue_manager = dialogue_manager
     if dialogue_manager is not None:
       self.dialogue_manager.start_event("intro")
-
+    print('2')
     self.player = Player("Player")
     self.match.register_player(self.player)
+    print('3')
     wall = None
     deadwall = None
     if tutorial_info is not None:
@@ -77,8 +87,12 @@ class GameView(MenuView):
         p.hand_open = False
         p.discard_pile = []
     elif self.ai_managed:
+      # Init Mahjong Game Engine
+      print("start_game")
       MahjongGameManager.start_game(["PythonAIInterface"] + ["AngryDiscardoBot"] * 3, True)
+      print("get_inst")
       self.match.player_ai_inst = PythonAIInterface.Inst()
+      print("GameStart")
       self.match.player_id = self.match.player_ai_inst.GameStart()
       self.match.players[0].ai_managed = True
       self.match.register_player(Player("Bot 1", ai_managed=True))
@@ -103,6 +117,21 @@ class GameView(MenuView):
       if len(queued_events) != 0:
         print(queued_events)
         process_event_queue(self.game_manager, self.match, queued_events)
+      if self.game_manager.board_manager.round_should_end:
+        self.ai_game_active = False
+        self.game_manager.board_manager.round_should_end = False
+        self.round_dialogue_manager.register_dialog_event("round_end")
+        self.round_dialogue_manager.append_dialog_event("round_end", ["Round Complete! Now for the Results..."])
+        i = 0
+        for score in self.match.scores:
+          self.round_dialogue_manager.append_dialog_event("round_end", ["Player {0} was awarded {1} points!".format(i + 1, score)])
+          i += 1
+        self.round_dialogue_manager.append_dialog_event("round_end", ["Thank you for playing a demo match of Riichi Royale! Press Next to return to the main menu."])
+        self.round_dialogue_manager.start_event('round_end')
+        self.player.calls_avaliable = []
+        for button in self.buttons:
+          self.buttons[button].hide()
+        return
     if self.player.calls_avaliable:
       self.buttons["skip"].show()
       #self.buttons["text"].show()
@@ -136,6 +165,17 @@ class GameView(MenuView):
       self.match.current_board.decision_pending = True
       self.buttons["text"].show()
       if len(self.player.calls_avaliable) != 0 and self.dialogue_manager.is_last_page():
+        self.buttons['advance_text'].hide()
+      else:
+        self.buttons["advance_text"].show()
+
+    if self.round_dialogue_manager is not None and self.round_dialogue_manager.current_event is not None:
+      if self.round_dialogue_manager.get_current_page() != self.buttons["text"].html_text:
+        self.buttons["text"].kill()
+        self.new_text_box(self.round_dialogue_manager.get_current_page())
+      self.match.current_board.decision_pending = True
+      self.buttons["text"].show()
+      if len(self.player.calls_avaliable) != 0 and self.round_dialogue_manager.is_last_page():
         self.buttons['advance_text'].hide()
       else:
         self.buttons["advance_text"].show()
@@ -365,25 +405,36 @@ class GameView(MenuView):
             print('Pressed skip')
             self.match.current_board.decision_pending = False
             self.player.make_decision(Call.Skip)
-            self.player.calls_avaliable = []
-            for button in self.buttons:
-              buttons[button].hide()
+          self.player.calls_avaliable = []
+          for button in self.buttons:
+            buttons[button].hide()
+          return
         if event.ui_element == text_next:
-          if not self.dialogue_manager.is_last_page():
-            self.dialogue_manager.next_page()
-            #self.match.current_board.decision_pending = False
-          else:
-            if self.dialogue_manager.current_event == 'end':
+          if hasattr(self, 'round_dialogue_manager'):
+            if self.round_dialogue_manager.is_last_page() and self.round_dialogue_manager.current_event == 'round_end':
               game_manager.set_active_view('main_menu')
               game_manager.sound_manager.play_music('lobby')
-            if self.dialogue_manager.current_event == 'skip_pon':
-              self.dialogue_manager.start_event('discard_tip')
-              self.match.current_board.decision_pending = False
-            else:
-              self.dialogue_manager.current_event = None
-              self.match.current_board.decision_pending = False
+              self.round_dialogue_manager.current_event = None
               text_next.hide()
               self.buttons["text"].kill()
+            else:
+              self.round_dialogue_manager.next_page()
+          else:
+            if not self.dialogue_manager.is_last_page():
+              self.dialogue_manager.next_page()
+              #self.match.current_board.decision_pending = False
+            else:
+              if self.dialogue_manager.current_event == 'end':
+                game_manager.set_active_view('main_menu')
+                game_manager.sound_manager.play_music('lobby')
+              if self.dialogue_manager.current_event == 'skip_pon':
+                self.dialogue_manager.start_event('discard_tip')
+                self.match.current_board.decision_pending = False
+              else:
+                self.dialogue_manager.current_event = None
+                self.match.current_board.decision_pending = False
+                text_next.hide()
+                self.buttons["text"].kill()
 
     
     return ui_manager, process_ui_event, buttons

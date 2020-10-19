@@ -5,15 +5,17 @@ class Match():
   def __init__(self, player_id, sound_manager=None, two_wind_game=False, ai_managed=False):
     self.players = []
     self.player_id = player_id
+    print('match init')
     self.sound_manager = sound_manager
     self.scores = []
     self.current_board = None
     self.current_dealer = 0
     self.east_prevalent = True
     self.ai_managed = ai_managed
+    self.player_ai_inst = None
     self.two_wind_game = two_wind_game
 
-  def register_player(self, player, starting_score=25000, seat=None):
+  def register_player(self, player, starting_score=0, seat=None):
     if seat is not None:
       if self.players[seat] is not None:
         raise "Attempted to register player to an already taken seat"
