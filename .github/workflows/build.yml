@@ -58,7 +58,10 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: windowsbuild
-        path: libmahjong/libmahjong.pyd
+        path: libmahjong/
+
+    - name: Rename Windows Pyd
+      run: mv libmahjong/libmahjong.so libmahjong/libmahjong.pyd
 
     - name: Build Library
       run: cmake --build build
