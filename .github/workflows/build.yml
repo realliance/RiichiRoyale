@@ -26,9 +26,6 @@ jobs:
     - name: Install Python Dependencies
       run: py -m pip install -r requirements.txt --user
 
-    - name: Install Twine
-      run: py -m pip install -U twine --user
-
     - name: Create CMake Environment
       run: cmake -G"Visual Studio 16 2019" -S . -B build -DPACKAGE_TESTS=OFF
 
