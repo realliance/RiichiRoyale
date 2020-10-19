@@ -23,6 +23,7 @@ currentMenu = Menu()
 menus = {
 
 }
+load_dialog_shown = False
 
 
 def _build_icon():
@@ -83,34 +84,39 @@ def createmainmenu():
                                                  'bottom': 'bottom'
                                              })
 
-    load_file_rect = pygame.Rect(0, 0, 500, 300)
-    load_file_rect.bottomleft = (600, 300)
-    load_file_dialog = pygame_gui.windows.UIFileDialog(rect=load_file_rect,
-                                                       manager=menu.manager,
-                                                       window_title='Select file to load.',
-                                                       visible=False,
-                                                       allow_existing_files_only=False)
-
     menu.uiElements.append(newgame_button)
     menu.uiElements.append(loadgame_button)
     menu.uiElements.append(settings_button)
     menu.uiElements.append(title_text)
-    menu.uiElements.append(load_file_dialog)
 
     # processuievent() is called when a UI event is caught while this menu is active
     def processuievent(event):
         global currentMenu
+        global load_dialog_shown
         if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == newgame_button:
-                print('Pressed new game')
+                print('Pressed new game.')
             if event.ui_element == settings_button:
-                print('Switching to settings menu')
+                print('Switching to settings menu.')
                 currentMenu = menus['settings']
             if event.ui_element == loadgame_button:
-                print('Showing load dialog')
-                load_file_dialog.show()
+                if not load_dialog_shown:
+                    load_file_rect = pygame.Rect(0, 0, 500, 300)
+                    load_file_rect.bottomleft = (600, 300)
+                    load_file_dialog = pygame_gui.windows.UIFileDialog(rect=load_file_rect,
+                                                                       manager=menu.manager,
+                                                                       window_title='Select file to load.',
+                                                                       visible=False,
+                                                                       allow_existing_files_only=False)
+                    print('Showing load dialog.')
+                    load_file_dialog.show()
+                    load_dialog_shown = True
         if event.user_type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
             print('Path to load:', event.text)
+        if event.user_type == pygame_gui.UI_WINDOW_CLOSE:
+            if event.ui_object_id == '#file_dialog':
+                print('Load dialog closed.')
+                load_dialog_shown = False
 
     menu.processuievent = processuievent
     return menu
