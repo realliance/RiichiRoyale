@@ -31,6 +31,9 @@ jobs:
     - name: Build Library
       run: cmake --build build
 
+    - name: Display Build Folder
+      run: dir .\libmahjong\
+
     - name: Upload built artifact
       uses: actions/upload-artifact@v2
       with:
