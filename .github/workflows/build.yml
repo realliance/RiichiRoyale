@@ -39,7 +39,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: windowsbuild
-        path: libmahjong/libmahjong.so
+        path: libmahjong/libmahjong.pyd
 
   linux-build:
     name: Linux Build
@@ -65,9 +65,6 @@ jobs:
       with:
         name: windowsbuild
         path: libmahjong/
-
-    - name: Rename Windows Pyd
-      run: mv libmahjong/libmahjong.so libmahjong/libmahjong.pyd
 
     - name: Display Build Folder 1
       run: ls libmahjong
