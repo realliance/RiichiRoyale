@@ -120,8 +120,6 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
             if event.ui_element == settings_button:
                 print('Switching to settings menu')
                 game_manager.set_active_view('settings')
-                game_manager.get_active_view().ai_managed = False
-                game_manager.get_active_view().match.ai_managed = False
                 
 
     return ui_manager, process_ui_event
