@@ -1,6 +1,19 @@
 # Riichi Royale
 *Team "The One Cow" for Fall 2020 Performant Programming in Python*
 
+## For TAs
+
+### Project Description
+Riichi Royale is a singleplayer game where you play 4-player Riichi Mahjong against AI opponents. The project includes a tutorial so you can learn how to play and (currently) a demo project in order to showcase our C++ Mahjong Game Manager
+
+### Install
+``pip install riichiroyale``
+
+### Run Riichi Royale in your command prompt
+``riichiroyale``
+
+# Deevelopment
+
 ## Getting Started
 This getting start guide assumes you are running either Arch Linux or Ubuntu (whether standalone or within WSL).
 
