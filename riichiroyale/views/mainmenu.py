@@ -50,8 +50,8 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
                                                       'right': 'left',
                                                   })
 
-    tutorial_button_rect = pygame.Rect(0, 0, 100, 50)
-    tutorial_button_rect.bottomleft = (650, -200)
+    tutorial_button_rect = pygame.Rect(0, 0, 120, 50)
+    tutorial_button_rect.bottomleft = (640, -200)
     tutorial_button = pygame_gui.elements.UIButton(relative_rect=tutorial_button_rect,
                                                   text='Start Tutorial',
                                                   manager=ui_manager,
