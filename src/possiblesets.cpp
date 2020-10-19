@@ -1,6 +1,5 @@
 #include "possiblesets.h"
 
-#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
 #include <stdint.h>            // for uint8_t
 #include <algorithm>           // for shuffle, move
 #include <iterator>            // for back_insert_iterator, back_inserter

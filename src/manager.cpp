@@ -1,6 +1,5 @@
 #include "manager.h"
 
-#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
 #include <stddef.h>            // for size_t
 #include <algorithm>           // for find
 #include <array>               // for array
@@ -600,14 +599,14 @@ auto MahjongGameManager::AlertPlayers(const GameState& state, Event e) -> void {
 }
 
 // Count number of piece p that are in given players hands
-auto MahjongGameManager::CountPieces(const GameState& state, int player, Piece p) -> uint {
+auto MahjongGameManager::CountPieces(const GameState& state, int player, Piece p) -> uint8_t {
   return std::count(state.hands[player].live.begin(),state.hands[player].live.end(),p);
 }
 
 // Remove an instance of piece p from given players hand
-auto MahjongGameManager::RemovePieces(GameState& state, int player, Piece p, uint count) -> int {
+auto MahjongGameManager::RemovePieces(GameState& state, int player, Piece p, uint8_t count) -> uint8_t {
   count = std::min(CountPieces(state,player,p),count);
-  uint removed = 0;
+  uint8_t removed = 0;
   state.hands[player].live.erase(
     std::remove_if(state.hands[player].live.begin(), state.hands[player].live.end(),
       [&](Piece _p){
