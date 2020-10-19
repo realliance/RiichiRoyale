@@ -12,10 +12,11 @@ Riichi Royale is a singleplayer game where you play 4-player Riichi Mahjong agai
 ### Run Riichi Royale in your command prompt
 ``riichiroyale``
 
-# Deevelopment
+# Development
 
 ## Getting Started
-This getting start guide assumes you are running either Arch Linux or Ubuntu (whether standalone or within WSL).
+
+### On Linux
 
 Install the following dependencies:
 
@@ -25,13 +26,17 @@ Install the following dependencies:
 
 - `clang` (or [clang-10](https://packages.ubuntu.com/bionic/clang-10) if on Ubuntu < 20.04LTS)
 
+### On Windows
+
+Windows requires Visual Studio 2019, which can be found [here](https://visualstudio.microsoft.com/downloads/), and CMake, which can be found [here](https://cmake.org/download/)
+
 Clone the repository:
 
 ```
 git clone git@github.com:HartleyAHartley/RiichiRoyale.git
 ```
 
-Run the following commands within the project directory:
+Run the following commands within the project directory (note that these commands are for ):
 ```
 # Install python dependencies locally
 pip install --user -r requirements.txt
@@ -45,15 +50,17 @@ cmake -S . -B build
 # Or bootstrap CMake with tool building enabled
 cmake -S . -B build -DPACKAGE_TOOLS=ON
 
-# Or, if wanting to use Clang
+# Or, if wanting to use Clang (Linux Only)
 
 C=clang CXX=clang++ cmake -S . -B build
 
 # Build Project
 cmake --build build
 
-# Run Project
+# Bootstrap Development Environment
 python setup.py develop --user
+
+# Run Project
 python riichiroyale
 ```
 
