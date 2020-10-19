@@ -28,6 +28,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wmost -Wextra)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wextra)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+target_compile_options(RiichiRoyale PRIVATE "/MT")
 endif()
 
 add_subdirectory(${RiichiRoyale_SOURCE_DIR}/include)
