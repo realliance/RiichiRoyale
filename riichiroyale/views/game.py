@@ -51,25 +51,19 @@ class GameView(MenuView):
     return Rect((w - player_area_width)//2, 0, player_area_width, play_area_height)
 
   def on_match_start(self, tutorial_info=None, dialogue_manager=None, round_dialogue_manager=None):
-    print('on_match_start')
     if self.match is not None:
       if self.match.player_ai_inst is not None:
-        print('clearing queue...')
         self.match.player_ai_inst.ReceiveEvent()
     self.match = None
-    print('on_match_start')
     self.match = Match(None, sound_manager=self.game_manager.sound_manager, ai_managed=self.ai_managed)
-    print('1')
     self.tutorial = tutorial_info
     self.pons = 0 #counting for tutorial
     self.round_dialogue_manager = round_dialogue_manager # TODO: Merge with below dialogue manager.
     self.dialogue_manager = dialogue_manager
     if dialogue_manager is not None:
       self.dialogue_manager.start_event("intro")
-    print('2')
     self.player = Player("Player")
     self.match.register_player(self.player)
-    print('3')
     wall = None
     deadwall = None
     if tutorial_info is not None:
@@ -88,11 +82,8 @@ class GameView(MenuView):
         p.discard_pile = []
     elif self.ai_managed:
       # Init Mahjong Game Engine
-      print("start_game")
       MahjongGameManager.start_game(["PythonAIInterface"] + ["AngryDiscardoBot"] * 3, True)
-      print("get_inst")
       self.match.player_ai_inst = PythonAIInterface.Inst()
-      print("GameStart")
       self.match.player_id = self.match.player_ai_inst.GameStart()
       self.match.players[0].ai_managed = True
       self.match.register_player(Player("Bot 1", ai_managed=True))
@@ -115,7 +106,6 @@ class GameView(MenuView):
     if self.ai_game_active:
       queued_events = self.match.player_ai_inst.ReceiveEvent()
       if len(queued_events) != 0:
-        print(queued_events)
         process_event_queue(self.game_manager, self.match, queued_events)
       if self.game_manager.board_manager.round_should_end:
         self.ai_game_active = False
@@ -347,7 +337,6 @@ class GameView(MenuView):
             self.tutorial.call()
             self.pons += 1
             self.dialogue_manager.start_event('after_pon')
-            print('Pressed pon')
             self.match.current_board.decision_pending = False
             self.player.make_decision(Call.Pon)
           for button in self.buttons:
@@ -358,7 +347,6 @@ class GameView(MenuView):
           elif (self.tutorial is None) or (self.tutorial.next_call == 'chi'):
             self.tutorial.call()
             self.dialogue_manager.start_event('after_chi')
-            print('Pressed chi')
             self.match.current_board.decision_pending = False
             self.player.make_decision(Call.Chi)
           for button in self.buttons:
@@ -387,7 +375,6 @@ class GameView(MenuView):
           elif (self.tutorial is None) or (self.tutorial.next_call == 'ron'):
             self.tutorial.call()
             self.dialogue_manager.start_event('end')
-            print('Pressed ron')
             self.match.current_board.decision_pending = False
             self.player.make_decision(Call.Ron)
           for button in self.buttons:
@@ -402,7 +389,6 @@ class GameView(MenuView):
             PythonAIInterface.Inst().RetrieveDecision(event)
           elif (self.tutorial is None) or (self.tutorial.next_call == 'skip'):
             self.tutorial.call()
-            print('Pressed skip')
             self.match.current_board.decision_pending = False
             self.player.make_decision(Call.Skip)
           self.player.calls_avaliable = []

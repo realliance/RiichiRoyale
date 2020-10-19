@@ -91,13 +91,11 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
     def process_ui_event(event):
         if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == newgame_button:
-                print('Pressed new game')
                 game_manager.set_active_view('game')
                 game_manager.get_active_view().ai_managed = True
                 game_manager.get_active_view().match.ai_managed = True
                 game_manager.get_active_view().on_match_start(round_dialogue_manager=DialogManager())
             if event.ui_element == tutorial_button:
-                print('Pressed tutorial')
                 game_manager.set_active_view('tutorial')
 
                 prefered_discards = [
@@ -118,7 +116,6 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
 
                 game_manager.get_active_view().on_match_start(Tutorial(prefered_discards, calls, Tile.THREE_PIN, wall, deadwall), dialogue_manager) #HOY
             if event.ui_element == settings_button:
-                print('Switching to settings menu')
                 game_manager.set_active_view('settings')
                 
 

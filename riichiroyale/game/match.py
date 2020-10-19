@@ -5,7 +5,6 @@ class Match():
   def __init__(self, player_id, sound_manager=None, two_wind_game=False, ai_managed=False):
     self.players = []
     self.player_id = player_id
-    print('match init')
     self.sound_manager = sound_manager
     self.scores = []
     self.current_board = None

@@ -148,7 +148,6 @@ def create_settings_menu(game_manager, screen_width, screen_height):
     def process_ui_event(event):
         if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == back_button:
-                print('Pressed back')
                 game_manager.set_active_view('main_menu')
         elif event.user_type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
             game_manager.sound_manager.set_music_volume(music_volume_slider.get_current_value() / 100.0)

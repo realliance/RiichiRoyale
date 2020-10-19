@@ -26,11 +26,6 @@ def process_event_queue(game_manager, match, current_queue):
   process_event_queue(game_manager, match, current_queue)
 
 def on_game_event(game_manager, event, match):
-  print("===NEW EVENT===")
-  print(event.type, "Int Value:", int(event.type))
-  print(event.player)
-  print(event.piece)
-  print(event.decision)
   is_ai = event.player != match.player_id
   is_decision = event.decision
   event_type = event.type
