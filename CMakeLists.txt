@@ -54,7 +54,7 @@ add_custom_target(
 )
 
 add_custom_command(TARGET RiichiRoyale POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:RiichiRoyale> ${CMAKE_CURRENT_SOURCE_DIR}/./libmahjong.so
+  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:RiichiRoyale> ${CMAKE_CURRENT_SOURCE_DIR}/libmahjong/libmahjong.so
 )
 
 find_program(iwyu_path NAMES include-what-you-use iwyu)
