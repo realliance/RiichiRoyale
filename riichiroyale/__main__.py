@@ -44,14 +44,14 @@ def main():
   # Init Clacks
   for x in range(1, 18):
     name = 'clack{0}'.format(x)
-    sound_manager.add_audio_source(name, os.path.join(current_path, 'resources/audio/tileclack/clack-{:02}.ogg'.format(x)))
+    sound_manager.add_audio_source(name, os.path.join(current_path, 'resources', 'audio', 'tileclack', 'clack-{:02}.ogg'.format(x)))
     sound_manager.add_to_sfx_set('clack', name)
 
   
-  sound_manager.add_audio_source('lobby', os.path.join(current_path, 'resources/audio/music/lobby.ogg'), preload=False)
-  sound_manager.add_audio_source('game1', os.path.join(current_path, 'resources/audio/music/game1.ogg'), preload=False)
-  sound_manager.add_audio_source('game2', os.path.join(current_path, 'resources/audio/music/game2.ogg'), preload=False)
-  sound_manager.add_audio_source('game3', os.path.join(current_path, 'resources/audio/music/game3.ogg'), preload=False)
+  sound_manager.add_audio_source('lobby', os.path.join(current_path, 'resources', 'audio', 'music', 'lobby.ogg'), preload=False)
+  sound_manager.add_audio_source('game1', os.path.join(current_path, 'resources', 'audio', 'music', 'game1.ogg'), preload=False)
+  sound_manager.add_audio_source('game2', os.path.join(current_path, 'resources', 'audio', 'music', 'game2.ogg'), preload=False)
+  sound_manager.add_audio_source('game3', os.path.join(current_path, 'resources', 'audio', 'music', 'game3.ogg'), preload=False)
 
   sound_manager.music_playlist = ['game1', 'game2', 'game3']
 
