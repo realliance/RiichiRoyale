@@ -11,6 +11,8 @@ Riichi Royale has been verified to run with 64bit Python 3.8.x
 
 If you encounter the error `ImportError: DLL load failed: %1 is not a valid Win32 application.`, this is due to having 32bit python.
 
+If you encounter the error `ImportError: DLL load failed while importing libmahjong: The specified module could not be found.`, this is due to not using Python 3.8.
+
 ### Install
 ``pip install riichiroyale``
 
