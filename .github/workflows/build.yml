@@ -26,7 +26,7 @@ jobs:
       run: py -m pip install -U twine --user
 
     - name: Create CMake Environment
-      run: cmake -G"Vistual Studio 16 2019" -S . -B build -DPACKAGE_TESTS=OFF
+      run: cmake -G"Visual Studio 16 2019" -S . -B build -DPACKAGE_TESTS=OFF
 
     - name: Build Library
       run: cmake --build build
