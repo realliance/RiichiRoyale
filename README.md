@@ -14,8 +14,12 @@ If you encounter the error `ImportError: DLL load failed: %1 is not a valid Win3
 ### Install
 ``pip install riichiroyale``
 
-### Run Riichi Royale in your command prompt
+### To run Riichi Royale in your command prompt
 ``riichiroyale``
+
+Depending on your installation of python, you may need to instead run 
+
+```python -m riichiroyale```
 
 # Development
 
