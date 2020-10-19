@@ -14,7 +14,6 @@ PythonAIInterface::PythonAIInterface(){
 
 auto PythonAIInterface::Inst() -> PythonAIInterface*{
   while(!instSet){}
-  std::cout << "==================" << inst << std::endl;
   return inst;
 }
 
@@ -54,7 +53,6 @@ auto PythonAIInterface::ReceiveEvent(Event e) -> void{
 auto PythonAIInterface::RetrieveDecision() -> Event{
   while(!decisionRecieved){}
   const std::lock_guard<std::mutex> lock(class_mutex);
-  std::cout << decision << std::endl;
   decisionRecieved = false;
   return decision;
 }

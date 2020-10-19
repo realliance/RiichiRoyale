@@ -35,7 +35,6 @@ Piece Walls::TakePiece(){
   if(livingWalls.size() > 0){
     Piece p = livingWalls.front();
     livingWalls.erase(livingWalls.begin());
-    std::cout << "We now at " << livingWalls.size() << std::endl;
     return p;
   }
   return PieceType::ERROR_PIECE;

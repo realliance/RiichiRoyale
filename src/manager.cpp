@@ -80,7 +80,6 @@ auto MahjongGameManager::RoundStart(GameState& state) -> stateFunction {
   state.walls = Walls();
   for(size_t i = 0; i < 4; i++){
     auto hand = state.walls.TakeHand();
-    std::cout << hand.size() << std::endl;
     state.players[i].controller->RoundStart(
       hand,
       state.players[i].seat,
@@ -101,7 +100,6 @@ auto MahjongGameManager::RoundStart(GameState& state) -> stateFunction {
 
 
 auto MahjongGameManager::PlayerTurn(GameState& state) -> stateFunction {
-  std::cout << "It is currently this player hours: " << state.currentPlayer << std::endl;
   if(state.walls.GetRemainingPieces() == 0){
     state.currentState = AfterExhaustiveDraw;
     return RoundEnd;
@@ -383,7 +381,6 @@ auto MahjongGameManager::DiscardState(GameState& state) -> stateFunction{
     state.currentState = AfterCall;
     MeldPieces(state, decision[0].player, decision[0].piece, Pon);
     AlertPlayers(state,decision[0]);
-    std::cout << "PON HAND: " << state.hands[decision[0].player] << std::endl;
     return PlayerTurn;
   }
 
@@ -592,7 +589,6 @@ auto MahjongGameManager::ScorePlayers(const GameState& state) -> std::array<int1
 // Push Event to Player Queue
 auto MahjongGameManager::AlertPlayers(const GameState& state, Event e) -> void {
   e.decision = false;
-  std::cout << "ALERT PLAYERS: " << e << std::endl;
   for(const auto & player : state.players){
     player.controller->ReceiveEvent(e);
   }
@@ -640,7 +636,6 @@ auto MahjongGameManager::MeldPieces(GameState& state, int player, Piece piece, E
 
   // Needs to be first piece given in event
   if (type == Chi) {
-    std::cout << state.hands[player] << std::endl;
     if(RemovePieces(state,player,piece,1) != 1){
       ErrorState(state,"Not enough pieces to meld into a chi[0] player: " + std::to_string(player) + " Event: " + Piece(piece).toStr());
     }
