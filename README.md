@@ -7,7 +7,7 @@
 Riichi Royale is a singleplayer game where you play 4-player Riichi Mahjong against AI opponents. The project includes a tutorial so you can learn how to play and (currently) a demo project in order to showcase our C++ Mahjong Game Manager
 
 ### Python Requirement
-Riichi Royale has been verified to run with 64bit Python 3.8.x 
+Riichi Royale has been verified to run with 64bit Python 3.8.x. We have verified against the Python 3.8.6 Windows x86-64 executable installer default installation, which can be found [here](https://www.python.org/downloads/release/python-386/).
 
 If you encounter the error `ImportError: DLL load failed: %1 is not a valid Win32 application.`, this is due to having 32bit python.
 
