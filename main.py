@@ -6,7 +6,7 @@ import pygame
 import pygame_gui
 import libmahjong
 from riichiroyale import MahjongHand, load_image, load_tile
-import soundWrapper
+#import soundWrapper
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 1500, 800
 sounds = []
@@ -83,10 +83,19 @@ def createmainmenu():
                                                  'bottom': 'bottom'
                                              })
 
+    load_file_rect = pygame.Rect(0, 0, 500, 300)
+    load_file_rect.bottomleft = (600, 300)
+    load_file_dialog = pygame_gui.windows.UIFileDialog(rect=load_file_rect,
+                                                       manager=menu.manager,
+                                                       window_title='Select file to load.',
+                                                       visible=False,
+                                                       allow_existing_files_only=False)
+
     menu.uiElements.append(newgame_button)
     menu.uiElements.append(loadgame_button)
     menu.uiElements.append(settings_button)
     menu.uiElements.append(title_text)
+    menu.uiElements.append(load_file_dialog)
 
     # processuievent() is called when a UI event is caught while this menu is active
     def processuievent(event):
@@ -97,6 +106,11 @@ def createmainmenu():
             if event.ui_element == settings_button:
                 print('Switching to settings menu')
                 currentMenu = menus['settings']
+            if event.ui_element == loadgame_button:
+                print('Showing load dialog')
+                load_file_dialog.show()
+        if event.user_type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
+            print('Path to load:', event.text)
 
     menu.processuievent = processuievent
     return menu
@@ -249,10 +263,10 @@ def main():
     hand = MahjongHand()
 
     # Initialize sounds
-    sounds = soundWrapper.soundInit()
-    soundWrapper.musicInit(0.05)
-    soundWrapper.musicStart()
-    soundWrapper.setAllSoundEffectVolume(sounds,0.5)
+    # sounds = soundWrapper.soundInit()
+    # soundWrapper.musicInit(0.05)
+    # soundWrapper.musicStart()
+    # soundWrapper.setAllSoundEffectVolume(sounds,0.5)
 
 
     # Blit everything to the screen
