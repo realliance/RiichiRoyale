@@ -218,7 +218,7 @@ auto MahjongGameManager::PlayerTurn(GameState& state) -> stateFunction {
     state.lastDiscard = decision.piece;
     decision.piece = static_cast<int16_t>(draw.toUint8_t());
     state.currentState = AfterConcealedKanDiscard;
-    MeldPieces(state, state.currentPlayer, decision);
+    MeldPieces(state, state.currentPlayer, draw, ConcealedKan);
     AlertPlayers(state,decision);
     return DiscardState;
   }
@@ -227,7 +227,7 @@ auto MahjongGameManager::PlayerTurn(GameState& state) -> stateFunction {
     state.lastDiscard = decision.piece;
     decision.piece = static_cast<int16_t>(draw.toUint8_t());
     state.currentState = AfterKanDiscard;
-    MeldPieces(state, state.currentPlayer, decision);
+    MeldPieces(state, state.currentPlayer, draw, ConvertedKan);
     AlertPlayers(state,decision);
     return DiscardState;
   }
@@ -368,7 +368,7 @@ auto MahjongGameManager::DiscardState(GameState& state) -> stateFunction{
     state.turnCount++;
     decision[0].piece = static_cast<int16_t>(GetChiStart(state,decision[0].player).toUint8_t());
     state.currentState = AfterCall;
-    MeldPieces(state, state.currentPlayer, decision[0]);
+    MeldPieces(state, decision[0].player, decision[0].piece, Chi);
     AlertPlayers(state,decision[0]);
     return PlayerTurn;
   }
@@ -382,7 +382,7 @@ auto MahjongGameManager::DiscardState(GameState& state) -> stateFunction{
     state.lastCall = state.turnCount;
     state.turnCount++;
     state.currentState = AfterCall;
-    MeldPieces(state, state.currentPlayer, decision[0]);
+    MeldPieces(state, decision[0].player, decision[0].piece, Pon);
     AlertPlayers(state,decision[0]);
     std::cout << "PON HAND: " << state.hands[decision[0].player] << std::endl;
     return PlayerTurn;
@@ -396,7 +396,7 @@ auto MahjongGameManager::DiscardState(GameState& state) -> stateFunction{
     state.lastCall = state.turnCount;
     state.turnCount++;
     state.currentState = AfterKanDiscard;
-    MeldPieces(state, state.currentPlayer, decision[0]);
+    MeldPieces(state, decision[0].player, decision[0].piece, Kan);
     AlertPlayers(state,decision[0]);
     return DiscardState;
   }
@@ -600,15 +600,14 @@ auto MahjongGameManager::AlertPlayers(const GameState& state, Event e) -> void {
 }
 
 // Count number of piece p that are in given players hands
-auto MahjongGameManager::CountPieces(const GameState& state, int player, Piece p) -> int {
+auto MahjongGameManager::CountPieces(const GameState& state, int player, Piece p) -> uint {
   return std::count(state.hands[player].live.begin(),state.hands[player].live.end(),p);
 }
 
 // Remove an instance of piece p from given players hand
-auto MahjongGameManager::RemovePieces(GameState& state, int player, Piece p, int count) -> int {
+auto MahjongGameManager::RemovePieces(GameState& state, int player, Piece p, uint count) -> int {
   count = std::min(CountPieces(state,player,p),count);
-  std::cout << "BIG COUNTO: " << count << std::endl;
-  int removed = 0;
+  uint removed = 0;
   state.hands[player].live.erase(
     std::remove_if(state.hands[player].live.begin(), state.hands[player].live.end(),
       [&](Piece _p){
@@ -631,58 +630,58 @@ auto MahjongGameManager::DiscardPiece(GameState& state, int player, Piece p) -> 
 }
 
 // Produce a Meld given the Event
-auto MahjongGameManager::MeldPieces(GameState& state, int player, Event e) -> void {
-  if (e.type == Pon) {
-    std::cout << "PON TIME =================: " << state.hands[player] << std::endl;
-    if(RemovePieces(state,player,e.piece,3) != 3){
-      ErrorState(state,"Not enough pieces to meld into a Pon: Player: " + std::to_string(player) + " Event: " + Piece(e.piece).toStr());
+auto MahjongGameManager::MeldPieces(GameState& state, int player, Piece piece, EventType type) -> void {
+  if (type == Pon) {
+    if(RemovePieces(state,player,piece,3) != 3){
+      ErrorState(state,"Not enough pieces to meld into a Pon: Player: " + std::to_string(player) + " Event: " + Piece(piece).toStr());
     }
-    state.hands[player].melds.push_back({ PonMeld,  e.piece });
+    state.hands[player].melds.push_back({ PonMeld,  piece });
     return;
   }
 
   // Needs to be first piece given in event
-  if (e.type == Chi) {
+  if (type == Chi) {
     std::cout << state.hands[player] << std::endl;
-    if(RemovePieces(state,player,e.piece,1) != 1){
-      ErrorState(state,"Not enough pieces to meld into a chi[0] player: " + std::to_string(player) + " Event: " + Piece(e.piece).toStr());
+    if(RemovePieces(state,player,piece,1) != 1){
+      ErrorState(state,"Not enough pieces to meld into a chi[0] player: " + std::to_string(player) + " Event: " + Piece(piece).toStr());
     }
-    if(RemovePieces(state,player,e.piece+1,1) != 1){
-      ErrorState(state,"Not enough pieces to meld into a chi[1]: " + std::to_string(player) + " Event: " + Piece(e.piece+1).toStr());
+    if(RemovePieces(state,player,piece+1,1) != 1){
+      ErrorState(state,"Not enough pieces to meld into a chi[1]: " + std::to_string(player) + " Event: " + Piece(piece+1).toStr());
     }
-    if(RemovePieces(state,player,e.piece+2,1) != 1){
-      ErrorState(state,"Not enough pieces to meld into a chi[2]: " + std::to_string(player) + " Event: " + Piece(e.piece+2).toStr());
+    if(RemovePieces(state,player,piece+2,1) != 1){
+      ErrorState(state,"Not enough pieces to meld into a chi[2]: " + std::to_string(player) + " Event: " + Piece(piece+2).toStr());
     }
-    state.hands[player].melds.push_back({ ChiMeld,  e.piece });
+    state.hands[player].melds.push_back({ ChiMeld, piece });
     return;
   }
 
-  if (e.type == Kan) {
-    if(RemovePieces(state,player,e.piece,4) != 4){
-      ErrorState(state,"Not enough pieces to meld into a Kan: " + std::to_string(player) + " Event: " + Piece(e.piece).toStr());
+  if (type == Kan) {
+    if(RemovePieces(state,player,piece,4) != 4){
+      ErrorState(state,"Not enough pieces to meld into a Kan: " + std::to_string(player) + " Event: " + Piece(piece).toStr());
     }
-    state.hands[player].melds.push_back({ KanMeld,  e.piece });
+    state.hands[player].melds.push_back({ KanMeld,  piece });
     return;
   }
 
-  if (e.type == ConcealedKan) {
-    if(RemovePieces(state,player,e.piece,4) != 4){
-      ErrorState(state,"Not enough pieces to meld into a ConcealedKan: " + std::to_string(player) + " Event: " + Piece(e.piece).toStr());
+  if (type == ConcealedKan) {
+    if(RemovePieces(state,player,piece,4) != 4){
+      ErrorState(state,"Not enough pieces to meld into a ConcealedKan: " + std::to_string(player) + " Event: " + Piece(piece).toStr());
     }
-    state.hands[player].melds.push_back({ ConcealedKanMeld,  e.piece });
+    state.hands[player].melds.push_back({ ConcealedKanMeld, piece });
     return;
   }
 
-  if (e.type == ConvertedKan) {
-    if(RemovePieces(state,player,e.piece,1) != 1){
-      ErrorState(state,"Not enough pieces to meld into a ConvertedKan: " + std::to_string(player) + " Event: " + Piece(e.piece).toStr());
+  if (type == ConvertedKan) {
+    if(RemovePieces(state,player,piece,1) != 1){
+      ErrorState(state,"Not enough pieces to meld into a ConvertedKan: " + std::to_string(player) + " Event: " + Piece(piece).toStr());
     }
     for(auto& meld : state.hands[player].melds){
-      if(meld.type == PonMeld && meld.start == e.piece){
+      if(meld.type == PonMeld && meld.start == piece){
         meld.type = KanMeld;
+        return;
       }
     }
-    return;
+    ErrorState(state,"No meld to convert into a Kan: " + std::to_string(player) + " Event: " + Piece(piece).toStr());
   }
 }
 

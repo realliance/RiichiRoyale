@@ -7,7 +7,7 @@ struct Player {
   int points;
   int position;
   Wind seat;
-  MahjongAI* controller;
+  MahjongAI* controller = nullptr;
 };
 
 auto operator<<(std::ostream& os, const Player& player) -> std::ostream&;

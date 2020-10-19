@@ -71,9 +71,9 @@ public:
 
   auto isTerminal() const -> bool;
 
-  auto getSuit() const -> int;
+  auto getSuit() const -> uint8_t;
 
-  auto getPieceNum() const -> int;
+  auto getPieceNum() const -> uint8_t;
   
   auto isGreen() const -> bool;
 
@@ -82,30 +82,20 @@ public:
   auto toStr() const -> std::string;
 
   auto operator++() -> Piece&{
-    if(isHonor()){
-      p = ERROR_PIECE;
-      return *this;
-    }
-    if(getPieceNum() == 9){
-      p = ERROR_PIECE;
-      return *this;
-    }
-    p++;
+    p = p+1;
     return *this;
   }
 
-  inline auto operator++(int) -> Piece{
-    Piece _p(*this);
-    operator++();
-    return _p;
-  }
 
   inline auto operator==(Piece rhs) const -> bool{
     return (p | RED_FIVE) == (rhs.p | RED_FIVE);
   }
 
-  inline auto operator-(int i) const -> Piece{
-    if(isHonor() || (getPieceNum()-i < 1)){
+  inline auto operator-(uint i) const -> Piece{
+    if(i == 0){
+      return Piece(p);
+    }
+    if(isHonor() || (int(getPieceNum())-int(i) < 1)){
       return Piece(ERROR_PIECE);
     }
     if(getPieceNum()-i == 1){
@@ -114,7 +104,10 @@ public:
     return Piece(((p-i) & ~uint8_t(RED_FIVE)) & ~uint8_t(TERMINAL_BIT));
   }
 
-  inline auto operator+(int i) const -> Piece{
+  inline auto operator+(uint i) const -> Piece{
+    if(i == 0){
+      return Piece(p);
+    }
     if(isHonor() || (getPieceNum()+i > 9)){
       return Piece(ERROR_PIECE);
     }

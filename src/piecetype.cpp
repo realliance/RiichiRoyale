@@ -17,16 +17,19 @@ auto Piece::isTerminal() const -> bool{
   return (p & TERMINAL_BIT) != ERROR_PIECE;
 }
 
-auto Piece::getSuit() const -> int {
+auto Piece::getSuit() const -> uint8_t {
   return p & 3<<5;
 }
 
-auto Piece::getPieceNum() const -> int {
+auto Piece::getPieceNum() const -> uint8_t {
   return p & 15;
 }
 
 auto Piece::isGreen() const -> bool {
-  if(getSuit() != BAMBOO_SUIT && p != GREEN_DRAGON){
+  if(p == GREEN_DRAGON){
+    return true;
+  }
+  if(getSuit() != BAMBOO_SUIT){
     return false;
   }
   if(((getPieceNum() % 2) == 1) && getPieceNum() != 3){

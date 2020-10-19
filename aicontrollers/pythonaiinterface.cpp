@@ -64,7 +64,6 @@ auto PythonAIInterface::Name() -> std::string{
 }
 
 
-
 auto PythonAIInterface::PyGameStart() -> int{
   while(!playerIDRecieved){}
   const std::lock_guard<std::mutex> lock(class_mutex);

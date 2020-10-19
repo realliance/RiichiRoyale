@@ -23,3 +23,8 @@ endmacro()
 
 # ADD TESTS BELOW #
 package_add_test(Can_Chi can_chi.test.cpp)
+package_add_test(Count_Pieces count_pieces.test.cpp)
+package_add_test(Remove_Pieces remove_pieces.test.cpp)
+package_add_test(Discard_Piece discard_piece.test.cpp)
+package_add_test(Piece_Type piece_type.test.cpp)
+package_add_test(Meld_Pieces meld_pieces.test.cpp)

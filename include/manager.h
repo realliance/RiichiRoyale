@@ -28,9 +28,9 @@ public:
 
   [[noreturn]] static auto ErrorState(const GameState& state, std::string info) -> void;
 
-  static auto RemovePieces(GameState& state, int player, Piece p, int count) -> int;
+  static auto RemovePieces(GameState& state, int player, Piece p, uint count) -> int;
   static auto DiscardPiece(GameState& state, int player, Piece p) -> void;
-  static auto MeldPieces(GameState& state, int player, Event e) -> void;
+  static auto MeldPieces(GameState& state, int player, Piece p, EventType type) -> void;
 
   static auto CanKan(const GameState& state, int player) -> bool;
   static auto CanPon(const GameState& state, int player) -> bool;
@@ -45,7 +45,7 @@ public:
 
   static auto ScorePlayers(const GameState& state) -> std::array<int16_t,4>;
   static auto AlertPlayers(const GameState& state, Event e) -> void;
-  static auto CountPieces(const GameState& state, int player, Piece p) -> int;
+  static auto CountPieces(const GameState& state, int player, Piece p) -> uint;
   static auto ValidateDecision(GameState& state, int player, Event decision, bool inHand, Piece p) -> bool;
 private:
   static std::map<std::string,newMahjongAiInst> availableAIs;
