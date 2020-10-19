@@ -25,8 +25,8 @@ def main():
   current_path = os.path.dirname(os.path.realpath(__file__))
 
   # Initialize tile surface dictionary
-  tile_dictionary = build_tile_surface_dict(os.path.join(current_path, 'resources/tiles/102x136'), TILE_SIZE, file_suffix='png')
-  small_tile_dictionary = build_tile_surface_dict(os.path.join(current_path, 'resources/tiles/102x136'), SMALL_TILE_SIZE, file_suffix='png')
+  tile_dictionary = build_tile_surface_dict(os.path.join(current_path, 'resources', 'tiles', '102x136'), TILE_SIZE, file_suffix='png')
+  small_tile_dictionary = build_tile_surface_dict(os.path.join(current_path, 'resources', 'tiles', '102x136'), SMALL_TILE_SIZE, file_suffix='png')
 
   # Set Icon
   pygame.display.set_icon(tile_dictionary[Tile.GREEN_DRAGON])
