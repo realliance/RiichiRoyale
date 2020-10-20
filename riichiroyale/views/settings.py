@@ -3,6 +3,7 @@ from pygame import surface
 import pygame
 import pygame_gui
 from .menuview import MenuView
+from riichiroyale.utils import settingsmanager
 
 
 class Settings(MenuView):
@@ -142,16 +143,27 @@ def create_settings_menu(game_manager, screen_width, screen_height):
                                                                    'bottom': 'top'
                                                                })
 
+    # Create settings manager to load and save settings file
+    settings = settingsmanager.SettingsManager()
 
+    # Put sliders in saved positions
+    master_volume_slider.set_current_value(settings.get_setting('Master Volume'))
+    sfx_volume_slider.set_current_value(settings.get_setting('SFX Volume'))
+    music_volume_slider.set_current_value(settings.get_setting('Music Volume'))
 
     # process_ui_event() is called when a UI event is caught while this menu is active
     def process_ui_event(event):
         if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == back_button:
                 game_manager.set_active_view('main_menu')
+                settings.save_to_file()
         elif event.user_type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
             game_manager.sound_manager.set_music_volume(music_volume_slider.get_current_value() / 100.0)
             game_manager.sound_manager.set_sfx_volume(sfx_volume_slider.get_current_value() / 100.0)
             game_manager.sound_manager.set_master_volume(master_volume_slider.get_current_value() / 100.0)
+
+            settings.set_setting('Master Volume', master_volume_slider.get_current_value())
+            settings.set_setting('SFX Volume', sfx_volume_slider.get_current_value())
+            settings.set_setting('Music Volume', music_volume_slider.get_current_value())
 
     return ui_manager, process_ui_event
