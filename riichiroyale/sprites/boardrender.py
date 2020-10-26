@@ -70,12 +70,11 @@ class BoardRender():
     # Doras
     self.elements.append(StatefulBoardElement(0, lambda: self.board.dora_revealed, lambda: render_dora_pile(self)))
     
-  def update(self, tutorial_state=None):
+  def update(self, callback_handler=None):
     # Notify elements to check state changes
     for element in self.elements:
-      element.update(tutorial_state=tutorial_state)
+      element.update(callback_handler=callback_handler)
 
-    
   def force_redraw(self):
     for element in self.elements:
       element.force_render()
