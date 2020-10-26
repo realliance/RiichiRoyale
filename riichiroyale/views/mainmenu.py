@@ -92,9 +92,7 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
         if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == newgame_button:
                 game_manager.set_active_view('game')
-                game_manager.get_active_view().ai_managed = True
-                game_manager.get_active_view().match.ai_managed = True
-                game_manager.get_active_view().on_match_start(round_dialogue_manager=DialogManager())
+                game_manager.get_active_view().on_match_start()
             if event.ui_element == tutorial_button:
                 game_manager.set_active_view('tutorial')
 

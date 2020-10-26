@@ -26,32 +26,6 @@ class Player:
     meld_tiles = len(self.melded_hand) * 3
     return self.hand + meld_tiles
 
-  def on_tile_click(self, tile_index, tutorial_state=None):
-    if self.my_turn:
-      if len(self.calls_avaliable) != 0:
-        return
-      # Discard Tile
-      tile = self.hand[tile_index]
-      if (not self.board.decision_pending) and ((tutorial_state is None) or (tutorial_state.next_discard == tile)):
-        self.board.play_clack()
-        if self.ai_managed:
-          event = EngineEvent()
-          event.type = EventType.Discard
-          event.piece = int(tile)
-          event.player = self.player_id
-          event.decision = True
-          PythonAIInterface.Inst().RetrieveDecision(event)
-        else:
-          del self.hand[tile_index]
-          self.hand.sort()
-          self.discard_pile.append(tile)
-          if self.board is None:
-            raise "Cannot communicate with board! Is this player registered?"
-          self.board.on_discard(self)
-          if tutorial_state is not None:
-            tutorial_state.discard()
-        self.my_turn = False
-
   def on_opponent_discard(self, player, chi_avaliable, ron_available=False):
     if len(player.discard_pile) == 0:
       raise "Player does not have a discard pile even though on_opponent_discard was drawn!"

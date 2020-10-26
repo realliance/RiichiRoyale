@@ -22,8 +22,8 @@ class StatefulBoardElement():
     self.rendered.clear(surface, background)
     self.rendered.draw(surface)
 
-  def update(self, tutorial_state=None):
-    self.rendered.update(tutorial_state)
+  def update(self, callback_handler=None):
+    self.rendered.update(callback_handler)
 
 def calculate_against_player_pov(player_pov, offset):
   return (player_pov + offset) % 4
