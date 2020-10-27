@@ -1,13 +1,11 @@
-import math
-from pygame import Rect
 from libmahjong import MahjongGameManager, PythonAIInterface, EventType, EngineEvent
 from riichiroyale import Tile
-from riichiroyale.game import Player, Match, process_event_queue
+from riichiroyale.game import Player, Match, process_event_queue, DialogManager
 from .boardview import BoardView
 
 class GameView(BoardView):
   def __init__(self, game_manager, screen, tile_dict, small_tile_dict, screen_width, screen_height, width_ratio, height_ratio):
-    super().__init__("game", game_manager, None, screen, tile_dict, small_tile_dict, screen_width, screen_height, width_ratio, height_ratio)
+    super().__init__("game", game_manager, DialogManager(), screen, tile_dict, small_tile_dict, screen_width, screen_height, width_ratio, height_ratio)
     self.player_ai_inst = None
 
   def on_match_init(self):
@@ -35,12 +33,6 @@ class GameView(BoardView):
     self.ai_game_active = True
 
     self.match.new_board(wall=wall, deadwall=deadwall)
-
-  def get_play_area_pos(self, screen):
-    w, h = screen.get_size()
-    play_area_height = h
-    player_area_width = math.floor(h * (float(self.screen_width_ratio)/self.screen_height_ratio))
-    return Rect((w - player_area_width)//2, 0, player_area_width, play_area_height)
 
   def on_tile_pressed(self, owner, tile_hand_index):
     if owner.my_turn:

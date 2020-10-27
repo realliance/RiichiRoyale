@@ -1,13 +1,12 @@
 import os
 import sys
 import math
-from libmahjong import MahjongGameManager
+import logging
 from pygame import surface, Rect
 import pygame
-from riichiroyale import GameManager, MainMenu, Settings, create_settings_menu, GameView, build_tile_surface_dict, Tile, TILE_SIZE, SMALL_TILE_SIZE, SoundManager, BoardManager
+from riichiroyale import GameManager, MainMenu, Settings, GameView, build_tile_surface_dict, Tile, TILE_SIZE, SMALL_TILE_SIZE, SoundManager, BoardManager, TutorialView
 
 SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO = 16, 9
-
 STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT = 1366, 768
 
 def get_play_area_pos(screen):
@@ -23,6 +22,9 @@ def main():
   pygame.display.set_caption('Riichi Royale')
 
   current_path = os.path.dirname(os.path.realpath(__file__))
+
+  # Init Logging
+  logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 
   # Initialize tile surface dictionary
   tile_dictionary = build_tile_surface_dict(os.path.join(current_path, 'resources', 'tiles', '102x136'), TILE_SIZE, file_suffix='png')
@@ -64,12 +66,12 @@ def main():
   main_menu = MainMenu(game_manager, tile_dictionary, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT)
   settings_menu = Settings(game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT)
   game_view = GameView(game_manager, screen, tile_dictionary, small_tile_dictionary, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT, SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO)
-  #tutorial_view = GameView(game_manager, sound_manager, screen, tile_dictionary, small_tile_dictionary, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT, SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO, name="tutorial")
+  tutorial_view = TutorialView(game_manager, screen, tile_dictionary, small_tile_dictionary, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT, SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO)
   
   game_manager.add_view(main_menu)
   game_manager.add_view(settings_menu)
   game_manager.add_view(game_view)
-  #game_manager.add_view(tutorial_view)
+  game_manager.add_view(tutorial_view)
   game_manager.set_active_view('main_menu')
 
   # Clock for pygame-gui

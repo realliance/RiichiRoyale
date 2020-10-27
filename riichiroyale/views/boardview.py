@@ -1,8 +1,8 @@
 import os
 import math
+import random
 import pygame_gui
 import pygame
-import random
 from pygame import Rect
 from pygame import surface
 from riichiroyale import BoardRender
@@ -40,6 +40,7 @@ class BoardView(MenuView):
     self.match = None
     self.board_render = None
     self.player = None
+    self.previous_player_calls_avaliable = []
 
   def on_match_init(self):
     """Called to initialize a new, default match. Should define self.match
@@ -84,20 +85,28 @@ class BoardView(MenuView):
 
   def update(self, time_delta):
     if self.player.calls_avaliable:
-      self.buttons["skip"].show()
-      for decision in self.player.calls_avaliable:
-        if decision == Call.Chi:
-          self.buttons["chi"].show()
-        elif decision == Call.Pon:
-          self.buttons["pon"].show()
-        elif decision == Call.Kan or decision == Call.Concealed_Kan:
-          self.buttons["kan"].show()
-        elif decision == Call.Riichi:
-          self.buttons["riichi"].show()
-        elif decision == Call.Ron:
-          self.buttons["ron"].show()
-        elif decision == Call.Tsumo:
-          self.buttons["tsumo"].show()
+      if self.player.calls_avaliable != self.previous_player_calls_avaliable:
+        self.previous_player_calls_avaliable = self.player.calls_avaliable
+        self.buttons["skip"].show()
+        for decision in self.player.calls_avaliable:
+          if decision == Call.Chi:
+            self.on_chi_call_avaliable()
+            self.buttons["chi"].show()
+          elif decision == Call.Pon:
+            self.on_pon_call_avaliable()
+            self.buttons["pon"].show()
+          elif decision == Call.Kan or decision == Call.Concealed_Kan:
+            self.on_kan_call_avaliable()
+            self.buttons["kan"].show()
+          elif decision == Call.Riichi:
+            self.on_riichi_call_avaliable()
+            self.buttons["riichi"].show()
+          elif decision == Call.Ron:
+            self.on_ron_call_avaliable()
+            self.buttons["ron"].show()
+          elif decision == Call.Tsumo:
+            self.on_tsumo_call_avaliable()
+            self.buttons["tsumo"].show()
       
     if self.dialogue_manager is not None and self.dialogue_manager.current_event is not None:
       if self.dialogue_manager.get_current_page() != self.buttons["text"].html_text:
@@ -124,11 +133,19 @@ class BoardView(MenuView):
     """
     raise NotImplementedError()
 
+  def on_pon_call_avaliable(self):
+    """Called when a Pon call is avaliable.
+    """
+
   def on_chi_button_pressed(self):
     """Called when the Chi UI button is selected. The button is hidden if this function returns true.
     :result: Bool. Whether the buttons should be hidden or not.
     """
     raise NotImplementedError()
+
+  def on_chi_call_avaliable(self):
+    """Called when a Chi call is avaliable.
+    """
 
   def on_kan_button_pressed(self):
     """Called when the Kan UI button is selected. The button is hidden if this function returns true.
@@ -136,11 +153,19 @@ class BoardView(MenuView):
     """
     raise NotImplementedError()
 
+  def on_kan_call_avaliable(self):
+    """Called when a Kan call is avaliable
+    """
+
   def on_riichi_button_pressed(self):
     """Called when the Riichi UI button is selected. The button is hidden if this function returns true.
     :result: Bool. Whether the buttons should be hidden or not.
     """
     raise NotImplementedError()
+
+  def on_riichi_call_avaliable(self):
+    """Called when a Riichi call is avaliable
+    """
 
   def on_ron_button_pressed(self):
     """Called when the Riichi UI button is selected. The button is hidden if this function returns true.
@@ -148,11 +173,19 @@ class BoardView(MenuView):
     """
     raise NotImplementedError()
 
+  def on_ron_call_avaliable(self):
+    """Called when a Ron call is avaliable
+    """
+
   def on_tsumo_button_pressed(self):
     """Called when the Tsumo UI button is selected. The button is hidden if this function returns true.
     :result: Bool. Whether the buttons should be hidden or not.
     """
     raise NotImplementedError()
+
+  def on_tsumo_call_avaliable(self):
+    """Called when a Tsumo call is avaliable
+    """
 
   def on_skip_button_pressed(self):
     """Called when the Skip UI button is selected. The button is hidden if this function returns true.

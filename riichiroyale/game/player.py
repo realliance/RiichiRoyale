@@ -48,8 +48,6 @@ class Player:
     self.calls_avaliable = []
     self.board.on_decision(call, self, self.discarder)
 
-
-
   def on_turn(self, board, draw=True):
     self.my_turn = True
     if draw:
