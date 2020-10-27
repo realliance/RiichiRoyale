@@ -4,7 +4,6 @@ import pygame
 import pygame_gui
 from pygame import surface
 from pygame.sprite import Group
-from riichiroyale.tutorial import Tutorial, get_wall, get_dialogue
 from riichiroyale.sprites import TileRender
 from riichiroyale.game import generate_start_board, Tile, DialogManager
 from .menuview import MenuView
@@ -92,29 +91,10 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
         if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == newgame_button:
                 game_manager.set_active_view('game')
-                game_manager.get_active_view().ai_managed = True
-                game_manager.get_active_view().match.ai_managed = True
-                game_manager.get_active_view().on_match_start(round_dialogue_manager=DialogManager())
+                game_manager.get_active_view().on_match_start()
             if event.ui_element == tutorial_button:
                 game_manager.set_active_view('tutorial')
-
-                prefered_discards = [
-                  Tile.SOUTH_WIND,
-                  Tile.ONE_BAMBOO,
-                  Tile.SEVEN_BAMBOO,
-                  Tile.SEVEN_PIN,
-                  Tile.ERROR_PIECE
-                ]
-                calls = ['pon', 'chi', 'skip', 'ron', 'endCall']
-                wall, deadwall = get_wall()
-                dialogue = get_dialogue()
-
-                dialogue_manager = DialogManager()
-                for item in dialogue:
-                  dialogue_manager.register_dialog_event(item)
-                  dialogue_manager.append_dialog_event(item, dialogue[item])
-
-                game_manager.get_active_view().on_match_start(Tutorial(prefered_discards, calls, Tile.THREE_PIN, wall, deadwall), dialogue_manager) #HOY
+                game_manager.get_active_view().on_match_start()
             if event.ui_element == settings_button:
                 game_manager.set_active_view('settings')
                 
