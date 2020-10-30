@@ -114,5 +114,28 @@
          "text_shadow_size": "2",
          "text_shadow_offset": "1,1"
        }
+   },
+   "#file_dialog":
+   {
+
+   },
+   "#file_dialog.#ok_button": {
+       "colours": {
+         "normal_bg": "#487049,#5b8c5c,90",
+         "hovered_bg": "#35393e",
+         "disabled_bg": "#23301f",
+         "selected_bg": "#193754",
+         "dark_bg": "#15191e"
+       }
+   },
+   "#file_dialog.#cancel_button": {
+       "colours": {
+         "normal_bg": "#692e2e,#7a4343,90",
+         "hovered_bg": "#35393e",
+         "disabled_bg": "#3b1f1f",
+         "selected_bg": "#193754",
+         "dark_bg": "#15191e"
+       }
    }
+
  }
