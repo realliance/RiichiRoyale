@@ -117,7 +117,20 @@
    },
    "#file_dialog":
    {
+     "colours":
+      {
+        "dark_bg":"#45494ef0,#65696efd,90",
+        "normal_border": "#999999"
+      },
 
+      "misc":
+      {
+         "shape": "rounded_rectangle",
+         "shape_corner_radius": "10",
+         "border_width": "1",
+         "shadow_width": "15",
+         "title_bar_height": "20"
+      }
    },
    "#file_dialog.#ok_button": {
        "colours": {
