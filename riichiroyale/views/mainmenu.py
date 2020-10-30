@@ -38,7 +38,7 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
     current_path = os.path.dirname(os.path.realpath(__file__))
     ui_manager = pygame_gui.UIManager((screen_width, screen_height), os.path.join(current_path, '../resources/theme.json'))
     newgame_button_rect = pygame.Rect(0, 0, 100, 50)
-    newgame_button_rect.bottomleft = (500, -200)
+    newgame_button_rect.bottomleft = (400, -200)
     newgame_button = pygame_gui.elements.UIButton(relative_rect=newgame_button_rect,
                                                   text='Start Demo',
                                                   manager=ui_manager,
@@ -50,7 +50,7 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
                                                   })
 
     tutorial_button_rect = pygame.Rect(0, 0, 120, 50)
-    tutorial_button_rect.bottomleft = (640, -200)
+    tutorial_button_rect.bottomleft = (540, -200)
     tutorial_button = pygame_gui.elements.UIButton(relative_rect=tutorial_button_rect,
                                                   text='Start Tutorial',
                                                   manager=ui_manager,
@@ -62,7 +62,7 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
                                                   })
 
     settings_button_rect = pygame.Rect(0, 0, 100, 50)
-    settings_button_rect.bottomleft = (800, -200)
+    settings_button_rect.bottomleft = (700, -200)
     settings_button = pygame_gui.elements.UIButton(relative_rect=settings_button_rect,
                                                    text='Settings',
                                                    manager=ui_manager,
@@ -86,8 +86,24 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
                                                  'bottom': 'bottom'
                                              })
 
+
+    load_button_rect = pygame.Rect(0, 0, 100, 50)
+    load_button_rect.bottomleft = (850, -200)
+    load_button = pygame_gui.elements.UIButton(relative_rect=load_button_rect,
+                                               text='Load Game',
+                                               manager=ui_manager,
+                                               anchors={
+                                                   'top': 'bottom',
+                                                   'bottom': 'bottom',
+                                                   'left': 'left',
+                                                   'right': 'left',
+                                               })
+
+    load_dialog_shown = False
+
     # processuievent() is called when a UI event is caught while this menu is active
     def process_ui_event(event):
+        nonlocal load_dialog_shown
         if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == newgame_button:
                 game_manager.set_active_view('game')
@@ -97,6 +113,24 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
                 game_manager.get_active_view().on_match_start()
             if event.ui_element == settings_button:
                 game_manager.set_active_view('settings')
+            if event.ui_element == load_button:
+                if not load_dialog_shown:
+                    load_file_rect = pygame.Rect(0, 0, 500, 300)
+                    load_file_rect.bottomleft = (600, 300)
+                    load_file_dialog = pygame_gui.windows.UIFileDialog(rect=load_file_rect,
+                                                                       manager=ui_manager,
+                                                                       window_title='Select file to load.',
+                                                                       visible=False,
+                                                                       allow_existing_files_only=False)
+                    print('Showing load dialog.')
+                    load_file_dialog.show()
+                    load_dialog_shown = True
+        if event.user_type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
+            print('Path to load:', event.text)
+        if event.user_type == pygame_gui.UI_WINDOW_CLOSE:
+            if event.ui_object_id == '#file_dialog':
+                print('Load dialog closed.')
+                load_dialog_shown = False
                 
 
     return ui_manager, process_ui_event
