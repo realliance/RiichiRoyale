@@ -146,10 +146,17 @@ def create_settings_menu(game_manager, screen_width, screen_height):
     # Create settings manager to load and save settings file
     settings = settingsmanager.SettingsManager()
 
+
+    # Apply loaded settings
+    game_manager.sound_manager.set_master_volume(settings.get_setting('Master Volume'))
+    game_manager.sound_manager.set_music_volume(settings.get_setting('Music Volume'))
+    game_manager.sound_manager.set_sfx_volume(settings.get_setting('SFX Volume'))
+    
     # Put sliders in saved positions
     master_volume_slider.set_current_value(settings.get_setting('Master Volume'))
     sfx_volume_slider.set_current_value(settings.get_setting('SFX Volume'))
     music_volume_slider.set_current_value(settings.get_setting('Music Volume'))
+
 
     # process_ui_event() is called when a UI event is caught while this menu is active
     def process_ui_event(event):
