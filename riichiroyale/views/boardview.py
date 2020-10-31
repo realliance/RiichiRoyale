@@ -122,7 +122,7 @@ class BoardView(MenuView):
                     elif decision == Call.Pon:
                         self.on_pon_call_avaliable()
                         self.buttons["pon"].show()
-                    elif decision == Call.Kan or decision == Call.Concealed_Kan:
+                    elif decision in (Call.Kan, Call.Concealed_Kan):
                         self.on_kan_call_avaliable()
                         self.buttons["kan"].show()
                     elif decision == Call.Riichi:
@@ -236,10 +236,11 @@ class BoardView(MenuView):
             self.dialogue_manager.next_page()
 
     def create_game_elements(self, screen_width, screen_height):
-        current_path = os.path.dirname(os.path.realpath(__file__))
         ui_manager = pygame_gui.UIManager(
             (screen_width, screen_height),
-            os.path.join(current_path, "../resources/theme.json"),
+            os.path.join(
+                os.path.dirname(os.path.realpath(__file__), "../resources/theme.json")
+            ),
         )
 
         call_menu_rect = pygame.Rect(

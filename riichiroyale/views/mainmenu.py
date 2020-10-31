@@ -5,7 +5,7 @@ import pygame_gui
 from pygame import surface
 from pygame.sprite import Group
 from riichiroyale.sprites import TileRender
-from riichiroyale.game import generate_start_board, Tile, DialogManager
+from riichiroyale.game import generate_start_board
 from .menuview import MenuView
 
 

@@ -23,7 +23,7 @@ class CallDirection(IntEnum):
     def get_call_direction(you, opponent):
         if you == 0 and opponent == 3:
             return CallDirection.Left
-        elif you == 3 and opponent == 0:
+        if you == 3 and opponent == 0:
             return CallDirection.Right
         return CallDirection(abs(opponent - you))
 

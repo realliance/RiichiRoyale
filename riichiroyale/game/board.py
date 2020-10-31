@@ -1,5 +1,4 @@
 import random
-import asyncio
 from .call import Call, CallDirection
 from .meld import Meld
 from .wall import generate_start_board

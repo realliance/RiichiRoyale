@@ -1,5 +1,5 @@
-import pygame
 import random
+import pygame
 from pygame.mixer import Sound
 
 
@@ -67,9 +67,10 @@ class SoundManager:
         pygame.mixer.music.set_volume(self.music_volume * self.master_volume)
         pygame.mixer.music.play(-1)
 
-    def stop_music(self):
+    @staticmethod
+    def stop_music():
         pygame.mixer.music.stop()
-        pygame.mixer.music.rewind()  # restarts sing so that if play is called it is at the beginning
+        pygame.mixer.music.rewind()  # restarts song so that if play is called it is at the beginning
 
     def set_music_volume(self, volume):
         self.music_volume = volume
@@ -81,28 +82,3 @@ class SoundManager:
 
     def set_sfx_volume(self, volume):
         self.sfx_volume = volume
-
-
-# Folk Chinese by PeriTune | http://peritune.com
-# Music promoted by https://www.free-stock-music.com
-# Creative Commons Attribution 3.0 Unported License
-# https://creativecommons.org/licenses/by/3.0/deed.en_US
-def musicInit(volume):
-    gameMusic = pygame.mixer.music.load("./audio/peritune-folk-chinese.ogg")
-    musicVolume = volume
-    pygame.mixer.music.set_volume(musicVolume * masterVolume)
-
-
-def musicStop():
-    pygame.mixer.music.stop()
-    pygame.mixer.music.rewind()
-
-
-def musicStart():
-    pygame.mixer.music.play(-1)
-
-
-def setMusicVolume(volume):
-    musicVolume = volume
-    pygame.mixer.music.set_volume(musicVolume * masterVolume)
-    return musicVolume

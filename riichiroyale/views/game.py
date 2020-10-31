@@ -1,6 +1,5 @@
 from libmahjong import MahjongGameManager, PythonAIInterface, EventType, EngineEvent
-from riichiroyale import Tile
-from riichiroyale.game import Player, Match, process_event_queue, DialogManager
+from riichiroyale.game import Player, Match, process_event_queue, DialogManager, Tile
 from .boardview import BoardView
 
 

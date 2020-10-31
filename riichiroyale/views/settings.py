@@ -2,8 +2,8 @@ import os
 from pygame import surface
 import pygame
 import pygame_gui
-from .menuview import MenuView
 from riichiroyale.utils import settingsmanager
+from .menuview import MenuView
 
 
 class Settings(MenuView):

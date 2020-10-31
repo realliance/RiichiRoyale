@@ -1,6 +1,5 @@
 from pygame.sprite import DirtySprite
 from pygame import mouse, Rect, transform
-import pygame
 from .tileload import TILE_SIZE, SMALL_TILE_SIZE
 
 

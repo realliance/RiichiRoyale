@@ -16,7 +16,7 @@ from riichiroyale.views import GameManager
 class TestBoardManager(unittest.TestCase):
     def setUp(self):
         self.game_manager = GameManager(BoardManager(), None)
-        self.match = Match(0, ai_managed=True)
+        self.match = Match(0)
         self.match.register_player(Player("Player"))
         self.match.register_player(Player("Bot 1"))
         self.match.register_player(Player("Bot 2"))
@@ -365,8 +365,8 @@ class TestBoardManager(unittest.TestCase):
             self.game_manager, self.match, [three_discards, ron_decisions]
         )
 
-        self.assertEqual(self.match.current_board.current_turn, 3)
-        self.assertTrue(self.game_manager.board_manager.waiting_on_decision)
+        self.assertEqual(self.match.current_board.current_turn, 2)
+        self.assertFalse(self.game_manager.board_manager.waiting_on_decision)
         self.assertEqual(
             self.match.current_board.players[2].discard_pile[-1], Tile.GREEN_DRAGON
         )

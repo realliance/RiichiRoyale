@@ -1,4 +1,3 @@
-from libmahjong import PythonAIInterface, EngineEvent, EventType
 from .call import Call, chi_possible, kan_possible, pon_possible
 
 
