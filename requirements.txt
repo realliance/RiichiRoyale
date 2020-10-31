@@ -3,6 +3,6 @@ pygame == 2.0.0.dev14
 pygame-gui ~= 0.5.7
 
 pdoc ~= 0.3
-pylint ~= 2.6
+black
 
 setuptools
