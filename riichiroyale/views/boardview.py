@@ -238,14 +238,14 @@ class BoardView(MenuView):
     def create_game_elements(self, screen_width, screen_height):
         ui_manager = pygame_gui.UIManager(
             (screen_width, screen_height),
-            os.path.join(
-                os.path.dirname(os.path.realpath(__file__), "../resources/theme.json")
-            ),
+            os.path.join(os.path.dirname(os.path.realpath(__file__)),
+            "../resources/theme.json")
         )
 
         call_menu_rect = pygame.Rect(
             screen_width / 2 - 500, screen_height / 2 - 350, 1000, 700
         )
+
         call_menu_panel = pygame_gui.elements.UIPanel(
             relative_rect=call_menu_rect,
             starting_layer_height=1,

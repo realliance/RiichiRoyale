@@ -486,6 +486,8 @@ def on_game_event(game_manager, event, match):
             extra_player = match.current_board.players[event.extra_player]
         else:
             extra_player = None
+    else:
+        extra_player = None
 
     # Align Turn
     if event_type in (
