@@ -17,7 +17,7 @@ setuptools.setup(
         'pybind11~=2.5'
     ],
     url="https://github.com/HartleyAHartley/RiichiRoyale",
-    packages=['libmahjong', 'riichiroyale', 'riichiroyale.resources', 'riichiroyale.resources.fonts', 'riichiroyale.audio', 'riichiroyale.sprites', 'riichiroyale.sprites.elements', 'riichiroyale.utils', 'riichiroyale.test', 'riichiroyale.game', 'riichiroyale.tutorial', 'riichiroyale.views'],
+    packages=['libmahjong', 'riichiroyale', 'riichiroyale.resources', 'riichiroyale.resources.fonts', 'riichiroyale.resources.images', 'riichiroyale.audio', 'riichiroyale.sprites', 'riichiroyale.sprites.elements', 'riichiroyale.utils', 'riichiroyale.test', 'riichiroyale.game', 'riichiroyale.tutorial', 'riichiroyale.views'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: Microsoft :: Windows",

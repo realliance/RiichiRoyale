@@ -50,6 +50,47 @@
            }
        }
      },
+     "menuButton":
+     {
+       "colours":
+       {
+        "normal_bg": "#076324",
+        "hovered_bg": "#076324",
+        "selected_bg": "#076324",
+        "active_bg": "#076324",
+        "normal_border": "#076324",
+        "hovered_border": "#076324",
+        "disabled_border": "#076324",
+        "selected_border": "#076324",
+        "active_border": "#076324",
+        "text_shadow": "#000000"
+       },
+       "font":
+       {
+         "name": "SourceSans3-Semibold",
+         "size": "48",
+         "bold": "0",
+         "italic": "0",
+         "regular_resource": {
+          "package": "riichiroyale.resources.fonts",
+          "resource": "SourceSans3-Semibold.ttf"
+         }
+       },
+       "misc":
+       {
+          "border_width": "0",
+          "shadow_width": "0",
+          "shape": "rectangle",
+          "text_horiz_alignment": "left",
+          "text_vert_alignment": "center",
+          "text_horiz_alignment_padding": "40",
+          "state_transitions":
+          {
+              "normal_hovered": "0",
+              "hovered_normal": "0"
+          }
+       }
+     },
     "panel":
     {
       "colours":
@@ -95,23 +136,23 @@
        {
          "dark_bg": "#00000000",
          "normal_text": "#df0f00",
-         "text_shadow": "#505050"
+         "text_shadow": "#FFFFFF"
        },
        "font":
        {
-         "name": "SourceSans3-SemiboldIt",
+         "name": "SourceSans3-Semibold",
          "size": "98",
          "bold": "0",
          "italic": "0",
          "regular_resource": {
           "package": "riichiroyale.resources.fonts",
-          "resource": "SourceSans3-SemiboldIt.ttf"
+          "resource": "SourceSans3-Semibold.ttf"
          }
        },
        "misc":
        {
          "text_shadow": "0",
-         "text_shadow_size": "2",
+         "text_shadow_size": "1",
          "text_shadow_offset": "1,1"
        }
    }
