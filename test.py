@@ -1,11 +1,12 @@
+import subprocess
 import sys
-import unittest
 import pylint.lint
 from pylint import epylint
-from riichiroyale.test import *
 
 linting_locations = ['riichiroyale/']
-opts = ['--rcfile=pylintrc', '--output-format=colorized'] + linting_locations
+formatter_opts = ['--target-version=py38', '--color'] + linting_locations
+
+lint_opts = ['--rcfile=pylintrc', '--output-format=colorized'] + linting_locations
 
 def run_lint(ci=False):
   if ci:
@@ -14,16 +15,20 @@ def run_lint(ci=False):
     _user_lint()
 
 def _user_lint():
-  pylint.lint.Run(opts)
+  pylint.lint.Run(lint_opts)
 
 def _ci_lint():
   return epylint.py_run(''.join(linting_locations), return_std=True)
 
 def main():
-  #CI = sys.argv[1] == 'ci' if len(sys.argv) > 1 else False
-  #run_lint(ci=CI)
+  CI = (sys.argv[1] == 'ci') if len(sys.argv) > 1 else False
+  if not CI:
+    subprocess.call(['python', '-m', 'black'] + formatter_opts)
 
-  unittest.main()
+  subprocess.call(['python', '-m', 'unittest', 'riichiroyale.test'])
+
+  run_lint(ci=CI)
+
 
 if __name__ == '__main__':
     main()

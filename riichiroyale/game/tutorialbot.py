@@ -1,10 +1,12 @@
-import asyncio
 from .player import Player
 
+
 class TutorialBot(Player):
-    def __init__(self, name, tutorial_winning_call, starting_hand=None, discard_pile=None):
+    def __init__(
+        self, name, tutorial_winning_call, starting_hand=None, discard_pile=None
+    ):
         super().__init__(name, starting_hand=None, discard_pile=None)
-        self.tutorial_winning_call=tutorial_winning_call
+        self.tutorial_winning_call = tutorial_winning_call
 
     def on_turn(self, board, draw=True):
         self.my_turn = True
@@ -22,4 +24,3 @@ class TutorialBot(Player):
 
     def make_decision(self, call):
         self.calls_avaliable = []
-
