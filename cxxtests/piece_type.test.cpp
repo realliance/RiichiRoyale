@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "piecetype.h"
-#include "winds.h"
+
 
 TEST(PieceType, toUint8_t) {
   EXPECT_EQ(Piece(EAST_WIND).toUint8_t(),1);

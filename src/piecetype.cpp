@@ -1,6 +1,8 @@
 #include <string>
 #include "piecetype.h"
 
+using namespace Mahjong;
+
 auto Piece::toUint8_t() const -> uint8_t {
   return p & ~uint8_t(RED_FIVE);
 }
@@ -14,7 +16,7 @@ auto Piece::isHonor() const -> bool{
 }
 
 auto Piece::isTerminal() const -> bool{
-  return (p & TERMINAL_BIT) != ERROR_PIECE;
+  return (p & TERMINAL_BIT) != ERROR;
 }
 
 auto Piece::getSuit() const -> uint8_t {
@@ -49,7 +51,7 @@ auto Piece::fromWind(Wind w) -> Piece {
     case North:
       return Piece(NORTH_WIND);
     default:
-      return Piece(ERROR_PIECE);
+      return Piece(ERROR);
   }
 }
 
@@ -61,7 +63,7 @@ auto Piece::toStr() const -> std::string{
 }
 
 const std::map<uint8_t,std::string> Piece::STR_MAP = {
-    {ERROR_PIECE, "ERRORPIECE"},
+    {ERROR, "ERRORPIECE"},
     {RED_DRAGON , "Red Dragon"},
     {WHITE_DRAGON , "White Dragon"},
     {GREEN_DRAGON , "Green Dragon"},

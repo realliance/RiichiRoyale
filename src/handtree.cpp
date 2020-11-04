@@ -1,9 +1,13 @@
-#include <sys/types.h>  // for int8_t
-#include <algorithm>    // for generate_n, sort, unique
-#include <memory>       // for allocator_traits<>::value_type
-#include <vector>       // for vector
-#include "handnode.h"   // for Node, ChiSet, Pair, PonSet, Root, Single
-#include "piecetype.h"  // for Piece, ERROR_PIECE
+#include <sys/types.h>
+#include <algorithm>
+#include <memory>
+#include <vector>
+#include "handnode.h"
+#include "piecetype.h"
+#include "analysis.h"
+
+
+using namespace Mahjong;
 
 int possibleChis(const int8_t* counts, Piece p){
   if(p.isHonor()){
@@ -42,7 +46,7 @@ void countPieces(int8_t* counts, const std::vector<Piece>& pieces){
   }
 }
 
-auto breakdownHand(std::vector<Piece> pieces) -> Node*{
+auto Mahjong::breakdownHand(std::vector<Piece> pieces) -> Node*{
   int8_t counts[256] = {};
   countPieces(counts,pieces);
   std::sort(pieces.begin(), pieces.end());
@@ -122,8 +126,8 @@ auto breakdownHand(std::vector<Piece> pieces) -> Node*{
   int id = 0;
   Node* rootNode = new Node{
     id++, //id
-    Root, //type
-    ERROR_PIECE, //Start
+    Node::Root, //type
+    Piece::ERROR, //Start
     nullptr, //parent
     {}, // leaves
     0 //leafPosInParent
@@ -138,7 +142,7 @@ auto breakdownHand(std::vector<Piece> pieces) -> Node*{
     while(counts[single.toUint8_t()] > n++){
       Node* leaf = new Node{
         id++, //id
-        Single, //type
+        Node::Single, //type
         single, //Start
         currentNode, //parent
         {}, // leaves
@@ -154,7 +158,7 @@ auto breakdownHand(std::vector<Piece> pieces) -> Node*{
   for(const auto & start : onlyPon){
     Node* leaf = new Node{
       id++, //id
-      PonSet, //type
+      Node::PonSet, //type
       start, //Start
       currentNode, //parent
       {}, // leaves
@@ -168,7 +172,7 @@ auto breakdownHand(std::vector<Piece> pieces) -> Node*{
   for(const auto & start : onlyChi){
     Node* leaf = new Node{
       id++, //id
-      ChiSet, //type
+      Node::ChiSet, //type
       start, //Start
       currentNode, //parent
       {}, // leaves
@@ -182,7 +186,7 @@ auto breakdownHand(std::vector<Piece> pieces) -> Node*{
   for(const auto & start : pairs){
     Node* leaf = new Node{
       id++, //id
-      Pair, //type
+      Node::Pair, //type
       start, //Start
       currentNode, //parent
       {}, // leaves

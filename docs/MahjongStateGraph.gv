@@ -10,11 +10,11 @@ digraph Mahjong {
   KanDiscard -> Replacement
   KanDiscard -> Ron
 
-  Chi -> PlayerHand
   Draw -> PlayerHand
   Replacement -> PlayerHand
-  Pon -> PlayerHand
     
+  Pon -> Discard
+  Chi -> Discard
   PlayerHand -> Discard
   Riichi -> Discard
   

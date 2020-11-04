@@ -1,6 +1,8 @@
 #include "handnode.h"
 
 
+using namespace Mahjong;
+
 auto Node::begin() const -> const_iterator{
   return const_iterator(this, false);
 }
@@ -125,15 +127,15 @@ auto Node::DumpAsTGF(std::ostream& os) -> std::ostream&{
 
 auto NodeTypeToColorStr(uint8_t nodetype) -> std::string{
   switch(nodetype){
-    case ChiSet:
+    case Node::ChiSet:
       return "purple";
-    case PonSet:
+    case Node::PonSet:
       return "yellow";
-    case Pair:
+    case Node::Pair:
       return "green";
-    case Single:
+    case Node::Single:
       return "blue";
-    case Root:
+    case Node::Root:
       return "black";
     default:
       return "red";
@@ -142,15 +144,15 @@ auto NodeTypeToColorStr(uint8_t nodetype) -> std::string{
 
 auto NodeTypeToShapeStr(uint8_t nodetype) -> std::string{
   switch(nodetype){
-    case ChiSet:
+    case Node::ChiSet:
       return "house";
-    case PonSet:
+    case Node::PonSet:
       return "septagon";
-    case Pair:
+    case Node::Pair:
       return "oval";
-    case Single:
+    case Node::Single:
       return "box";
-    case Root:
+    case Node::Root:
       return "underline";
     default:
       return "Mdiamond";

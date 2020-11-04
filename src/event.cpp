@@ -2,6 +2,8 @@
 #include "piecetype.h"
 #include <iostream>
 
+using namespace Mahjong;
+
 auto operator<<(std::ostream& os, const Event& e) -> std::ostream&{
   os << "{type: " << EventTypeToStr(e.type);
   os << " player: " << e.player;

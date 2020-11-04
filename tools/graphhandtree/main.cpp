@@ -1,9 +1,10 @@
 #include <fstream>
 
-#include "possiblesets.h"
-#include "handtree.h"
+#include "analysis.h"
 #include "handnode.h"
  
+using namespace Mahjong;
+
 int main(){
   std::vector<Piece> Hand = GetPossibleStdFormHand();
 
