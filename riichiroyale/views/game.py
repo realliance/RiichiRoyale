@@ -1,4 +1,4 @@
-from libmahjong import MahjongGameManager, PythonAIInterface, EventType, EngineEvent
+from libmahjong import start_game, PythonAIInterface, EventType, EngineEvent
 from riichiroyale.game import Player, Match, process_event_queue, DialogManager, Tile
 from .boardview import BoardView
 
@@ -42,7 +42,7 @@ class GameView(BoardView):
         self.match.player_id = 0
 
         # Init Mahjong Game Engine
-        MahjongGameManager.start_game(
+        start_game(
             ["PythonAIInterface"] + ["AngryDiscardoBot"] * 3, True
         )
         self.match.player_ai_inst = PythonAIInterface.Inst()
