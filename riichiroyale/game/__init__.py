@@ -1,4 +1,3 @@
-from .tile import *
 from .board import *
 from .wall import *
 from .meld import *
@@ -9,3 +8,4 @@ from .match import *
 from .boardmanager import *
 from .gameevent import *
 from .dialogmanager import *
+from .playermanager import *

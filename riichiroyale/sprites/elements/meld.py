@@ -1,7 +1,8 @@
 from functools import reduce
 from pygame.sprite import Group
 from pygame import Rect
-from riichiroyale.game import Tile, CallDirection
+from libmahjong import PieceType
+from riichiroyale.game import CallDirection
 from riichiroyale.sprites import SMALL_TILE_SIZE, TileRender
 
 
@@ -98,7 +99,7 @@ def render_meld(board_render, meld, xpos, ypos, meld_rotation=0):
         tile_pos = (tile_posx, tile_posy)
 
         rendered_tile = (
-            Tile.ERROR_PIECE
+            PieceType.ERROR
             if direction == CallDirection.Concealed and i in (0, 3)
             else tile
         )

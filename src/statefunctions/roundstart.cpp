@@ -12,6 +12,8 @@
 #include "statefunctions.h"
 #include "stateutilities.h"
 #include "walls.h"
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 using namespace Mahjong;
 

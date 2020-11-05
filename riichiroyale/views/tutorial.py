@@ -1,4 +1,4 @@
-from riichiroyale import Tile
+from libmahjong import PieceType
 from riichiroyale.game import Player, Match, TutorialBot, Call, DialogManager
 from riichiroyale.tutorial import Tutorial, get_wall, get_dialogue
 from .boardview import BoardView
@@ -39,17 +39,17 @@ class TutorialView(BoardView):
 
     def on_match_init(self):
         prefered_discards = [
-            Tile.SOUTH_WIND,
-            Tile.ONE_BAMBOO,
-            Tile.SEVEN_BAMBOO,
-            Tile.SEVEN_PIN,
-            Tile.ERROR_PIECE,
+            PieceType.SOUTH_WIND,
+            PieceType.ONE_BAMBOO,
+            PieceType.SEVEN_BAMBOO,
+            PieceType.SEVEN_PIN,
+            PieceType.ERROR,
         ]
         calls = ["pon", "chi", "skip", "ron", "endCall"]
         wall, deadwall = get_wall()
 
         self.tutorial = Tutorial(
-            prefered_discards, calls, Tile.THREE_PIN, wall, deadwall
+            prefered_discards, calls, PieceType.THREE_PIN, wall, deadwall
         )
         self.match = Match(None, self.game_manager.sound_manager)
 

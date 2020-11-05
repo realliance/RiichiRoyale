@@ -4,6 +4,7 @@ import pygame
 import pygame_gui
 from pygame import surface
 from pygame.sprite import LayeredUpdates, Sprite
+from libmahjong import Piece
 from riichiroyale.sprites import TileRender
 from riichiroyale.game import generate_start_board
 from riichiroyale.utils import load_image_resource
@@ -21,7 +22,7 @@ class MainMenu(MenuView):
         wall, _ = generate_start_board()
         tile_hand = wall[:14]
         self.hand = list(
-            map(lambda tile: TileRender(dictionary, tile, (0, 0)), tile_hand)
+            map(lambda tile: TileRender(dictionary, Piece(tile), (0, 0)), tile_hand)
         )
         self.hand_group = LayeredUpdates(self.hand)
 

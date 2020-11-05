@@ -1,4 +1,6 @@
-from libmahjong import EventType
+from time import sleep
+from copy import copy
+from libmahjong import EventType, Piece, PieceType
 from .gameevent import Event, CombinedEventType
 from .meld import Meld
 from .call import Call, CallDirection
@@ -13,12 +15,22 @@ class BoardManager:
         self.game_should_end = False
 
 
-def process_event_queue(game_manager, match, current_queue):
-    if len(current_queue) == 0:
+def convert_event(event):
+    if isinstance(event.type, CombinedEventType):
+        return event
+
+    event_piece = event.piece.get_raw_value() if isinstance(event.piece, Piece) else event.piece
+    return Event(event.type, event.player, Piece(int(event_piece)), event.decision)
+
+def process_event_queue(game_manager, match):
+    event = match.player_manager.Pop()
+    if event is None:
         return
-    event = current_queue.pop(0)
-    if event.type == EventType.Discard and len(current_queue) > 0:
-        next_event = current_queue.pop(0)
+    
+    event = convert_event(event)
+    if event.type == EventType.Discard and match.player_manager.GetQueueLength() > 0:
+        next_event = match.player_manager.Pop()
+        next_event = convert_event(next_event)
         if (
             next_event.type
             in (EventType.Pon, EventType.Ron, EventType.Kan, EventType.Chi)
@@ -31,14 +43,15 @@ def process_event_queue(game_manager, match, current_queue):
                 next_event.decision,
                 extra_player=next_event.player,
                 extra_piece=next_event.piece,
-                raw_event_a=event,
-                raw_event_b=next_event,
+                raw_event_a=copy(event),
+                raw_event_b=copy(next_event),
             )
-            process_event_queue(game_manager, match, [new_event] + current_queue)
+            match.player_manager.AddToEventQueue(new_event)
+            process_event_queue(game_manager, match)
             return
-        current_queue = [next_event] + current_queue
+        match.player_manager.AddToEventQueue(next_event)
     on_game_event(game_manager, event, match)
-    process_event_queue(game_manager, match, current_queue)
+    process_event_queue(game_manager, match)
 
 
 def on_chi_event(
@@ -53,7 +66,7 @@ def on_chi_event(
 ):
     if not is_decision:
         last_event = game_manager.board_manager.last_decision_event
-        del match.current_board.players[last_event.player].discard_pile[-1]
+        del match.players[last_event.player].discard_pile[-1]
         event_player.hand += [last_event.extra_piece]
 
         game_manager.board_manager.last_decision_event = None
@@ -73,6 +86,9 @@ def on_chi_event(
         ]
         event_player.calls_avaliable = []
 
+        game_manager.board_manager.last_decision_event = None
+        game_manager.board_manager.waiting_on_decision = False
+
 
 def on_pon_event(
     game_manager,
@@ -86,7 +102,7 @@ def on_pon_event(
 ):
     if not is_decision:
         last_event = game_manager.board_manager.last_decision_event
-        del match.current_board.players[last_event.player].discard_pile[-1]
+        del match.players[last_event.player].discard_pile[-1]
 
         if is_ai:
             del event_player.hand[-2:]
@@ -99,7 +115,7 @@ def on_pon_event(
             Meld(
                 [event.piece] * 3,
                 CallDirection.get_call_direction(
-                    event_player.player, last_event.player
+                    event_player.player_id, last_event.player
                 ),
             )
         ]
@@ -167,7 +183,7 @@ def on_kan_event(
     if not is_decision:
         # Calling Kan
         last_event = game_manager.board_manager.last_decision_event
-        del match.current_board.players[last_event.player].discard_pile[-1]
+        del match.players[last_event.player].discard_pile[-1]
 
         match.current_board.current_turn = event.player
 
@@ -257,6 +273,7 @@ def on_discard_event(
         event_player.my_turn = True
         game_manager.board_manager.waiting_on_decision = True
     else:
+        game_manager.board_manager.waiting_on_decision = False
         if not is_ai:
             event_player.hand.remove(event.piece)
             event_player.hand.sort()
@@ -329,7 +346,7 @@ def on_point_diff_event(
     _pov_player,
     _extra_player,
 ):
-    match.scores[event.player] += event.piece * 1000
+    match.scores[event.player] += event.piece.get_raw_value() * 1000
     game_manager.board_manager.round_should_end = True
 
 
@@ -451,9 +468,18 @@ def on_discard_ron_event(
 
 
 def on_game_event(game_manager, event, match):
-    is_ai = event.player != match.player_id
+    is_ai = event.player != match.player_manager.player_id
     is_decision = event.decision
     event_type = event.type
+
+    if is_ai and event.player != -1:
+        sleep(0.5)
+
+    print('== NEW EVENT ==')
+    print('Player:', event.player)
+    print('Type:', event.type)
+    print('Piece:', PieceType(event.piece.get_raw_value()))
+    print('Decision?', event.decision)
 
     EVENTS = {
         EventType.Chi: on_chi_event,
@@ -474,16 +500,16 @@ def on_game_event(game_manager, event, match):
         CombinedEventType.DiscardRon: on_discard_ron_event,
     }
 
-    actual_player = match.current_board.players[match.player_id]
+    actual_player = match.players[match.player_manager.player_id]
 
     if event.player is not None or event.player in range(4):
-        player = match.current_board.players[event.player]
+        player = match.players[event.player]
     else:
         player = None
 
     if hasattr(event, "extra_player"):
         if event.extra_player is not None or event.extra_player in range(4):
-            extra_player = match.current_board.players[event.extra_player]
+            extra_player = match.players[event.extra_player]
         else:
             extra_player = None
     else:

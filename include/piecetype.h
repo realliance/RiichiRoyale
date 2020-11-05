@@ -4,7 +4,6 @@
 #include <map>
 #include "winds.h"
 
-
 namespace Mahjong{
 
   class Piece{
@@ -61,14 +60,16 @@ namespace Mahjong{
       GREEN_DRAGON = HONOR_SUIT | 7
   };
 
-    auto isHonor()     const -> bool;
-    auto isTerminal()  const -> bool;
-    auto isGreen()     const -> bool;
-    auto toUint8_t()   const -> uint8_t;
-    auto raw_value()   const -> uint8_t;
-    auto getSuit()     const -> uint8_t;
-    auto getPieceNum() const -> uint8_t;
-    auto toStr()       const -> std::string;
+    auto isHonor()      const -> bool;
+    auto isTerminal()   const -> bool;
+    auto isGreen()      const -> bool;
+    auto isRedFive()    const -> bool;
+    auto isBoardPiece() const -> bool;
+    auto toUint8_t()    const -> uint8_t;
+    auto raw_value()    const -> uint8_t;
+    auto getSuit()      const -> uint8_t;
+    auto getPieceNum()  const -> uint8_t;
+    auto toStr()        const -> std::string;
 
     static auto fromWind(Wind w) -> Piece;
 

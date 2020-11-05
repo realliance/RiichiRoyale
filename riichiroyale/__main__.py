@@ -2,20 +2,21 @@ import os
 import sys
 import math
 import logging
-from pygame import surface, Rect
 import pygame
+from pygame import surface, Rect
+from libmahjong import register_ai, avaliable_ais, PieceType
 from riichiroyale import (
     GameManager,
     MainMenu,
     Settings,
     GameView,
     build_tile_surface_dict,
-    Tile,
     TILE_SIZE,
     SMALL_TILE_SIZE,
     SoundManager,
     BoardManager,
     TutorialView,
+    PlayerManager
 )
 
 SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO = 16, 9
@@ -56,13 +57,12 @@ def main():
         file_suffix="png",
     )
 
-    # Set Icon
-    pygame.display.set_icon(tile_dictionary[Tile.GREEN_DRAGON])
+    player_manager = PlayerManager()
+    register_ai(player_manager, "Player")
+    print(avaliable_ais())
 
-    # Fill background
-    clear_background = surface.Surface(screen.get_size())
-    clear_background = clear_background.convert_alpha()
-    clear_background.fill((0, 0, 0))
+    # Set Icon
+    pygame.display.set_icon(tile_dictionary[PieceType.GREEN_DRAGON])
 
     # Initialize Sound Manager
     sound_manager = SoundManager()
@@ -128,6 +128,7 @@ def main():
         STARTING_SCREEN_HEIGHT,
         SCREEN_WIDTH_RATIO,
         SCREEN_HEIGHT_RATIO,
+        player_manager=player_manager,
     )
     tutorial_view = TutorialView(
         game_manager,
@@ -146,10 +147,15 @@ def main():
     game_manager.add_view(tutorial_view)
     game_manager.set_active_view("main_menu")
 
+    sound_manager.play_music("lobby")
+
+    # Fill background
+    clear_background = surface.Surface(screen.get_size())
+    clear_background = clear_background.convert_alpha()
+    clear_background.fill((0, 0, 0))
+
     # Clock for pygame-gui
     clock = pygame.time.Clock()
-
-    sound_manager.play_music("lobby")
 
     # Event loop
     while 1:

@@ -19,6 +19,14 @@ auto Piece::isTerminal() const -> bool{
   return (p & TERMINAL_BIT) != ERROR;
 }
 
+auto Piece::isBoardPiece() const -> bool {
+  return (p & 0x0F) != ERROR;
+}
+
+auto Piece::isRedFive() const -> bool {
+  return (p & RED_FIVE) != ERROR;
+}
+
 auto Piece::getSuit() const -> uint8_t {
   return p & 3<<5;
 }

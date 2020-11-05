@@ -1,5 +1,6 @@
 #include <pybind11/pybind11.h>       // for class_, init, module
 #include <pybind11/stl.h>
+#include <pybind11/operators.h>
 
 namespace py = pybind11;
 
@@ -80,6 +81,64 @@ PYBIND11_MODULE(libmahjong, m) {
     .value("End", Mahjong::Event::Type::End)
     .export_values();
 
+  py::class_<Mahjong::Piece>(m, "Piece")
+    .def(py::init<const uint8_t &>())
+    .def("get_piece_num", &Mahjong::Piece::getPieceNum)
+    .def("get_raw_value", &Mahjong::Piece::raw_value)
+    .def("get_suit", &Mahjong::Piece::getSuit)
+    .def("is_board_piece", &Mahjong::Piece::isBoardPiece)
+    .def("is_red_five", &Mahjong::Piece::isRedFive)
+    .def(py::self < py::self)
+    .def(py::self == py::self)
+    .def(py::self + int());
+
+  py::enum_<Mahjong::Piece::Type>(m, "PieceType")
+    .value("TERMINAL_BIT", Mahjong::Piece::Type::TERMINAL_BIT)
+    .value("HONOR_SUIT", Mahjong::Piece::Type::HONOR_SUIT)
+    .value("BAMBOO_SUIT", Mahjong::Piece::Type::BAMBOO_SUIT)
+    .value("PIN_SUIT", Mahjong::Piece::Type::PIN_SUIT)
+    .value("CHARACTER_SUIT", Mahjong::Piece::Type::CHARACTER_SUIT)
+    .value("RED_FIVE", Mahjong::Piece::Type::RED_FIVE)
+    .value("ERROR", Mahjong::Piece::Type::ERROR)
+    .value("ONE_BAMBOO", Mahjong::Piece::Type::ONE_BAMBOO)
+    .value("TWO_BAMBOO", Mahjong::Piece::Type::TWO_BAMBOO)
+    .value("THREE_BAMBOO", Mahjong::Piece::Type::THREE_BAMBOO)
+    .value("FOUR_BAMBOO", Mahjong::Piece::Type::FOUR_BAMBOO)
+    .value("FIVE_BAMBOO", Mahjong::Piece::Type::FIVE_BAMBOO)
+    .value("RED_FIVE_BAMBOO", Mahjong::Piece::Type::RED_FIVE_BAMBOO)
+    .value("SIX_BAMBOO", Mahjong::Piece::Type::SIX_BAMBOO)
+    .value("SEVEN_BAMBOO", Mahjong::Piece::Type::SEVEN_BAMBOO)
+    .value("EIGHT_BAMBOO", Mahjong::Piece::Type::EIGHT_BAMBOO)
+    .value("NINE_BAMBOO", Mahjong::Piece::Type::NINE_BAMBOO)
+    .value("ONE_PIN", Mahjong::Piece::Type::ONE_PIN)
+    .value("TWO_PIN", Mahjong::Piece::Type::TWO_PIN)
+    .value("THREE_PIN", Mahjong::Piece::Type::THREE_PIN)
+    .value("FOUR_PIN", Mahjong::Piece::Type::FOUR_PIN)
+    .value("FIVE_PIN", Mahjong::Piece::Type::FIVE_PIN)
+    .value("RED_FIVE_PIN", Mahjong::Piece::Type::RED_FIVE_PIN)
+    .value("SIX_PIN", Mahjong::Piece::Type::SIX_PIN)
+    .value("SEVEN_PIN", Mahjong::Piece::Type::SEVEN_PIN)
+    .value("EIGHT_PIN", Mahjong::Piece::Type::EIGHT_PIN)
+    .value("NINE_PIN", Mahjong::Piece::Type::NINE_PIN)
+    .value("ONE_CHARACTER", Mahjong::Piece::Type::ONE_CHARACTER)
+    .value("TWO_CHARACTER", Mahjong::Piece::Type::TWO_CHARACTER)
+    .value("THREE_CHARACTER", Mahjong::Piece::Type::THREE_CHARACTER)
+    .value("FOUR_CHARACTER", Mahjong::Piece::Type::FOUR_CHARACTER)
+    .value("FIVE_CHARACTER", Mahjong::Piece::Type::FIVE_CHARACTER)
+    .value("RED_FIVE_CHARACTER", Mahjong::Piece::Type::RED_FIVE_CHARACTER)
+    .value("SIX_CHARACTER", Mahjong::Piece::Type::SIX_CHARACTER)
+    .value("SEVEN_CHARACTER", Mahjong::Piece::Type::SEVEN_CHARACTER)
+    .value("EIGHT_CHARACTER", Mahjong::Piece::Type::EIGHT_CHARACTER)
+    .value("NINE_CHARACTER", Mahjong::Piece::Type::NINE_CHARACTER)
+    .value("EAST_WIND", Mahjong::Piece::Type::EAST_WIND)
+    .value("SOUTH_WIND", Mahjong::Piece::Type::SOUTH_WIND)
+    .value("WEST_WIND", Mahjong::Piece::Type::WEST_WIND)
+    .value("NORTH_WIND", Mahjong::Piece::Type::NORTH_WIND)
+    .value("RED_DRAGON", Mahjong::Piece::Type::RED_DRAGON)
+    .value("WHITE_DRAGON", Mahjong::Piece::Type::WHITE_DRAGON)
+    .value("GREEN_DRAGON", Mahjong::Piece::Type::GREEN_DRAGON)
+    .export_values();
+
   py::class_<Mahjong::Event>(m, "EngineEvent")
     .def(py::init<>())
     .def_readwrite("type", &Mahjong::Event::type)
@@ -111,6 +170,6 @@ PYBIND11_MODULE(libmahjong, m) {
     .def_readonly("prevalent_wind", &RoundStartStruct::prevalentWind);
 
   m.def("avaliable_ais", &Mahjong::GetAvailableControllers);
-  m.def("register_ai", &Mahjong::RegisterController);
+  m.def("register_ai", &Mahjong::RegisterPythonController);
   m.def("start_game", &Mahjong::StartGame);
 }

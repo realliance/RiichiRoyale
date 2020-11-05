@@ -1,5 +1,5 @@
-from libmahjong import start_game, PythonAIInterface, EventType, EngineEvent
-from riichiroyale.game import Player, Match, process_event_queue, DialogManager, Tile
+from libmahjong import start_game, PythonAIInterface, EventType, EngineEvent, PieceType
+from riichiroyale.game import Player, Match, process_event_queue, DialogManager
 from .boardview import BoardView
 
 
@@ -14,6 +14,7 @@ class GameView(BoardView):
         screen_height,
         width_ratio,
         height_ratio,
+        player_manager=None,
     ):
         super().__init__(
             "game",
@@ -27,35 +28,16 @@ class GameView(BoardView):
             width_ratio,
             height_ratio,
         )
-        self.player_ai_inst = None
+        self.player_manager = player_manager
 
     def on_match_init(self):
-        if self.match is not None:
-            if self.match.player_ai_inst is not None:
-                self.match.player_ai_inst.ReceiveEvent()
         self.match = None
-        self.match = Match(None, sound_manager=self.sound_manager, ai_managed=True)
+        self.match = Match(["Player"] + ["AngryDiscardoBot"] * 3, self.game_manager, self.player_manager, self.sound_manager)
+        self.match.start()
 
     def on_pov_init(self):
-        self.player = Player("Player")
-        self.match.register_player(self.player)
-        self.match.player_id = 0
-
-        # Init Mahjong Game Engine
-        start_game(
-            ["PythonAIInterface"] + ["AngryDiscardoBot"] * 3, True
-        )
-        self.match.player_ai_inst = PythonAIInterface.Inst()
-        self.match.player_id = self.match.player_ai_inst.GameStart()
-        self.match.players[0].ai_managed = True
-        self.match.register_player(Player("Bot 1", ai_managed=True))
-        self.match.register_player(Player("Bot 2", ai_managed=True))
-        self.match.register_player(Player("Bot 3", ai_managed=True))
-        wall = [Tile.ERROR_PIECE] * 70
-        deadwall = [Tile.ERROR_PIECE] * 14
-        self.ai_game_active = True
-
-        self.match.new_board(wall=wall, deadwall=deadwall)
+        if self.player_manager is None:
+            self.match_pov = 0
 
     def on_tile_pressed(self, owner, tile_hand_index):
         if owner.my_turn:
@@ -64,22 +46,22 @@ class GameView(BoardView):
                 self.game_manager.board_manager.waiting_on_decision
                 and len(owner.calls_avaliable) == 0
             ):
-                self.match.current_board.play_clack()
+                self.match.play_clack()
                 event = EngineEvent()
                 event.type = EventType.Discard
-                event.piece = int(tile)
+                event.piece = int(tile.get_raw_value())
                 event.player = owner.player_id
                 event.decision = True
-                PythonAIInterface.Inst().RetrieveDecision(event)
+                self.player_manager.MakeDecision(event)
 
     def on_pon_button_pressed(self):
-        self.match.player_ai_inst.RetrieveDecision(
+        self.match.player_manager.MakeDecision(
             self.game_manager.board_manager.last_decision_event.raw_event_b
         )
         return True
 
     def on_chi_button_pressed(self):
-        self.match.player_ai_inst.RetrieveDecision(
+        self.match.player_manager.MakeDecision(
             self.game_manager.board_manager.last_decision_event.raw_event_b
         )
         return True
@@ -89,29 +71,29 @@ class GameView(BoardView):
             self.game_manager.board_manager.last_decision_event.type
             == EventType.ConvertedKan
         ):
-            self.match.player_ai_inst.RetrieveDecision(
+            self.match.player_manager.MakeDecision(
                 self.game_manager.board_manager.last_decision_event
             )
         else:
-            self.match.player_ai_inst.RetrieveDecision(
+            self.match.player_manager.MakeDecision(
                 self.game_manager.board_manager.last_decision_event.raw_event_b
             )
         return True
 
     def on_tsumo_button_pressed(self):
-        self.match.player_ai_inst.RetrieveDecision(
+        self.match.player_manager.MakeDecision(
             self.game_manager.board_manager.last_decision_event.raw_event_b
         )
         return True
 
     def on_riichi_button_pressed(self):
-        self.match.player_ai_inst.RetrieveDecision(
+        self.match.player_manager.MakeDecision(
             self.game_manager.board_manager.last_decision_event
         )
         return True
 
     def on_ron_button_pressed(self):
-        self.match.player_ai_inst.RetrieveDecision(
+        self.match.player_manager.MakeDecision(
             self.game_manager.board_manager.last_decision_event.raw_event_b
         )
         return True
@@ -122,7 +104,9 @@ class GameView(BoardView):
         event.piece = -1
         event.player = -1
         event.decision = True
-        PythonAIInterface.Inst().RetrieveDecision(event)
+
+        self.match.player_manager.MakeDecision(event)            
+
         return True
 
     def on_dialogue_event_ending(self, event_name):
@@ -155,9 +139,6 @@ class GameView(BoardView):
             self.buttons[button].hide()
 
     def update(self, time_delta):
-        queued_events = self.match.player_ai_inst.ReceiveEvent()
-        if len(queued_events) != 0:
-            process_event_queue(self.game_manager, self.match, queued_events)
         if self.game_manager.board_manager.round_should_end:
             self._end_round_dialog()
 

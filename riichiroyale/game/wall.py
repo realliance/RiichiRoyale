@@ -1,44 +1,44 @@
 import random
 import copy
-from riichiroyale.game import Tile
+from libmahjong import PieceType
 
 PIECE_SET = (
     [
-        Tile.ONE_BAMBOO,
-        Tile.TWO_BAMBOO,
-        Tile.THREE_BAMBOO,
-        Tile.FOUR_BAMBOO,
-        Tile.SIX_BAMBOO,
-        Tile.SEVEN_BAMBOO,
-        Tile.EIGHT_BAMBOO,
-        Tile.NINE_BAMBOO,
-        Tile.ONE_PIN,
-        Tile.TWO_PIN,
-        Tile.THREE_PIN,
-        Tile.FOUR_PIN,
-        Tile.SIX_PIN,
-        Tile.SEVEN_PIN,
-        Tile.EIGHT_PIN,
-        Tile.NINE_PIN,
-        Tile.ONE_CHARACTER,
-        Tile.TWO_CHARACTER,
-        Tile.THREE_CHARACTER,
-        Tile.FOUR_CHARACTER,
-        Tile.SIX_CHARACTER,
-        Tile.SEVEN_CHARACTER,
-        Tile.EIGHT_CHARACTER,
-        Tile.NINE_CHARACTER,
-        Tile.NORTH_WIND,
-        Tile.EAST_WIND,
-        Tile.SOUTH_WIND,
-        Tile.WEST_WIND,
-        Tile.RED_DRAGON,
-        Tile.GREEN_DRAGON,
-        Tile.WHITE_DRAGON,
+        PieceType.ONE_BAMBOO,
+        PieceType.TWO_BAMBOO,
+        PieceType.THREE_BAMBOO,
+        PieceType.FOUR_BAMBOO,
+        PieceType.SIX_BAMBOO,
+        PieceType.SEVEN_BAMBOO,
+        PieceType.EIGHT_BAMBOO,
+        PieceType.NINE_BAMBOO,
+        PieceType.ONE_PIN,
+        PieceType.TWO_PIN,
+        PieceType.THREE_PIN,
+        PieceType.FOUR_PIN,
+        PieceType.SIX_PIN,
+        PieceType.SEVEN_PIN,
+        PieceType.EIGHT_PIN,
+        PieceType.NINE_PIN,
+        PieceType.ONE_CHARACTER,
+        PieceType.TWO_CHARACTER,
+        PieceType.THREE_CHARACTER,
+        PieceType.FOUR_CHARACTER,
+        PieceType.SIX_CHARACTER,
+        PieceType.SEVEN_CHARACTER,
+        PieceType.EIGHT_CHARACTER,
+        PieceType.NINE_CHARACTER,
+        PieceType.NORTH_WIND,
+        PieceType.EAST_WIND,
+        PieceType.SOUTH_WIND,
+        PieceType.WEST_WIND,
+        PieceType.RED_DRAGON,
+        PieceType.GREEN_DRAGON,
+        PieceType.WHITE_DRAGON,
     ]
     * 4
-    + [Tile.FIVE_BAMBOO, Tile.FIVE_CHARACTER, Tile.FIVE_PIN] * 3
-    + [Tile.RED_FIVE_BAMBOO, Tile.RED_FIVE_CHARACTER, Tile.RED_FIVE_PIN]
+    + [PieceType.FIVE_BAMBOO, PieceType.FIVE_CHARACTER, PieceType.FIVE_PIN] * 3
+    + [PieceType.RED_FIVE_BAMBOO, PieceType.RED_FIVE_CHARACTER, PieceType.RED_FIVE_PIN]
 )
 
 

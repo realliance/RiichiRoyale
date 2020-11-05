@@ -3,6 +3,7 @@ import math
 import random
 import pygame_gui
 import pygame
+from copy import deepcopy
 from pygame import Rect
 from pygame import surface
 from riichiroyale import BoardRender
@@ -34,11 +35,16 @@ class BoardView(MenuView):
         self.screen_width_ratio = width_ratio
         self.screen_height_ratio = height_ratio
         self.game_manager = game_manager
+        self.match_pov = None
 
         # Fill background
         background = surface.Surface(screen.get_size())
         self.background = background.convert_alpha()
         self.background.fill((7, 99, 36))
+
+        loading_background = surface.Surface(screen.get_size())
+        self.loading_background = loading_background.convert_alpha()
+        self.loading_background.fill((0, 0, 0))
 
         self.sound_manager = self.game_manager.sound_manager
         self.dialogue_manager = dialogue_manager
@@ -57,7 +63,6 @@ class BoardView(MenuView):
 
         self.match = None
         self.board_render = None
-        self.player = None
         self.previous_player_calls_avaliable = []
 
     def on_match_init(self):
@@ -95,8 +100,8 @@ class BoardView(MenuView):
             self.small_tile_dict,
             self.tile_dict,
             self.play_area,
-            self.match.current_board,
-            self.match.player_id,
+            self.match,
+            self.match_pov,
         )
         self.board_render.update()
         self.board_render.force_redraw()
@@ -105,15 +110,28 @@ class BoardView(MenuView):
         """Called upon the start of a match, which comprises a series of rounds"""
         self.on_match_init()
         self.on_pov_init()
-        self.on_round_start()
 
         random.shuffle(self.sound_manager.music_playlist)
         self.sound_manager.start_playlist()
 
+    @property
+    def player(self):
+        if self.match_pov is None:
+            raise "Unable to determine pov player, is match_pov set?"
+        return self.match.players[self.match_pov]
+
     def update(self, time_delta):
+        if self.match.match_ready and self.match_pov is None:
+            self.match_pov = self.match.player_manager.player_id
+            self.on_round_start()
+
+        if self.match_pov is None:
+            return
+
         if self.player.calls_avaliable:
             if self.player.calls_avaliable != self.previous_player_calls_avaliable:
-                self.previous_player_calls_avaliable = self.player.calls_avaliable
+                print('New Decision Avaliable! Checking Buttons...')
+                self.previous_player_calls_avaliable = deepcopy(self.player.calls_avaliable)
                 self.buttons["skip"].show()
                 for decision in self.player.calls_avaliable:
                     if decision == Call.Chi:
@@ -157,10 +175,17 @@ class BoardView(MenuView):
         self.board_render.update(callback_handler=self.on_tile_pressed)
         super().update(time_delta)
 
+    def draw_loading_screen(self, screen):
+        """While the match is bootstrapping on the backend, draw a loading screen instead."""
+        screen.blit(self.loading_background, (0, 0))
+
     def draw(self, screen):
-        self.board_render.draw(self.background)
-        screen.blit(self.background, (0, 0))
-        screen.blit(self.play_area, (self.player_area_rect.x, self.player_area_rect.y))
+        if not self.match.match_ready:
+            self.draw_loading_screen(screen)
+        else:
+            self.board_render.draw(self.background)
+            screen.blit(self.background, (0, 0))
+            screen.blit(self.play_area, (self.player_area_rect.x, self.player_area_rect.y))
         super().draw(screen)
 
     def on_pon_button_pressed(self):

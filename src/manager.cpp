@@ -10,8 +10,10 @@
 #include <string>              // for string
 #include <vector>              // for vector
 #include <thread>
+#include <functional>
 #include <angrydiscardobot.h>
 #include <pythonaiinterface.h>
+#include <pybind11/pybind11.h>
 
 #include "event.h"             // for Event, Kan, Discard, Chi, ConcealedKan
 #include "gamestate.h"         // for GameState, AfterCall, AfterDraw, opera...
@@ -25,6 +27,7 @@
 #include "statefunctions.h"
 
 using namespace Mahjong;
+namespace py = pybind11;
 
 auto Mahjong::StartGame(std::vector<std::string> playerAIs, bool async) -> void {
   if(async){
@@ -61,4 +64,12 @@ auto Mahjong::RegisterController(newControllerInst newFunc, std::string name) ->
   }
   availableControllers[name] = newFunc;
   return true;
+}
+
+
+auto Mahjong::RegisterPythonController(py::object pythonController, std::string Name) -> bool {
+  auto genFunction = [=]() -> PlayerController* {
+    return pythonController.cast<PlayerController*>(); 
+  };
+  return Mahjong::RegisterController(genFunction, Name);
 }
