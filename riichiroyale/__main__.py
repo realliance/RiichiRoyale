@@ -89,6 +89,7 @@ def main():
 
     draw_loading_screen(screen, clear_background, font, "Registering Player Interface...")
 
+    # Register Python AIs
     player_manager = PlayerManager()
     register_ai(player_manager, "Player")
     print(avaliable_ais())
