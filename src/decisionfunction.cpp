@@ -1,4 +1,11 @@
 #include "decisionfunction.h"
+#include <array>
+#include <algorithm>
+#include <vector>
+#include "hand.h"
+#include "meld.h"
+#include "gamestate.h"
+#include "piecetype.h"
 #include "stateutilities.h"
 #include "hands.h"
 

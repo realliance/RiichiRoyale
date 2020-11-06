@@ -1,4 +1,5 @@
 #pragma once
+#include "mahjongns.h"
 
 namespace Mahjong {
 

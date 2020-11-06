@@ -12,8 +12,10 @@
 #include "stateutilities.h"
 #include "meld.h"
 #include "statefunctions.h"
+#include "winds.h"
 
 
+#include "mahjongns.h"
 using namespace Mahjong;
 
 auto Mahjong::countPiece(const GameState& state, int player, Piece p) -> int{
@@ -172,14 +174,14 @@ namespace Mahjong {
   // auto isOutsideHand(const GameState& state, int player) -> HandState{
   // }
 
-  auto isAfterAKan(const GameState& state, int player) -> HandState{
+  auto isAfterAKan(const GameState& state, int) -> HandState{
     if(state.nextState == KanDiscard){
       return Satisfies;
     }
     return DoesNotSatisfy;
   }
 
-  auto isRobbingAKan(const GameState& state, int player) -> HandState{
+  auto isRobbingAKan(const GameState& state, int) -> HandState{
     if(state.nextState == KanDiscard){
       return Satisfies;
     }
@@ -189,7 +191,7 @@ namespace Mahjong {
     return DoesNotSatisfy;
   }
 
-  auto isBottomOfTheSea(const GameState& state, int player) -> HandState{
+  auto isBottomOfTheSea(const GameState& state, int) -> HandState{
     if(state.walls.GetRemainingPieces() == 0){
       return Satisfies;
     }

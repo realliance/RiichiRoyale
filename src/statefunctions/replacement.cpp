@@ -11,8 +11,7 @@
 #include "walls.h"
 using namespace Mahjong;
 
-auto Mahjong::Replacement(GameState& state) -> GameState& {
-  std::cerr << "State: Replacement" << std::endl;
+auto Mahjong::Replacement(GameState& state) -> GameState& {  
   Piece draw = state.walls.TakeReplacementTile();
   state.hands[state.currentPlayer].live.push_back(draw);
   state.hands[state.currentPlayer].sort();

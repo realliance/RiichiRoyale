@@ -7,6 +7,7 @@
 #include "analysis.h"
 
 
+#include "mahjongns.h"
 using namespace Mahjong;
 
 int possibleChis(const int8_t* counts, Piece p){

@@ -9,8 +9,7 @@
 #include "stateutilities.h"
 using namespace Mahjong;
 
-auto Mahjong::Riichi(GameState& state) -> GameState& {
-  std::cerr << "State: Riichi" << std::endl;
+auto Mahjong::Riichi(GameState& state) -> GameState& {  
   AlertPlayers(state,Event{
     Event::Riichi, // type
     state.currentPlayer, // player

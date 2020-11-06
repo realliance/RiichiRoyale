@@ -6,10 +6,10 @@
 #include "hand.h"
 #include "piecetype.h"
 #include "walls.h"
+#include "mahjongns.h"
 using namespace Mahjong;
 
 auto Mahjong::Draw(GameState& state) -> GameState&{
-  std::cerr << "State: Draw" << std::endl;
   state.currentPlayer = (state.currentPlayer + 1) % 4;
   state.turnNum++;
   state.pendingPiece = state.walls.TakePiece();

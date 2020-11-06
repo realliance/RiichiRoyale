@@ -6,8 +6,7 @@
 #include "stateutilities.h"
 using namespace Mahjong;
 
-auto Mahjong::RoundEnd(GameState& state) -> GameState& {
-  std::cerr << "State: RoundEnd" << std::endl;
+auto Mahjong::RoundEnd(GameState& state) -> GameState& {  
   state.currentPlayer = -1;
   state.turnNum = -1;
   state.lastCall = -1;

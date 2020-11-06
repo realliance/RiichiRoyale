@@ -11,7 +11,6 @@
 using namespace Mahjong;
 
 auto Mahjong::ConcealedKan(GameState& state) -> GameState&{
-  std::cerr << "State: ConcealedKan" << std::endl;
   AlertPlayers(state,Event{
     Event::ConcealedKan, // type
     state.currentPlayer, // player

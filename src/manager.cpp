@@ -1,33 +1,18 @@
 #include "manager.h"
-
-#include <stddef.h>            // for size_t
-#include <algorithm>           // for find
-#include <array>               // for array
-#include <cstdint>             // for int16_t
-#include <iostream>            // for operator<<, endl, cerr, ostream, basic...
-#include <map>                 // for map
-#include <memory>              // for allocator_traits<>::value_type
-#include <string>              // for string
+#include <angrydiscardobot.h>  // for AngryDiscardoBot
+#include <map>                 // for map, map<>::mapped_type
+#include <string>              // for string, operator+
+#include <thread>              // for thread
 #include <vector>              // for vector
-#include <thread>
-#include <functional>
-#include <angrydiscardobot.h>
-#include <pythonaiinterface.h>
-#include <pybind11/pybind11.h>
-
-#include "event.h"             // for Event, Kan, Discard, Chi, ConcealedKan
-#include "gamestate.h"         // for GameState, AfterCall, AfterDraw, opera...
-#include "hand.h"              // for Hand
-#include "hands.h"             // for isComplete, isInAValidFormat, Tenpai
-#include "meld.h"              // for Meld, PonMeld
-#include "piecetype.h"         // for Piece, ERROR_PIECE
-#include "player.h"            // for Player
-#include "walls.h"             // for Walls
-             // for Wind, South
-#include "statefunctions.h"
+#include "playercontroller.h"  // for PlayerController
+#include "statefunctions.h"    // for StateController
+#ifndef NO_PYBIND
+#include <pybind11/stl.h>      // IWYU pragma: keep
+#include <pybind11/cast.h>     // for object::cast
+#include <pybind11/pytypes.h>  // for object
+#endif
 
 using namespace Mahjong;
-namespace py = pybind11;
 
 auto Mahjong::StartGame(std::vector<std::string> playerAIs, bool async) -> void {
   if(async){
@@ -66,9 +51,11 @@ auto Mahjong::RegisterController(newControllerInst newFunc, std::string name) ->
 }
 
 
-auto Mahjong::RegisterPythonController(py::object pythonController, std::string Name) -> bool {
+#ifndef NO_PYBIND
+auto Mahjong::RegisterPythonController(pybind11::object pythonController, std::string Name) -> bool {
   auto genFunction = [=]() -> PlayerController* {
     return pythonController.cast<PlayerController*>(); 
   };
   return Mahjong::RegisterController(genFunction, Name);
 }
+#endif

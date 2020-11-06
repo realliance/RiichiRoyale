@@ -9,6 +9,7 @@
 #include "meld.h"
 #include "stateutilities.h"
 #include "piecetype.h"
+#include "mahjongns.h"
 using namespace Mahjong;
 
 auto GetChiStart(const GameState& state, int player) -> Piece{
@@ -24,8 +25,7 @@ auto GetChiStart(const GameState& state, int player) -> Piece{
   return Piece::ERROR;
 }
 
-auto Mahjong::Chi(GameState& state) -> GameState& {
-  std::cerr << "State: Chi" << std::endl;
+auto Mahjong::Chi(GameState& state) -> GameState& {  
   Piece chiStart = GetChiStart(state, state.lastCaller);
   if(chiStart == Piece::ERROR ){
     state.nextState = Error;

@@ -13,7 +13,6 @@
 using namespace Mahjong;
 
 auto Mahjong::Discard(GameState& state) -> GameState&{
-  std::cerr << "State: Discard" << std::endl;
   AlertPlayers(state,Event{
     Event::Discard, // type
     state.currentPlayer, // player
@@ -37,7 +36,6 @@ auto Mahjong::Discard(GameState& state) -> GameState&{
   };
 
   std::array<bool,4> needDecision = {false,false,false,false};
-  std::cout << "Current Player: " << state.currentPlayer << std::endl;
   for(int player = 0; player < 4; player++){
     if(player == state.currentPlayer){
       continue;
@@ -61,7 +59,7 @@ auto Mahjong::Discard(GameState& state) -> GameState&{
   for(int i = 0; i < 4; i++){
     while(needDecision[i]){
       Event tempDecision = state.players[i].controller->RetrieveDecision();
-      if(ValidateDecision(state,i,tempDecision,false,state.pendingPiece)){
+      if(ValidateDecision(state,i,tempDecision,false)){
         needDecision[i] = false;
         if(tempDecision.type < decision.type){ // lower is higher priority
           tempDecision.player = i;

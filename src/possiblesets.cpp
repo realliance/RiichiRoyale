@@ -5,9 +5,12 @@
 #include <iterator>            // for back_insert_iterator,Piece::back_inserter
 #include <memory>              // for allocator_traits<>::value_type
 #include <random>              // for mt19937,Piece::uniform_int_distribution,Piece::ran...
+#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
+#include <vector>              // for vector
 
 #include "piecetype.h"         // for Piece,Piece::FIVE_BAMBOO,Piece::FIVE_CHARACTER
 
+#include "mahjongns.h"
 using namespace Mahjong;
 
 const std::vector<std::vector<Piece>> TRIPLETS = {

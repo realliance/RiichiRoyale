@@ -1,9 +1,5 @@
 #pragma once
-#include <stdint.h>
-#include <array>
-#include "event.h"
-#include "gamestate.h"
-#include "piecetype.h"
+namespace Mahjong { struct GameState; }
 
 namespace Mahjong {
 

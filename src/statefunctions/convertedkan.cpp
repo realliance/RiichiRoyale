@@ -9,10 +9,10 @@
 #include "meld.h"
 #include "piecetype.h"
 #include "stateutilities.h"
+#include "mahjongns.h"
 using namespace Mahjong;
 
 auto Mahjong::ConvertedKan(GameState& state) -> GameState&{
-  std::cerr << "State: ConvertedKan" << std::endl;
   AlertPlayers(state,Event{
     Event::ConvertedKan, // type
     state.currentPlayer, // player

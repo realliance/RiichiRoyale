@@ -4,8 +4,8 @@
 #include <event.h>
 #include <playercontroller.h>
 #include <winds.h>
-#include <piecetype.h>
 
+namespace Mahjong { class Piece; }
 //Always Calls (Angry) and Always Discards the tile it draws
 
 class AngryDiscardoBot : public Mahjong::PlayerController{

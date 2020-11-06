@@ -1,12 +1,14 @@
 #include <array>
 #include <string>
 #include <vector>
+#include <functional>
 #include "gamestate.h"
 #include "manager.h"
 #include "player.h"
 #include "statefunctions.h"
 
 
+#include "mahjongns.h"
 using namespace Mahjong;
 
 auto Mahjong::StateController(std::vector<std::string> playerControllers) -> void{

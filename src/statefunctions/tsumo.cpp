@@ -7,7 +7,7 @@
 using namespace Mahjong;
 
 auto Mahjong::Tsumo(GameState& state) -> GameState&{
-  std::cerr << "State: Tsumo" << std::endl;
+  
   //TODO scoring
   AlertPlayers(state,Event{
     Event::Tsumo, // type

@@ -1,6 +1,7 @@
 #include "handnode.h"
 
 
+#include "mahjongns.h"
 using namespace Mahjong;
 
 auto Node::begin() const -> const_iterator{

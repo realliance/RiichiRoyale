@@ -3,6 +3,7 @@
 #include <string>
 
 
+#include "mahjongns.h"
 using namespace Mahjong;
 
 auto operator<<(std::ostream& os, const GameState& state) -> std::ostream&{
