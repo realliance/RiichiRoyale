@@ -8,6 +8,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 set(BUILD_SHARED_LIBS TRUE)
 option(PACKAGE_TESTS "Build the tests" OFF)
 option(PACKAGE_TOOLS "Build the tools" OFF)
+option(PY_BIND "Build with pybind" ON)
 
 add_subdirectory(${RiichiRoyale_SOURCE_DIR}/libs)
 
@@ -44,7 +45,11 @@ if(PACKAGE_TESTS)
   target_include_directories(TestRiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/aicontrollers")
 endif()
 
-target_sources(RiichiRoyale PRIVATE "src/python.cpp")
+if(PY_BIND)
+  target_sources(RiichiRoyale PRIVATE "src/python.cpp")
+else()
+  target_compile_definitions(RiichiRoyale PUBLIC -DNO_PYBIND)
+endif()
 
 target_include_directories(RiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/include")
 target_include_directories(RiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/aicontrollers")
