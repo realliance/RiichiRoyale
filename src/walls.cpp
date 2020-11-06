@@ -53,7 +53,7 @@ Walls::Walls(int seed){
 
 Walls::Walls(std::vector<Piece> wall){
   std::swap(livingWalls,wall);
-  std::move(livingWalls.begin(), livingWalls.begin()+14, std::back_inserter(deadWall));
+  std::move(livingWalls.rbegin(), livingWalls.rbegin()+14, std::back_inserter(deadWall));
   for(size_t i = 0; i < 14; i++){
     livingWalls.erase(livingWalls.begin());
   }
