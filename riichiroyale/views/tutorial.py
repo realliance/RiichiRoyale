@@ -16,6 +16,7 @@ class TutorialView(BoardView):
         width_ratio,
         height_ratio,
         name="tutorial",
+        player_manager=None,
     ):
         dialogue = get_dialogue()
         dialogue_manager = DialogManager()
@@ -35,6 +36,7 @@ class TutorialView(BoardView):
             width_ratio,
             height_ratio,
         )
+        self.player_manager = player_manager
         self.tutorial = None
 
     def on_match_init(self):
@@ -51,30 +53,13 @@ class TutorialView(BoardView):
         self.tutorial = Tutorial(
             prefered_discards, calls, PieceType.THREE_PIN, wall, deadwall
         )
-        self.match = Match(None, self.game_manager.sound_manager)
+        self.match = None
+        self.match = self.match = Match(["Player"] + ["AngryDiscardoBot"] * 3, self.game_manager, self.player_manager, self.sound_manager)
+        self.match.start()
+        self.pons = 0
 
     def on_pov_init(self):
-        self.player = Player("Player")
-        self.match.register_player(self.player)
-        self.match.player_id = 0
-
-        self.match.register_player(TutorialBot("Bot 1", self.tutorial.winning_tile))
-        self.match.register_player(TutorialBot("Bot 2", self.tutorial.winning_tile))
-        self.match.register_player(TutorialBot("Bot 3", self.tutorial.winning_tile))
-        for p in self.match.players:
-            p.hand = []
-            p.melded_hand = []
-            p.riichi_declared = False
-            p.calls_avaliable = []
-            p.hand_open = False
-            p.discard_pile = []
         self.match.new_board(wall=self.tutorial.wall, deadwall=self.tutorial.deadwall)
-
-    def on_match_start(self):
-        self.pons = 0
-        self.dialogue_manager.start_event("intro")
-        super().on_match_start()
-        self.match.current_board.on_turn()
 
     def on_tile_pressed(self, owner, tile_hand_index):
         tile = owner.hand[tile_hand_index]
