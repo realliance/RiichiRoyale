@@ -4,9 +4,9 @@ You may choose to write your AI in either Python or C++. C++ would be more perfo
 
 ## C++ Method
 
-Create your `<bot>.cpp` and `<bot>.h` in the `aicontrollers/`.
+Create your `<bot>.cpp` and `<bot>.h` in the `aicontrollers/` directory.
 
-Add both files to the `CMakeLists.txt` like how the other files are added (`"${DIR}/<bot>[.cpp/.h]"`).
+Add both files to the `aicontrollers/CMakeLists.txt` like how the other files are added (`"${DIR}/<bot>[.cpp/.h]"`).
 
 Your class needs to extend `public Mahjong::PlayerController` (which can be included with `#include <playerconroller.h>`) and all virtual functions of `PlayerController` need to be implemented. See `aicontroller/angrydiscardobot.h` for an example of this. Keep data variables that needs to be stored on the AI `private`.
 
