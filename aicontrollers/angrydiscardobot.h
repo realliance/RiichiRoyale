@@ -3,9 +3,9 @@
 #include <vector>
 #include <event.h>
 #include <playercontroller.h>
+#include <piecetype.h>
 #include <winds.h>
 
-namespace Mahjong { class Piece; }
 //Always Calls (Angry) and Always Discards the tile it draws
 
 class AngryDiscardoBot : public Mahjong::PlayerController{
@@ -16,5 +16,7 @@ public:
   auto ReceiveEvent(Mahjong::Event e) -> void;
   auto RetrieveDecision() -> Mahjong::Event;
 private:
+  std::vector<Mahjong::Piece> hand;
+  int n = 0;
   Mahjong::Event lastEvent;
 };

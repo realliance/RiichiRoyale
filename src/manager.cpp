@@ -4,8 +4,8 @@
 #include <string>              // for string, operator+
 #include <thread>              // for thread
 #include <vector>              // for vector
-#include "playercontroller.h"  // for PlayerController
 #include "statefunctions.h"    // for StateController
+#include "playercontroller.h"
 #include "settings.h"          // for GameSettings
 #ifndef NO_PYBIND
 #include <pybind11/stl.h>      // IWYU pragma: keep
