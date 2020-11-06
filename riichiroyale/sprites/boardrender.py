@@ -88,7 +88,7 @@ class BoardRender:
         self.elements.append(
             StatefulBoardElement(
                 [],
-                lambda: self.match.players[player_pov].melded_hand,
+                lambda: map(lambda m: map(lambda tile: tile.get_raw_value(), m.tiles), self.match.players[player_pov].melded_hand),
                 lambda: render_meld_hand(
                     self, self.match.players[player_pov].melded_hand, seat=0
                 ),

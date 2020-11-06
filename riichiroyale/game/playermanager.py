@@ -21,6 +21,7 @@ class PlayerManager(MahjongAI, Player):
   def RoundStart(self, hand, seatWind, prevalentWind):
     with self.lock:
       self.hand = hand
+      self.hand.sort()
       self.seat_wind = seatWind
       self.prevalent_wind = prevalentWind
 

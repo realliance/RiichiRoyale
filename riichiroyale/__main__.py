@@ -9,6 +9,7 @@ from riichiroyale import (
     GameManager,
     MainMenu,
     Settings,
+    FreePlaySelect,
     GameView,
     build_tile_surface_dict,
     TILE_SIZE,
@@ -44,6 +45,16 @@ def main():
     logging.basicConfig(
         format="%(asctime)s %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p"
     )
+
+    # Fill background
+    clear_background = surface.Surface(screen.get_size())
+    clear_background = clear_background.convert_alpha()
+    clear_background.fill((0, 0, 0))
+    
+    # Draw black screen so window properly renders
+    screen.blit(clear_background, (0, 0))
+    pygame.display.flip()
+    pygame.display.update()
 
     # Initialize tile surface dictionary
     tile_dictionary = build_tile_surface_dict(
@@ -116,6 +127,9 @@ def main():
     main_menu = MainMenu(
         game_manager, tile_dictionary, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT
     )
+    freeplay_menu = FreePlaySelect(
+        game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT
+    )
     settings_menu = Settings(
         game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT
     )
@@ -145,14 +159,10 @@ def main():
     game_manager.add_view(settings_menu)
     game_manager.add_view(game_view)
     game_manager.add_view(tutorial_view)
+    game_manager.add_view(freeplay_menu)
     game_manager.set_active_view("main_menu")
 
     sound_manager.play_music("lobby")
-
-    # Fill background
-    clear_background = surface.Surface(screen.get_size())
-    clear_background = clear_background.convert_alpha()
-    clear_background.fill((0, 0, 0))
 
     # Clock for pygame-gui
     clock = pygame.time.Clock()

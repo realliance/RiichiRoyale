@@ -97,7 +97,7 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
     newgame_button_rect.topleft = (global_topleft[0], global_topleft[1] + logo_size[1] + 50)
     newgame_button = pygame_gui.elements.UIButton(
         relative_rect=newgame_button_rect,
-        text="Start Demo",
+        text="Freeplay",
         manager=ui_manager,
         object_id="menuButton",
         anchors={
@@ -144,8 +144,7 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
     def process_ui_event(event):
         if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == newgame_button:
-                game_manager.set_active_view("game")
-                game_manager.get_active_view().on_match_start()
+                game_manager.set_active_view("freeplayselect")
             if event.ui_element == tutorial_button:
                 game_manager.set_active_view("tutorial")
                 game_manager.get_active_view().on_match_start()
