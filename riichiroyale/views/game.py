@@ -1,4 +1,4 @@
-from libmahjong import start_game, PythonAIInterface, EventType, EngineEvent, PieceType
+from libmahjong import start_game, EventType, EngineEvent, PieceType
 from riichiroyale.game import Player, Match, process_event_queue, DialogManager
 from .boardview import BoardView
 
@@ -29,10 +29,11 @@ class GameView(BoardView):
             height_ratio,
         )
         self.player_manager = player_manager
+        self.ai_list = ["Player"] + ["AngryDiscardoBot"] * 3
 
     def on_match_init(self):
         self.match = None
-        self.match = Match(["Player"] + ["AngryDiscardoBot"] * 3, self.game_manager, self.player_manager, self.sound_manager)
+        self.match = Match(self.ai_list, self.game_manager, self.player_manager, self.sound_manager)
         self.match.start()
 
     def on_pov_init(self):

@@ -154,15 +154,6 @@ PYBIND11_MODULE(libmahjong, m) {
     .def("RetrieveDecision", &Mahjong::PlayerController::RetrieveDecision)
     .def("Name", &Mahjong::PlayerController::Name);
 
-  py::class_<PythonAIInterface>(m, "PythonAIInterface")
-    .def(py::init<>())
-    .def("GameStart", &PythonAIInterface::PyGameStart)
-    .def("RoundStart", &PythonAIInterface::PyRoundStart)
-    .def("ReceiveEvent", &PythonAIInterface::PyReceiveEvents)
-    .def("RetrieveDecision", &PythonAIInterface::PyRetrieveDecision)
-    .def("Name", &PythonAIInterface::Name)
-    .def("Inst", &PythonAIInterface::Inst);
-
   py::class_<RoundStartStruct>(m, "RoundStartInfo")
     .def(py::init<>())
     .def_readonly("hand", &RoundStartStruct::hand)

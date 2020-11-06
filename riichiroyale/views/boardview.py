@@ -128,30 +128,29 @@ class BoardView(MenuView):
         if self.match_pov is None:
             return
 
-        if self.player.calls_avaliable:
-            if self.player.calls_avaliable != self.previous_player_calls_avaliable:
-                print('New Decision Avaliable! Checking Buttons...')
-                self.previous_player_calls_avaliable = deepcopy(self.player.calls_avaliable)
+        if self.player.calls_avaliable != self.previous_player_calls_avaliable:
+            self.previous_player_calls_avaliable = deepcopy(self.player.calls_avaliable)
+            if len(self.player.calls_avaliable) > 0:
                 self.buttons["skip"].show()
-                for decision in self.player.calls_avaliable:
-                    if decision == Call.Chi:
-                        self.on_chi_call_avaliable()
-                        self.buttons["chi"].show()
-                    elif decision == Call.Pon:
-                        self.on_pon_call_avaliable()
-                        self.buttons["pon"].show()
-                    elif decision in (Call.Kan, Call.Concealed_Kan):
-                        self.on_kan_call_avaliable()
-                        self.buttons["kan"].show()
-                    elif decision == Call.Riichi:
-                        self.on_riichi_call_avaliable()
-                        self.buttons["riichi"].show()
-                    elif decision == Call.Ron:
-                        self.on_ron_call_avaliable()
-                        self.buttons["ron"].show()
-                    elif decision == Call.Tsumo:
-                        self.on_tsumo_call_avaliable()
-                        self.buttons["tsumo"].show()
+            for decision in self.player.calls_avaliable:
+                if decision == Call.Chi:
+                    self.on_chi_call_avaliable()
+                    self.buttons["chi"].show()
+                elif decision == Call.Pon:
+                    self.on_pon_call_avaliable()
+                    self.buttons["pon"].show()
+                elif decision in (Call.Kan, Call.Concealed_Kan):
+                    self.on_kan_call_avaliable()
+                    self.buttons["kan"].show()
+                elif decision == Call.Riichi:
+                    self.on_riichi_call_avaliable()
+                    self.buttons["riichi"].show()
+                elif decision == Call.Ron:
+                    self.on_ron_call_avaliable()
+                    self.buttons["ron"].show()
+                elif decision == Call.Tsumo:
+                    self.on_tsumo_call_avaliable()
+                    self.buttons["tsumo"].show()
 
         if (
             self.dialogue_manager is not None
