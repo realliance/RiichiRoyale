@@ -41,7 +41,7 @@ my_bot = BotClass()
 register_ai(my_bot, "MyBot")
 ```
 
-But this within the `# Register Python AIs` section.
+Put this within the `# Register Python AIs` section.
 
 # Bot Functions
 
