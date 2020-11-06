@@ -4,6 +4,7 @@ import math
 import logging
 import pygame
 from pygame import surface, Rect
+from pygame.font import Font
 from libmahjong import register_ai, avaliable_ais, PieceType
 from riichiroyale import (
     GameManager,
@@ -32,6 +33,21 @@ def get_play_area_pos(screen):
     )
     return Rect((w - player_area_width) // 2, 0, player_area_width, play_area_height)
 
+def draw_loading_screen(screen, background, font, text):
+    # Draw black screen so window properly renders
+    screen.blit(background, (0, 0))
+
+    font_surface = font.render(text, True, (255, 255, 255))
+    _, screen_height = screen.get_size()
+    _, font_height = font.size(text)
+    screen.blit(
+        font_surface,
+        (20, screen_height - font_height - 20),
+    )
+
+    pygame.display.flip()
+    pygame.display.update()
+
 
 def main():
     # Initialize screen
@@ -46,15 +62,18 @@ def main():
         format="%(asctime)s %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p"
     )
 
+    # Loading Font
+    font_path = os.path.join(
+        current_path, "resources", "fonts", "SourceSans3-Semibold.ttf"
+    )
+    font = Font(font_path, 40)
+
     # Fill background
     clear_background = surface.Surface(screen.get_size())
     clear_background = clear_background.convert_alpha()
     clear_background.fill((0, 0, 0))
     
-    # Draw black screen so window properly renders
-    screen.blit(clear_background, (0, 0))
-    pygame.display.flip()
-    pygame.display.update()
+    draw_loading_screen(screen, clear_background, font, "Loading Tiles...")
 
     # Initialize tile surface dictionary
     tile_dictionary = build_tile_surface_dict(
@@ -68,12 +87,16 @@ def main():
         file_suffix="png",
     )
 
+    draw_loading_screen(screen, clear_background, font, "Registering Player Interface...")
+
     player_manager = PlayerManager()
     register_ai(player_manager, "Player")
     print(avaliable_ais())
 
     # Set Icon
     pygame.display.set_icon(tile_dictionary[PieceType.GREEN_DRAGON])
+
+    draw_loading_screen(screen, clear_background, font, "Loading Lofi Jams...")
 
     # Initialize Sound Manager
     sound_manager = SoundManager()
@@ -118,6 +141,8 @@ def main():
 
     sound_manager.music_playlist = ["game1", "game2", "game3"]
 
+    draw_loading_screen(screen, clear_background, font, "Prepping Game Views...")
+
     # Init Board Manager
     board_manager = BoardManager()
 
@@ -161,6 +186,8 @@ def main():
     game_manager.add_view(tutorial_view)
     game_manager.add_view(freeplay_menu)
     game_manager.set_active_view("main_menu")
+
+    draw_loading_screen(screen, clear_background, font, "Done!")
 
     sound_manager.play_music("lobby")
 
