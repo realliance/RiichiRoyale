@@ -13,6 +13,7 @@ target_sources(RiichiRoyale
     "${DIR}/piecetype.h"
     "${DIR}/player.h"
     "${DIR}/playercontroller.h"
+    "${DIR}/settings.h"
     "${DIR}/statefunctions.h"
     "${DIR}/stateutilities.h"
     "${DIR}/walls.h"

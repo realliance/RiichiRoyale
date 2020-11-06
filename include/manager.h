@@ -7,8 +7,9 @@
 namespace pybind11 { class object; }
 #endif
 
+namespace Mahjong { struct GameSettings; class PlayerController; }
+
 namespace Mahjong{
-  class PlayerController;
   using newControllerInst = std::function<PlayerController*()>;
 
   auto GetAvailableControllers() -> std::vector<std::string>;
@@ -17,5 +18,5 @@ namespace Mahjong{
 #ifndef NO_PYBIND
   auto RegisterPythonController(pybind11::object pythonController, std::string Name) -> bool;
 #endif
-  auto StartGame(std::vector<std::string> seatAIs, bool async) -> void;
+  auto StartGame(GameSettings settings, bool async) -> void;
 };

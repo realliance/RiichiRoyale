@@ -8,11 +8,6 @@ set(DIR ${CMAKE_CURRENT_LIST_DIR})
 add_executable(graphHandTree "")
 target_compile_definitions(graphHandTree PUBLIC -DNO_PYBIND)
 
-find_program(iwyu_path NAMES include-what-you-use iwyu)
-if(iwyu_path)
-  set_property(TARGET graphHandTree PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
-endif()
-
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   target_compile_options(graphHandTree PRIVATE -Wall -Wmost -Wextra -Werror)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
