@@ -1,5 +1,5 @@
-from libmahjong import PieceType
-from riichiroyale.game import Player, Match, TutorialBot, Call, DialogManager
+from libmahjong import start_game, EventType, EngineEvent, PieceType
+from riichiroyale.game import Player, Match, TutorialBot, Call, DialogManager, Piece
 from riichiroyale.tutorial import Tutorial, get_wall, get_dialogue
 from .boardview import BoardView
 
@@ -59,27 +59,37 @@ class TutorialView(BoardView):
         self.pons = 0
 
     def on_pov_init(self):
-        self.match.new_board(wall=self.tutorial.wall, deadwall=self.tutorial.deadwall)
+        if self.player_manager is None:
+            self.match_pov = 0
+
+        self.dialogue_manager.start_event('intro')
+
+        self.match.new_board(wall=self.tutorial.wall+self.tutorial.deadwall)
 
     def on_tile_pressed(self, owner, tile_hand_index):
         tile = owner.hand[tile_hand_index]
-        if owner.my_turn and self.tutorial.next_discard == tile:
-            del owner.hand[tile_hand_index]
-            owner.hand.sort()
-            owner.discard_pile.append(tile)
-            if owner.board is None:
-                raise "Cannot communicate with board! Is this player registered?"
-            owner.board.on_discard(owner)
-            self.tutorial.discard()
-            owner.my_turn = False
+        if owner.my_turn and Piece(self.tutorial.next_discard) == tile:
+            tile = owner.hand[tile_hand_index]
+            if (
+                self.game_manager.board_manager.waiting_on_decision
+                and len(owner.calls_avaliable) == 0
+            ):
+                self.match.play_clack()
+                event = EngineEvent()
+                event.type = EventType.Discard
+                event.piece = int(tile.get_raw_value())
+                event.player = owner.player_id
+                event.decision = True
+                self.player_manager.MakeDecision(event)
 
     def on_pon_button_pressed(self):
         if self.tutorial.next_call == "pon":
             self.tutorial.call()
             self.pons += 1
             self.dialogue_manager.start_event("after_pon")
-            self.match.current_board.decision_pending = False
-            self.player.make_decision(Call.Pon)
+            self.match.player_manager.MakeDecision(
+                self.game_manager.board_manager.last_decision_event.raw_event_b
+            )
             return True
         return False
 
@@ -93,8 +103,9 @@ class TutorialView(BoardView):
         if self.tutorial.next_call == "chi":
             self.tutorial.call()
             self.dialogue_manager.start_event("after_chi")
-            self.match.current_board.decision_pending = False
-            self.player.make_decision(Call.Chi)
+            self.match.player_manager.MakeDecision(
+                self.game_manager.board_manager.last_decision_event.raw_event_b
+            )
             return True
         return False
 
@@ -113,9 +124,13 @@ class TutorialView(BoardView):
     def on_skip_button_pressed(self):
         if self.tutorial.next_call == "skip":
             self.tutorial.call()
-            self.match.current_board.decision_pending = False
-            self.player.make_decision(Call.Skip)
-            self.player.calls_avaliable = []
+            event = EngineEvent()
+            event.type = EventType.Decline
+            event.piece = -1
+            event.player = -1
+            event.decision = True
+
+            self.match.player_manager.MakeDecision(event)
             return True
         return False
 
