@@ -17,7 +17,7 @@ auto Mahjong::StateController(GameSettings settings) -> void{
   for(int i = 0; i < 4; i++){
     state.players[i].controller = GetController(settings.seatControllers[i])();
   }
-  if(settings.seed && settings.overrideWall.empty()){
+  if(settings.seed){
     state.seed = settings.seed;
   }else{
     std::random_device rd;
@@ -25,6 +25,7 @@ auto Mahjong::StateController(GameSettings settings) -> void{
   }
   if(!settings.overrideWall.empty()){
     std::swap(state.overrideWall, settings.overrideWall);
+    state.seed = 0xBEEFBABE;
   }
   state.nextState = GameStart;
   while(state.nextState != GameEnd){

@@ -13,7 +13,7 @@ auto AngryDiscardoBot::RoundStart(std::vector<Mahjong::Piece>, Mahjong::Wind, Ma
 
 auto AngryDiscardoBot::ReceiveEvent(Mahjong::Event e) -> void{
   if(e.decision){
-    if(e.type >  lastEvent.type)
+    if(e.type < lastEvent.type)
     lastEvent = e;
   }
 }
