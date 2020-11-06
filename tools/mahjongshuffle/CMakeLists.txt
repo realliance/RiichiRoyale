@@ -8,11 +8,6 @@ set(DIR ${CMAKE_CURRENT_LIST_DIR})
 add_executable(mahjongShuffle "")
 target_compile_definitions(mahjongShuffle PUBLIC -DNO_PYBIND)
 
-find_program(iwyu_path NAMES include-what-you-use iwyu)
-if(iwyu_path)
-  set_property(TARGET mahjongShuffle PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
-endif()
-
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   target_compile_options(mahjongShuffle PRIVATE -Wall -Wmost -Wextra -Werror)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

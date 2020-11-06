@@ -17,7 +17,11 @@
 using namespace Mahjong;
 
 auto Mahjong::RoundStart(GameState& state) -> GameState& {
-  state.walls = Walls();
+  if(state.overrideWall.empty()){
+    state.walls = Walls(state.seed);
+  }else{
+    state.walls = Walls(state.overrideWall);
+  }
   for(size_t i = 0; i < 4; i++){
     auto hand = state.walls.TakeHand();
     state.players[i].controller->RoundStart(

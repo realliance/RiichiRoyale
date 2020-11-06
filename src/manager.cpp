@@ -6,6 +6,7 @@
 #include <vector>              // for vector
 #include "playercontroller.h"  // for PlayerController
 #include "statefunctions.h"    // for StateController
+#include "settings.h"          // for GameSettings
 #ifndef NO_PYBIND
 #include <pybind11/stl.h>      // IWYU pragma: keep
 #include <pybind11/cast.h>     // for object::cast
@@ -14,12 +15,12 @@
 
 using namespace Mahjong;
 
-auto Mahjong::StartGame(std::vector<std::string> playerAIs, bool async) -> void {
+auto Mahjong::StartGame(GameSettings settings, bool async) -> void {
   if(async){
-    std::thread gameloop(&Mahjong::StateController, playerAIs);
+    std::thread gameloop(&Mahjong::StateController, settings);
     gameloop.detach();
   }else{
-    StateController(playerAIs);
+    StateController(settings);
   }
 }
 

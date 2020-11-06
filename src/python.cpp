@@ -12,6 +12,7 @@
 #include "piecetype.h"               // for Piece::Type, Piece, Piece::BAMBO...
 #include "playercontroller.h"        // for PlayerController
 #include "winds.h"                   // for Wind, East, North, South, West
+#include "settings.h"
 
 namespace py = pybind11;
 
@@ -170,6 +171,13 @@ PYBIND11_MODULE(libmahjong, m) {
     .def_readonly("hand", &RoundStartStruct::hand)
     .def_readonly("seat_wind", &RoundStartStruct::seatWind)
     .def_readonly("prevalent_wind", &RoundStartStruct::prevalentWind);
+
+  py::class_<Mahjong::GameSettings>(m, "GameSettings")
+    .def(py::init<>())
+    .def_readonly("seat_controllers", &Mahjong::GameSettings::seatControllers)
+    .def_readonly("override_wall", &Mahjong::GameSettings::overrideWall)
+    .def_readonly("seed", &Mahjong::GameSettings::seed);
+
 
   m.def("avaliable_ais", &Mahjong::GetAvailableControllers);
   m.def("register_ai", &Mahjong::RegisterPythonController);

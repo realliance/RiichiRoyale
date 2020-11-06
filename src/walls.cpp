@@ -22,17 +22,43 @@ const std::vector<Piece> PIECE_SET = {
 };
 
 Walls::Walls(){
+  std::random_device rd;
+  std::mt19937 g(rd());
+
   for(int i = 0; i < 4; i++){
     livingWalls.insert(livingWalls.end(),PIECE_SET.begin(),PIECE_SET.end());
   }
-  std::random_device rd;
-  std::mt19937 g(rd());
   std::shuffle(livingWalls.begin(), livingWalls.end(), g);
+  
   std::move(livingWalls.begin(), livingWalls.begin()+14, std::back_inserter(deadWall));
   for(size_t i = 0; i < 14; i++){
     livingWalls.erase(livingWalls.begin());
   }
 }
+
+Walls::Walls(int seed){
+  std::mt19937 g(seed);
+
+  std::vector<Piece> wall;
+  for(int i = 0; i < 4; i++){
+    livingWalls.insert(livingWalls.end(),PIECE_SET.begin(),PIECE_SET.end());
+  }
+  std::shuffle(livingWalls.begin(), livingWalls.end(), g);
+
+  std::move(livingWalls.begin(), livingWalls.begin()+14, std::back_inserter(deadWall));
+  for(size_t i = 0; i < 14; i++){
+    livingWalls.erase(livingWalls.begin());
+  }
+}
+
+Walls::Walls(std::vector<Piece> wall){
+  std::swap(livingWalls,wall);
+  std::move(livingWalls.begin(), livingWalls.begin()+14, std::back_inserter(deadWall));
+  for(size_t i = 0; i < 14; i++){
+    livingWalls.erase(livingWalls.begin());
+  }
+}
+
 
 Piece Walls::TakePiece(){
   if(livingWalls.size() > 0){

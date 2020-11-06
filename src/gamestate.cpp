@@ -14,6 +14,7 @@ auto operator<<(std::ostream& os, const GameState& state) -> std::ostream&{
   os << "counters: " << state.counters << std::endl;
   os << "lastCall: " << state.lastCall << std::endl;
   os << "lastCaller: " << state.lastCaller << std::endl;
+    os << "seed: " << state.seed << std::endl;
   os << "pendingPiece: " << state.pendingPiece.toStr() << std::endl;
   os << "hasRonned: " << std::endl;
   for(size_t i = 0; i < state.hasRonned.size(); i++){

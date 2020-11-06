@@ -6,11 +6,13 @@
 namespace Mahjong { 
   class Walls{
   public:
+    explicit Walls();
+    explicit Walls(int seed);
+    explicit Walls(std::vector<Piece> wall);
     std::vector<Piece> livingWalls;
     std::vector<Piece> deadWall;
     int doraCount = 1;
     int replacements = 4;
-    explicit Walls();
     Piece TakePiece();
     std::vector<Piece> TakeHand();
     Piece TakeReplacementTile();

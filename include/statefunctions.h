@@ -1,9 +1,10 @@
 #pragma once
 #include "gamestate.h"
+#include "settings.h"
 
 namespace Mahjong{
 
-  auto StateController(std::vector<std::string> playerAIs) -> void;
+  auto StateController(GameSettings settings) -> void;
 
   using StateFunction = auto (*)(GameState&) -> GameState&;
 
