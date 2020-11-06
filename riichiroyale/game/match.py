@@ -1,5 +1,5 @@
 from threading import Thread, Condition
-from libmahjong import Wind, start_game, Piece, PieceType
+from libmahjong import Wind, start_game, Piece, PieceType, GameSettings
 from .board import Board
 from .player import Player
 from .boardmanager import process_event_queue
@@ -46,7 +46,9 @@ class Match(Thread):
         self.match_ready = True
     
     def run(self):
-        start_game(self.ai_list, True)
+        settings = GameSettings()
+        settings.seat_controllers = self.ai_list
+        start_game(settings, True)
         while self.match_alive:
             self.on_update()
 

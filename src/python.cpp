@@ -174,9 +174,9 @@ PYBIND11_MODULE(libmahjong, m) {
 
   py::class_<Mahjong::GameSettings>(m, "GameSettings")
     .def(py::init<>())
-    .def_readonly("seat_controllers", &Mahjong::GameSettings::seatControllers)
-    .def_readonly("override_wall", &Mahjong::GameSettings::overrideWall)
-    .def_readonly("seed", &Mahjong::GameSettings::seed);
+    .def_readwrite("seat_controllers", &Mahjong::GameSettings::seatControllers)
+    .def_readwrite("override_wall", &Mahjong::GameSettings::overrideWall)
+    .def_readwrite("seed", &Mahjong::GameSettings::seed);
 
 
   m.def("avaliable_ais", &Mahjong::GetAvailableControllers);

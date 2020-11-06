@@ -65,7 +65,10 @@ def on_chi_event(
     _extra_player,
 ):
     if not is_decision:
-        last_event = game_manager.board_manager.last_decision_event
+        if is_ai:
+            last_event = game_manager.board_manager.last_event
+        else:
+            last_event = game_manager.board_manager.last_decision_event
         del match.players[last_event.player].discard_pile[-1]
         event_player.hand += [last_event.extra_piece]
 
@@ -101,7 +104,10 @@ def on_pon_event(
     _extra_player,
 ):
     if not is_decision:
-        last_event = game_manager.board_manager.last_decision_event
+        if is_ai:
+            last_event = game_manager.board_manager.last_event
+        else:
+            last_event = game_manager.board_manager.last_decision_event
         del match.players[last_event.player].discard_pile[-1]
 
         if is_ai:
@@ -182,7 +188,10 @@ def on_kan_event(
 ):
     if not is_decision:
         # Calling Kan
-        last_event = game_manager.board_manager.last_decision_event
+        if is_ai:
+            last_event = game_manager.board_manager.last_event
+        else:
+            last_event = game_manager.board_manager.last_decision_event
         del match.players[last_event.player].discard_pile[-1]
 
         match.current_board.current_turn = event.player

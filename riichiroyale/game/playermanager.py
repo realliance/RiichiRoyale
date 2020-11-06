@@ -41,6 +41,7 @@ class PlayerManager(MahjongAI, Player):
       pass
     with self.lock:
       self.decision_complete = False
+      print('[PlayerManager] Decision Retrieved')
       return self.decision_made
 
   def MakeDecision(self, event):

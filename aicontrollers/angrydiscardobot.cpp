@@ -7,9 +7,11 @@ auto AngryDiscardoBot::Name() -> std::string{
   return "AngryDiscardoBot";
 }
 
-auto AngryDiscardoBot::GameStart(int) -> void{}
+auto AngryDiscardoBot::GameStart(int) -> void {}
 
-auto AngryDiscardoBot::RoundStart(std::vector<Mahjong::Piece>, Mahjong::Wind, Mahjong::Wind) -> void{}
+auto AngryDiscardoBot::RoundStart(std::vector<Mahjong::Piece>, Mahjong::Wind, Mahjong::Wind) -> void {
+  lastEvent = Mahjong::END_EVENT;
+}
 
 auto AngryDiscardoBot::ReceiveEvent(Mahjong::Event e) -> void{
   if(e.decision){
