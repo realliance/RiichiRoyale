@@ -39,6 +39,7 @@ add_subdirectory(${RiichiRoyale_SOURCE_DIR}/src)
 if(PACKAGE_TESTS)
   get_target_property(_sources RiichiRoyale SOURCES)
   add_library(TestRiichiRoyale ${_sources})
+  target_compile_definitions(TestRiichiRoyale PUBLIC -DNO_PYBIND)
   target_include_directories(TestRiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/include")
   target_include_directories(TestRiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/aicontrollers")
 endif()
@@ -47,9 +48,6 @@ target_sources(RiichiRoyale PRIVATE "src/python.cpp")
 
 target_include_directories(RiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/include")
 target_include_directories(RiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/aicontrollers")
-
-
-
 
 add_custom_target(
   check

@@ -12,13 +12,11 @@
 #include "statefunctions.h"
 #include "stateutilities.h"
 #include "walls.h"
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+#include "winds.h"
 
 using namespace Mahjong;
 
 auto Mahjong::RoundStart(GameState& state) -> GameState& {
-  std::cerr << "State: RoundStart" << std::endl;
   state.walls = Walls();
   for(size_t i = 0; i < 4; i++){
     auto hand = state.walls.TakeHand();

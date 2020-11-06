@@ -17,4 +17,5 @@ target_sources(RiichiRoyale
     "${DIR}/stateutilities.h"
     "${DIR}/walls.h"
     "${DIR}/winds.h"
+    "${DIR}/mahjongns.h"
 )

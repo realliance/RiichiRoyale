@@ -8,6 +8,7 @@
 #include "decisionfunction.h"
 #include "playercontroller.h"
 
+#include "mahjongns.h"
 using namespace Mahjong;
 
 namespace Mahjong {
@@ -17,7 +18,7 @@ auto GetSeat(int round, int player) -> Wind{
 }
 
 // Score given player
-auto ScorePlayers(const GameState& state) -> std::array<int16_t,4> {
+auto ScorePlayers(const GameState&) -> std::array<int16_t,4> {
   // std::array<bool,4> isWinner = {false,false,false,false};
   // std::array<int16_t,4> points = {0,0,0,0};
   // for(const auto & winner : state.winners){
@@ -92,13 +93,13 @@ auto AskForDiscard(const GameState& state) -> Piece {
   bool valid = false;
   while(!valid){
     decision = state.players[state.currentPlayer].controller->RetrieveDecision();
-    valid = ValidateDecision(state,state.currentPlayer, decision, true, state.pendingPiece);
+    valid = ValidateDecision(state,state.currentPlayer, decision, true);
   }
 
   return decision.piece;
 }
 
-auto ValidateDecision(const GameState& state, int player, Event decision, bool inHand, Piece piece) -> bool {
+auto ValidateDecision(const GameState& state, int player, Event decision, bool inHand) -> bool {
   if(decision.type > Event::Discard){
     return false;
   }

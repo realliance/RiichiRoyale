@@ -13,7 +13,6 @@
 using namespace Mahjong;
 
 auto Mahjong::PlayerHand(GameState& state) -> GameState&{
-  std::cerr << "State: PlayerHand" << std::endl;
   using DecisionFunction = auto (*)(const Mahjong::GameState &state)->bool;
 
   struct possibleDecision{
@@ -54,7 +53,7 @@ auto Mahjong::PlayerHand(GameState& state) -> GameState&{
   Event decision;
   while(decisionAsked){
     decision = state.players[state.currentPlayer].controller->RetrieveDecision();
-    decisionAsked = !ValidateDecision(state,state.currentPlayer, decision, true, state.pendingPiece);
+    decisionAsked = !ValidateDecision(state,state.currentPlayer, decision, true);
   }
 
   state.pendingPiece = decision.piece;

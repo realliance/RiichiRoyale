@@ -1,6 +1,7 @@
 #include <string>
 #include "piecetype.h"
 
+#include "mahjongns.h"
 using namespace Mahjong;
 
 auto Piece::toUint8_t() const -> uint8_t {

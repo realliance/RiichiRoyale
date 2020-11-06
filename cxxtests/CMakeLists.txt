@@ -18,7 +18,13 @@ macro(package_add_test TESTNAME)
         WORKING_DIRECTORY ${PROJECT_DIR}
         PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_DIR}"
     )
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        target_compile_options(${TESTNAME} PRIVATE -pedantic -Wall -Wmost -Wextra)
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        target_compile_options(${TESTNAME} PRIVATE -pedantic -Wall -Wextra)
+    endif()
     set_target_properties(${TESTNAME} PROPERTIES FOLDER tests)
+    target_compile_definitions(${TESTNAME} PUBLIC -DNO_PYBIND)
 endmacro()
 
 # ADD TESTS BELOW #
@@ -27,4 +33,3 @@ package_add_test(Count_Pieces count_pieces.test.cpp)
 package_add_test(Remove_Pieces remove_pieces.test.cpp)
 package_add_test(Discard_Piece discard_piece.test.cpp)
 package_add_test(Piece_Type piece_type.test.cpp)
-package_add_test(Meld_Pieces meld_pieces.test.cpp)

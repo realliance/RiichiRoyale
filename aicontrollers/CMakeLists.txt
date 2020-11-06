@@ -3,6 +3,4 @@ target_sources(RiichiRoyale
   PRIVATE
     "${DIR}/angrydiscardobot.cpp"
     "${DIR}/angrydiscardobot.h"
-    "${DIR}/pythonaiinterface.cpp"
-    "${DIR}/pythonaiinterface.h"
 )

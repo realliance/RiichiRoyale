@@ -7,8 +7,7 @@
 #include "stateutilities.h"
 using namespace Mahjong;
 
-auto Mahjong::Ron(GameState& state) -> GameState& {
-  std::cerr << "State: Ron" << std::endl;
+auto Mahjong::Ron(GameState& state) -> GameState& {  
   //TODO scoring
   for(int player = 0; player < 4; player++){
     if(state.hasRonned[player]){

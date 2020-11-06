@@ -6,6 +6,7 @@
 #include <random>     // for random_device, mt19937
 #include <string>     // for operator<<, char_traits
 
+#include "mahjongns.h"
 using namespace Mahjong;
 
 const std::vector<Piece> PIECE_SET = {

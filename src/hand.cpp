@@ -2,6 +2,7 @@
 #include <ostream>
 #include <string>
 
+#include "mahjongns.h"
 using namespace Mahjong;
 
 auto operator<<(std::ostream& os, const Hand& hand) -> std::ostream&{

@@ -1,14 +1,25 @@
-#include <pybind11/pybind11.h>       // for class_, init, module
-#include <pybind11/stl.h>
-#include <pybind11/operators.h>
+#include <pybind11/detail/common.h>  // for PYBIND11_MODULE, pybind11
+#include <pybind11/detail/descr.h>   // for operator+
+#include <pybind11/operators.h>      // for self, operator+, operator<, oper...
+#include <pybind11/pybind11.h>       // for enum_, class_, init, module, PYB...
+#include <pybind11/pytypes.h>        // for sequence, str_attr_accessor
+#include <pybind11/stl.h>            // IWYU pragma: keep
+#include <cstdint>                   // for int16_t, uint8_t
+#include <string>                    // for string
+#include <vector>                    // for vector
+#include "event.h"                   // for Event::Type, Event, Event::Chi
+#include "manager.h"                 // for GetAvailableControllers, Registe...
+#include "piecetype.h"               // for Piece::Type, Piece, Piece::BAMBO...
+#include "playercontroller.h"        // for PlayerController
+#include "winds.h"                   // for Wind, East, North, South, West
 
 namespace py = pybind11;
 
-#include "winds.h"
-#include "manager.h"
-#include "event.h"
-#include "playercontroller.h"
-#include "pythonaiinterface.h"
+struct RoundStartStruct{
+  std::vector<int16_t> hand;
+  Mahjong::Wind seatWind;
+  Mahjong::Wind prevalentWind;
+};
 
 class PyMahjongAI: public Mahjong::PlayerController {
 public:

@@ -11,7 +11,6 @@
 using namespace Mahjong;
 
 auto Mahjong::KanDiscard(GameState& state) -> GameState&{
-  std::cerr << "State: KanDiscard" << std::endl;
   //Doesn't account for concealed kan safety yet oof
   std::array<bool,4> needDecision = {false,false,false,false};
   for(int player = 0; player < 4; player++){
@@ -35,7 +34,7 @@ auto Mahjong::KanDiscard(GameState& state) -> GameState&{
   for(int i = 0; i < 4; i++){
     while(needDecision[i]){
       Event tempDecision = state.players[i].controller->RetrieveDecision();
-      if(ValidateDecision(state,i,tempDecision,false,state.pendingPiece)){
+      if(ValidateDecision(state,i,tempDecision,false)){
         needDecision[i] = false;
         state.hasRonned[i] = true;
         haveRonned = true;

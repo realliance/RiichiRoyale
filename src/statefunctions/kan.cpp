@@ -11,7 +11,6 @@
 using namespace Mahjong;
 
 auto Mahjong::Kan(GameState& state) -> GameState&{
-  std::cerr << "State: Kan" << std::endl;
   AlertPlayers(state,Event{
     Event::Kan, // type
     state.lastCaller, // player

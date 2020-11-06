@@ -11,7 +11,6 @@
 using namespace Mahjong;
 
 auto Mahjong::Pon(GameState& state) -> GameState&{
-  std::cerr << "State: Pon" << std::endl;
   state.hands[state.lastCaller].open = true;
 
   AlertPlayers(state,Event{

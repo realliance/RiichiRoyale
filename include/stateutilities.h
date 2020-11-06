@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <array>
 #include "piecetype.h"
+#include "winds.h"
 
 
 namespace Mahjong{
@@ -17,6 +18,6 @@ namespace Mahjong{
   auto AlertPlayers(const GameState& state, Event e) -> void;
   auto AskForDiscard(const GameState& state) -> Piece;
   auto CountPieces(const GameState& state, int player, Piece p) -> uint8_t;
-  auto ValidateDecision(const GameState& state, int player, Event decision, bool inHand, Piece p) -> bool;
+  auto ValidateDecision(const GameState& state, int player, Event decision, bool inHand) -> bool;
 
 };

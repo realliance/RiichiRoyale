@@ -1,7 +1,6 @@
 #pragma once
 #include <algorithm>    // for sort
 #include <iosfwd>       // for ostream, ptrdiff_t
-#include <iterator>     // for forward_iterator_tag
 #include <vector>       // for vector<>::iterator, vector, vector<>::const_i...
 #include "meld.h"       // for Meld
 #include "piecetype.h"  // for Piece

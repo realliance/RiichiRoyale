@@ -6,8 +6,7 @@
 #include "statefunctions.h"
 using namespace Mahjong;
 
-auto Mahjong::GameStart(GameState& state) -> GameState& {
-  std::cerr << "State: GameStart" << std::endl;
+auto Mahjong::GameStart(GameState& state) -> GameState& {  
   for(int i = 0; i < 4; i++){
     state.players[i].points = 25000;
     state.players[i].controller->GameStart(i);
