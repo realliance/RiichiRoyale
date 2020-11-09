@@ -25,11 +25,12 @@ public:
   auto RetrieveDecision() -> Mahjong::Event;
 private:
   auto IncrementPiece(Mahjong::Piece piece, pieceSet& set) -> void;
+  auto IncreasePiece(Mahjong::Piece piece, pieceSet& set, uint8_t count) -> void;
   auto DecrementPiece(Mahjong::Piece piece, pieceSet& set) -> void;
   auto ShouldKeep(Mahjong::Piece piece) -> bool;
   auto ProcessNewPiece(Mahjong::Piece piece) -> void;
-  auto RecordDiscard(Mahjong::Piece piece) -> void;
   auto ChooseDiscard() -> Mahjong::Piece;
+  auto OutputSet(uint8_t id, pieceSet& set) -> void;
   pieceSet possibleTriples;
   std::vector<Mahjong::Piece> immediateDiscard;
   std::vector<Mahjong::Piece> validDoras;
