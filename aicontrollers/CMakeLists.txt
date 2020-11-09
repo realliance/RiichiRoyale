@@ -3,4 +3,6 @@ target_sources(RiichiRoyale
   PRIVATE
     "${DIR}/angrydiscardobot.cpp"
     "${DIR}/angrydiscardobot.h"
+    "${DIR}/fasttanyao.cpp"
+    "${DIR}/fasttanyao.h"
 )
