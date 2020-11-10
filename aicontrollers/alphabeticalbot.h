@@ -17,8 +17,7 @@ public:
     auto RetrieveDecision() -> Mahjong::Event;
 private:
     std::vector<Mahjong::Piece> hand;
-    int n = 0;
     int id;
-    Mahjong::Event lastEvent;
     int getDiscardPiece();
+    Mahjong::Event decisionToTake;
 };

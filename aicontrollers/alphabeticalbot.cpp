@@ -11,54 +11,73 @@ auto AlphabeticalBot::Name() -> std::string{
 
 auto AlphabeticalBot::GameStart(int id) -> void{
     this->id = id;
+    std::cout << "Started player " << id << std::endl;
 }
 
 auto AlphabeticalBot::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Wind, Mahjong::Wind) -> void {
     hand = _hand;
-    lastEvent.type = Mahjong::Event::Discard;
+    decisionToTake.type = Mahjong::Event::Discard;
+    decisionToTake.player = this->id;
 }
 
 auto AlphabeticalBot::ReceiveEvent(Mahjong::Event e) -> void{
-    if(e.decision){
-        if(e.type <= lastEvent.type)
-            lastEvent = e;
-    }else if(e.type == Mahjong::Event::Discard){
-        hand.push_back(e.piece);
+    const Mahjong::Piece eventPiece = Mahjong::Piece(e.piece);
+    //std::cout << "Player " << id <<" got event " << e << std::endl;
+    if (e.type <= Mahjong::Event::Discard && e.decision && e.player == this->id)
+    {
+        if (e.type == Mahjong::Event::Discard)
+        {
+            if (e.type < decisionToTake.type)
+            {
+                //std::cout <<"Choosing "<< e.type << std::endl;
+                decisionToTake = e;
+            }
+        }
+
+    }
+    switch (e.type)
+    {
+        case Mahjong::Event::Dora:
+            break;
+        case Mahjong::Event::Kan:
+            if (e.decision)
+            {
+                decisionToTake.type = Mahjong::Event::Decline;
+            }
+            break;
+        case Mahjong::Event::Chi:
+            if (e.decision)
+            {
+                decisionToTake.type = Mahjong::Event::Decline;
+            }
+            break;
+        case Mahjong::Event::Pon:
+            if (e.decision)
+            {
+                decisionToTake.type = Mahjong::Event::Decline;
+            }
+            break;
+        case Mahjong::Event::Discard:
+            if (e.decision && e.player == this->id) {
+                //std::cout << "Player " << this->id << " pushing piece into hand: " << e.piece << std::endl;
+                hand.push_back(e.piece);
+            }
+            break;
     }
 }
 
 auto AlphabeticalBot::RetrieveDecision() -> Mahjong::Event{
-    if (lastEvent.player == this->id && lastEvent.decision) //event needs decision
+    if (this->decisionToTake.type == Mahjong::Event::Discard)
     {
-        printf("Needs decision from player %d on event %d.\n",this->id, lastEvent.type);
-        if (lastEvent.type == Mahjong::Event::Discard){
-            int indexToDiscard = getDiscardPiece();
-            lastEvent.piece = hand[indexToDiscard].toUint8_t();
-            hand.erase(hand.begin() + indexToDiscard);
-            printf("%d discarded piece %d (index %d), hand size is now: %d\n", this->id, lastEvent.piece, indexToDiscard,  hand.size());
-            Mahjong::Event e = lastEvent;
-            e.type = Mahjong::Event::Discard;
-            e.decision = false;
-            return e;
-        }
-        else if (lastEvent.type < Mahjong::Event::Decline)
-        {
-            Mahjong::Event e = lastEvent;
-            e.type = Mahjong::Event::Decline; //skip all calls
-            return e;
-        }
-        else
-        {
-            printf("Got unimplemented event.\n");
-        }
+        auto indexToDiscard = getDiscardPiece();
+        decisionToTake.piece = hand[indexToDiscard].raw_value();
+        //std::cout << "Removing piece "<< indexToDiscard <<std::endl;
+        hand.erase(hand.begin() + indexToDiscard);
     }
-    else
-    {
-        printf("Shouldn't get here\n");
-    }
-    Mahjong::Event e = lastEvent;
-    lastEvent.type = Mahjong::Event::Discard; // lowest """priority""" event type
-    return e;
+    auto final = this->decisionToTake;
+    this->decisionToTake.type = Mahjong::Event::Discard;
+    //std::cout << "Sending decision "<< final <<std::endl;
+    return final;
 }
 
 
@@ -79,5 +98,6 @@ auto AlphabeticalBot::getDiscardPiece() -> int{
             index = i;
         }
     }
+    //std::cout << "getDiscardPiece(): " << index << std::endl;
     return index;
 } 
