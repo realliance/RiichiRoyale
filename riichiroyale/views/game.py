@@ -1,5 +1,5 @@
 from libmahjong import start_game, EventType, EngineEvent, PieceType
-from riichiroyale.game import Player, Match, process_event_queue, DialogManager
+from riichiroyale.game import Player, Match, process_event_queue, DialogManager, loadStory
 from .boardview import BoardView
 
 
@@ -33,7 +33,9 @@ class GameView(BoardView):
 
     def on_match_init(self):
         self.match = None
+        self.ai_list = loadStory.loadStory("demo.txt")
         self.match = Match(self.ai_list, self.game_manager, self.player_manager, self.sound_manager)
+        loadStory.markComplete("demo.txt")
         self.match.start()
 
     def on_pov_init(self):
