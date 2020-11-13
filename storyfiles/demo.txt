@@ -3,3 +3,4 @@
 AngryDiscardoBot
 AngryDiscardoBot
 AngryDiscardoBot
+someIdForDialog

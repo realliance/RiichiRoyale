@@ -33,9 +33,12 @@ class GameView(BoardView):
 
     def on_match_init(self):
         self.match = None
-        self.ai_list = loadStory.loadStory("demo.txt")
+        story = True
+        if(story):
+			storyInfo = loadStory.loadStory("../../storyfiles/demo.txt")
+			self.ai_list = storyInfo[0]
+			dialog = storyInfo[1]
         self.match = Match(self.ai_list, self.game_manager, self.player_manager, self.sound_manager)
-        loadStory.markComplete("demo.txt")
         self.match.start()
 
     def on_pov_init(self):

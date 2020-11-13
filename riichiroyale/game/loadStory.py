@@ -7,7 +7,8 @@ def loadStory(filename):
 		while(i < numOfAI):
 			listOfAI.append(f.readline().rstrip("\n"))
 			i += 1
-	return ["Player"] + listOfAI
+		dialogID = f.readline().rstrip("\n")
+	return [["Player"] + listOfAI, dialogID]
 
 
 def markComplete(filename):
@@ -27,10 +28,10 @@ def isComplete(filename):
 	else:
 		return False
 
+
 def main(args):
-    markComplete("demo.txt")
-    x = isComplete("demo.txt")
-    print(x)
+    x = loadStory("../../storyfiles/demo.txt")
+    print(x[0])
     return 0
 
 if __name__ == '__main__':
