@@ -35,7 +35,7 @@ class GameView(BoardView):
         self.match = None
         story = True
         if(story):
-            storyInfo = loadStory.loadStory("../../storyfiles/demo.txt")
+            storyInfo = loadStory.loadStory("./storyfiles/demo.txt")
             self.ai_list = storyInfo[0]
             dialog = storyInfo[1]
         self.match = Match(self.ai_list, self.game_manager, self.player_manager, self.sound_manager)
