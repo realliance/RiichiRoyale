@@ -18,7 +18,9 @@ from riichiroyale import (
     SoundManager,
     BoardManager,
     TutorialView,
-    PlayerManager
+    PlayerManager,
+    bootstrap_base_storage,
+    get_object
 )
 
 SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO = 16, 9
@@ -56,6 +58,9 @@ def main():
     pygame.display.set_caption("Riichi Royale")
 
     current_path = os.path.dirname(os.path.realpath(__file__))
+
+    bootstrap_base_storage()
+    story_matches = get_object('matches')
 
     # Init Logging
     logging.basicConfig(
