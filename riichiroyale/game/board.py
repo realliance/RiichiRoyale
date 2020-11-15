@@ -26,6 +26,6 @@ class Board:
 
     def get_revealed_dora(self):
         dora = []
-        for index in range(0, self.dora_revealed, 2):
+        for index in range(0, self.dora_revealed + 1, 2):
             dora.append(self.deadwall[index])
         return dora
