@@ -73,7 +73,7 @@ void MainWindow::on_button_clicked()
   std::vector<Mahjong::Piece> Hand;
   int i =0;
   do{
-    if(i % 1000 == 0){
+    if(i % 1000 == 0 && loopButton.get_active()){
       std::cout << "============== " << i << " ==============" << std::endl;
     }
     i++;
@@ -107,11 +107,24 @@ void MainWindow::on_button_clicked()
       std::ofstream os("hand.gv");
       root->DumpAsDot(os);
       os.close();
-      
-      if(root->leaves.size() > 0 && root->leaves[0]->type != Mahjong::Node::Single && root->leaves[0]->type != Mahjong::Node::Error){
+      bool stdform = true;
+      int cnt = 0;
+      for(const auto & n : *root){
+        if(n.type == Mahjong::Node::Single || n.type == Mahjong::Node::Error){
+          stdform = false;
+        }
+        cnt++;
+      }
+      if(stdform && cnt > 4){
         isStdForm.set_text("In Standard Form"+dotsStr);
       }else {
         isStdForm.set_text("Not Standard Form"+dotsStr);
+        if(stdformbutton.get_active()){
+          std::cout << "stopped at:=== " << i << " ==============" << std::endl;
+          errorRate++;
+          isStdForm.set_text("Error Case Found"+dotsStr);
+          stopButton.set_active();
+        }
       }
       delete root;
     }else{
@@ -119,7 +132,7 @@ void MainWindow::on_button_clicked()
       isStdForm.set_text("Error Case Found"+dotsStr);
       stopButton.set_active();
     }
-  }while(loopButton.get_active() && i< 10000000);
+  }while(loopButton.get_active() && i< 10000 && !stopButton.get_active());
   errorPercent.set_text("Error rate: " + std::to_string((float)errorRate/total));
   for(int i = 0; i < 14; i ++){
     int width = 100;
