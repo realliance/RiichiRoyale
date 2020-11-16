@@ -20,7 +20,8 @@ from riichiroyale import (
     TutorialView,
     PlayerManager,
     bootstrap_base_storage,
-    get_object
+    get_object,
+    StoryModeSelect
 )
 
 SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO = 16, 9
@@ -161,6 +162,9 @@ def main():
     freeplay_menu = FreePlaySelect(
         game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT
     )
+    storymode_menu = StoryModeSelect(
+        game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT
+    )
     settings_menu = Settings(
         game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT
     )
@@ -191,6 +195,7 @@ def main():
     game_manager.add_view(game_view)
     game_manager.add_view(tutorial_view)
     game_manager.add_view(freeplay_menu)
+    game_manager.add_view(storymode_menu)
     game_manager.set_active_view("main_menu")
 
     draw_loading_screen(screen, clear_background, font, "Done!")

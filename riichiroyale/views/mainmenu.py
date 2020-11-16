@@ -159,6 +159,8 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
     # processuievent() is called when a UI event is caught while this menu is active
     def process_ui_event(event):
         if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+            if event.ui_element == storymode_button:
+                game_manager.set_active_view("storymodeselect")
             if event.ui_element == newgame_button:
                 game_manager.set_active_view("freeplayselect")
             if event.ui_element == tutorial_button:

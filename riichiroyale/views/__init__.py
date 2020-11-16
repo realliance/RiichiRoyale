@@ -5,4 +5,5 @@ from .menuview import *
 from .gamemanager import *
 from .mainmenu import *
 from .freeplayselect import *
+from .storymodeselect import *
 from .settings import *
