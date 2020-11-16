@@ -1,9 +1,9 @@
 from libmahjong import start_game, EventType, EngineEvent, PieceType
 from riichiroyale.game import Player, Match, process_event_queue, DialogManager, loadStory
-from .boardview import BoardView
+from .game import GameView
 
 
-class GameView(BoardView):
+class StoryModeGame(GameView):
     def __init__(
         self,
         game_manager,
@@ -15,10 +15,8 @@ class GameView(BoardView):
         width_ratio,
         height_ratio,
         player_manager=None,
-        name="game"
     ):
         super().__init__(
-            name,
             game_manager,
             DialogManager(),
             screen,
@@ -28,18 +26,28 @@ class GameView(BoardView):
             screen_height,
             width_ratio,
             height_ratio,
+            game_manager,
+            name="storymodegame"
         )
         self.player_manager = player_manager
         self.ai_list = ["Player"] + ["AngryDiscardoBot"] * 3
-
-    def on_match_init(self):
         self.match = None
-        self.match = Match(self.ai_list, self.game_manager, self.player_manager, self.sound_manager)
-        self.match.start()
 
-    def on_pov_init(self):
-        if self.player_manager is None:
-            self.match_pov = 0
+    def load_match(self, match_dict):
+        self.ai_list = ["Player"] + match_dict["ais"]
+        self.match = match_dict
+        
+        for possible_event in ["intro", "call_pon", "call_chi", "call_kan", "call_ron", "call_riichi", "on_player_wins", "on_player_loses", "on_both_lose"]:
+            if possible_event in self.match:
+                self.dialogue_manager.register_dialog_event(possible_event)
+                for line in self.match[possible_event]:
+                    self.dialogue_manager.append_dialog_event(possible_event, line)
+
+    def on_round_start(self):
+        super().on_round_start(self)
+        if 'intro' in self.match:
+            self.dialogue_manager.start_event('intro')
+
 
     def on_tile_pressed(self, owner, tile_hand_index):
         if owner.my_turn:
