@@ -108,6 +108,10 @@ class BoardView(MenuView):
 
     def on_match_start(self):
         """Called upon the start of a match, which comprises a series of rounds"""
+        background = surface.Surface(self.screen.get_size())
+        self.background = background.convert_alpha()
+        self.background.fill((7, 99, 36))
+
         self.on_match_init()
         self.on_pov_init()
 

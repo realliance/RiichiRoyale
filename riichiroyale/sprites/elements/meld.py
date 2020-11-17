@@ -51,7 +51,17 @@ def render_meld_hand(board_render, meld_hand, seat=0):
             group.add(
                 render_meld(board_render, meld, xpos, ypos + offset, meld_rotation=seat)
             )
-        meld_width, meld_height = calculated_meld_dimensions[i]
+        try:
+            meld_width, meld_height = calculated_meld_dimensions[i]
+        except IndexError:
+            print(i)
+            print(calculated_meld_dimensions)
+            print(meld_hand)
+            print(meld)
+            print(list(
+                map(lambda x: x.calculate_meld_sprite_dimensions(*SMALL_TILE_SIZE), meld_hand)
+            ))
+            raise "MELD HAND RACE CONDITION DETECTED" from IndexError
         max_meld_height = max(max_meld_height, meld_height)
         offset += meld_width + 20
         i += 1

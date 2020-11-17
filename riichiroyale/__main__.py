@@ -61,7 +61,6 @@ def main():
     current_path = os.path.dirname(os.path.realpath(__file__))
 
     bootstrap_base_storage()
-    story_matches = get_object('matches')
 
     # Init Logging
     logging.basicConfig(
