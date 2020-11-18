@@ -44,8 +44,8 @@ auto Node::iterator::operator++() -> iterator&{
   const Node* traveler = root;
   size_t leafPosNext = traveler->leafPosInParent+1;
   while(traveler->parent && traveler->parent->leaves.size() <= leafPosNext ){
-    leafPosNext = traveler->leafPosInParent+1;
     traveler = traveler->parent;
+    leafPosNext = traveler->leafPosInParent+1;
   }
   if(!traveler->parent){
     end = true;

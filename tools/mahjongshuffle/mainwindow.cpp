@@ -109,11 +109,30 @@ void MainWindow::on_button_clicked()
       os.close();
       bool stdform = true;
       int cnt = 0;
+      bool branched = false;
+      bool justended = false;
       for(const auto & n : *root){
+        if(justended){
+          stopButton.set_active();
+          justended = false;
+          stdform = true;
+        }
+        if(n.leaves.size() > 1){
+          branched = true;
+        }
         if(n.type == Mahjong::Node::Single || n.type == Mahjong::Node::Error){
           stdform = false;
+          if(!branched){
+            break;
+          }
         }
         cnt++;
+        if(n.leaves.empty()){
+          if(stdform){
+            break;
+          }
+          justended = true;
+        }
       }
       if(stdform && cnt > 4){
         isStdForm.set_text("In Standard Form"+dotsStr);
@@ -132,7 +151,7 @@ void MainWindow::on_button_clicked()
       isStdForm.set_text("Error Case Found"+dotsStr);
       stopButton.set_active();
     }
-  }while(loopButton.get_active() && i< 10000 && !stopButton.get_active());
+  }while(loopButton.get_active() && i< 100000 && !stopButton.get_active());
   errorPercent.set_text("Error rate: " + std::to_string((float)errorRate/total));
   for(int i = 0; i < 14; i ++){
     int width = 100;

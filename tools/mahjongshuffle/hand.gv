@@ -1,8 +1,0 @@
-digraph {
-  0 [label="RootNode: Root",shape=underline,color=black];
-  1 [label="Chi: Man2",shape=house,color=purple];
-  2 [label="Chi: Sou1",shape=house,color=purple];
-
-  0 -> 1;
-  1 -> 2;
-}

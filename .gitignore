@@ -181,3 +181,7 @@ cython_debug/
 
 # Persisten settings file
 settings.json
+
+# Graph Formats
+*.gv
+*.tgf

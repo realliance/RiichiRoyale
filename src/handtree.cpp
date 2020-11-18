@@ -1,6 +1,8 @@
 #include <sys/types.h>
 #include <algorithm>
 #include <memory>
+#include <iostream>
+ #include <fstream>
 #include <vector>
 #include "handnode.h"
 #include "piecetype.h"
@@ -10,20 +12,21 @@
 #include "mahjongns.h"
 using namespace Mahjong;
 
+struct Breakdown {
+  Node* rootNode;
+  Node* currentNode;
+  bool paired = false;
+  int minPossible;
+  int id = 0;
+  int8_t counts[256] = {};
+  std::vector<int> possibilities;
+  std::vector<Piece> pieces;
+};
+
 bool possibleChiForward(const int8_t* counts, Piece p){
   if(p.isHonor()){
     return false;
   }
-  // if(counts[(p).toUint8_t()] == 3 && counts[(p).toUint8_t()] == 3 && counts[(p).toUint8_t()] == 2 && counts[(p+3).toUint8_t()] == 0)
-  // if(counts[(p-1).toUint8_t()] == 0 && counts[(p).toUint8_t()] == 2 && counts[(p+1).toUint8_t()] == 1){
-  //   return false;
-  // }
-  // if(counts[(p).toUint8_t()] == 1 && counts[(p+1).toUint8_t()] == 1 && counts[(p+2).toUint8_t()] == 2 && counts[(p+3).toUint8_t()] == 0){
-  //   return false;
-  // }
-  // if(counts[(p).toUint8_t()] == 3 && counts[(p+1).toUint8_t()] == 1 && counts[(p+2).toUint8_t()] == 3 && counts[(p+3).toUint8_t()] > 0){
-  //   return false;
-  // }
   if(counts[(p).toUint8_t()] > 0 && counts[(p+1).toUint8_t()] > 0 && counts[(p+2).toUint8_t()] > 0){
     return true;
   }
@@ -40,147 +43,250 @@ bool anyPossibleChi(const int8_t* counts, Piece p){
 }
 
 bool possiblePair(const int8_t* counts, Piece p){
-  return (counts[p.toUint8_t()] == 2);// || (counts[p.toUint8_t()] == 3 && !p.isHonor() && anyPossibleChi(counts,p));
+  return (counts[p.toUint8_t()] == 2);
 }
 
 bool possiblePon(const int8_t* counts, Piece p){
   return counts[p.toUint8_t()] == 3;
 }
 
-void countPieces(int8_t* counts, const std::vector<Piece>& pieces){
-  for(const auto & p : pieces){
-    counts[p.toUint8_t()]++;
+void countPieces(Breakdown& b){
+  for(const auto & p : b.pieces){
+    b.counts[p.toUint8_t()]++;
   }
 }
 
-int updatePossibilities(std::vector<int>& possibilities, const std::vector<Piece>& pieces, const int8_t* counts, bool paired){
-  possibilities.resize(pieces.size());
-  int minPossible = 6;
-  for(size_t i = 0; i < pieces.size(); i++){
-    possibilities[i] = 0;
-    possibilities[i] += possibleChis(counts,pieces[i]);
-    possibilities[i] += paired ? 0 : possiblePair(counts,pieces[i]);
-    possibilities[i] += possiblePon(counts,pieces[i]);
-    minPossible = possibilities[i] < minPossible ? possibilities[i] : minPossible;
+void updatePossibilities(Breakdown& b){
+  b.possibilities.resize(b.pieces.size());
+  b.minPossible = 6;
+  for(size_t i = 0; i < b.pieces.size(); i++){
+    b.possibilities[i] = 0;
+    b.possibilities[i] += possibleChis(b.counts,b.pieces[i]);
+    b.possibilities[i] += b.paired ? 0 : possiblePair(b.counts,b.pieces[i]);
+    b.possibilities[i] += possiblePon(b.counts,b.pieces[i]);
+    b.minPossible = b.possibilities[i] < b.minPossible ? b.possibilities[i] : b.minPossible;
   }
-  return minPossible;
 }
 
+auto addLeaf(Breakdown& b, Piece start, Node::Type type) -> Node* {
+  Node* leaf = new Node{
+    b.id++, //id
+    type, //type
+    start, //Start
+    b.currentNode, //parent
+    {}, // leaves
+    b.currentNode->leaves.size() //leafPosInParent
+  };
+  b.currentNode->leaves.push_back(leaf);
+  return leaf;
+}
 
-auto Mahjong::breakdownHand(std::vector<Piece> pieces) -> Node*{
-  int8_t counts[256] = {};
-  countPieces(counts,pieces);
-  std::sort(pieces.begin(), pieces.end());
-  pieces.erase(std::unique(pieces.begin(),pieces.end()),pieces.end());
-  std::cout << "Pieces: ";
-  for(const auto p : pieces){
-    std::cout << p.toStr() << ' ';
+auto breakdownForwardChi(Breakdown& b, int piecePos) -> void {
+  Piece start = b.pieces[piecePos];
+  for(int i = 0; i < 3; i++){
+    b.counts[(start+i).toUint8_t()]--;
+    if(b.counts[(start+i).toUint8_t()] == 0){
+      b.pieces.erase(std::remove(b.pieces.begin(), b.pieces.end(), (start+i)), b.pieces.end());
+    }
   }
-  std::cout << std::endl;
-  
-  std::vector<int> possibilities;
-  int minPossible = updatePossibilities(possibilities,pieces,counts, false);
+  b.currentNode = addLeaf(b, start, Node::ChiSet);
+}
 
-  int id = 0;
-  Node* rootNode = new Node{
-    id++, //id
+auto breakdownPon(Breakdown& b, int piecePos) -> void {
+  Piece start = b.pieces[piecePos];
+  b.counts[b.pieces[piecePos].toUint8_t()]-=3;
+  if(b.counts[b.pieces[piecePos].toUint8_t()] == 0){
+    b.pieces.erase(std::remove(b.pieces.begin(), b.pieces.end(), b.pieces[piecePos]), b.pieces.end());
+  }
+  b.currentNode = addLeaf(b, start, Node::PonSet);;
+}
+
+auto breakdownPair(Breakdown& b, int piecePos) -> void {
+  b.paired = true;
+  Piece start = b.pieces[piecePos];
+  b.counts[b.pieces[piecePos].toUint8_t()]-=2;
+  if(b.counts[b.pieces[piecePos].toUint8_t()] == 0){
+    b.pieces.erase(std::remove(b.pieces.begin(), b.pieces.end(), b.pieces[piecePos]), b.pieces.end());
+  }
+  b.currentNode = addLeaf(b, start, Node::Pair);;
+}
+
+auto breakdownSingle(Breakdown& b, int piecePos) -> void {
+  b.currentNode = addLeaf(b, b.pieces[piecePos], Node::Single);;
+  b.counts[b.pieces[piecePos].toUint8_t()]--;
+  if(b.counts[b.pieces[piecePos].toUint8_t()] == 0){
+    b.pieces.erase(std::remove(b.pieces.begin(), b.pieces.end(), b.pieces[piecePos]), b.pieces.end());
+  }
+}
+
+auto getNextPiece(Breakdown& b) -> int {
+  int piecePos = 0;
+  for(size_t i = 0; i < b.pieces.size(); i++){
+    if(b.possibilities[i] <= b.possibilities[piecePos]){
+      piecePos = i;
+      if(b.possibilities[i] == b.minPossible){
+        break;
+      }
+    }
+  }
+  return piecePos;
+}
+
+auto resetCounts(Breakdown& b, Node* target) -> void {
+  if(!b.currentNode){
+    std::cerr << "reset Failure: current node nullptr." << std::endl;
+    std::ofstream os("error.gv");
+    b.rootNode->DumpAsDot(os);
+    os.close();
+    throw -1;
+  }
+  while(b.currentNode != target){
+    if(!b.currentNode->parent){
+      std::cerr << "reset Failure: parent node nullptr." << std::endl;
+      std::ofstream os("error.gv");
+      b.rootNode->DumpAsDot(os);
+      os.close();
+      throw -2;
+    }
+    if(b.currentNode->parent->type == Node::Error){
+      std::cerr << "reset Failure: reset up to an error." << std::endl;
+      std::ofstream os("error.gv");
+      b.rootNode->DumpAsDot(os);
+      os.close();
+      throw -4;
+    }
+    if(b.currentNode->type == Node::ChiSet){
+      for(int i = 0; i < 3; i++){
+        if(b.counts[(b.currentNode->start+i).toUint8_t()] == 0){
+          b.pieces.push_back(Piece{b.currentNode->start+i});
+          std::sort(b.pieces.begin(), b.pieces.end());
+        }
+        b.counts[(b.currentNode->start+i).toUint8_t()]++;
+      }
+    }else{
+      if(b.counts[b.currentNode->start.toUint8_t()] == 0){
+        b.pieces.push_back(Piece{b.currentNode->start});
+        std::sort(b.pieces.begin(), b.pieces.end());
+      }
+      if(b.currentNode->type == Node::Single){
+        b.counts[b.currentNode->start.toUint8_t()]++;
+      }
+      if(b.currentNode->type == Node::Pair){
+        b.paired = false;
+        b.counts[b.currentNode->start.toUint8_t()]+=2;
+      }
+      if(b.currentNode->type == Node::PonSet){
+        b.counts[b.currentNode->start.toUint8_t()]+=3;
+      }
+    }
+    b.currentNode = b.currentNode->parent;
+  }
+}
+
+auto driver(Breakdown& b) -> void {
+  updatePossibilities(b);
+  if(b.pieces.empty()){
+    return;
+  }
+  int piecePos = getNextPiece(b);
+  if(b.possibilities[piecePos] == 0){
+    breakdownSingle(b, piecePos);
+    return driver(b);
+  }
+  if(b.possibilities[piecePos] == 1){
+    if(anyPossibleChi(b.counts,b.pieces[piecePos])){
+      for(int i = 0; i < 3; i++){
+        if(possibleChiForward(b.counts,b.pieces[piecePos]-i)){
+          breakdownForwardChi(b,piecePos-i);
+          break;
+        }
+      }
+      return driver(b);
+    }
+    if(possiblePon(b.counts,b.pieces[piecePos])){
+      breakdownPon(b, piecePos);
+      return driver(b);
+    }
+    if(possiblePair(b.counts,b.pieces[piecePos])){
+      breakdownPair(b, piecePos);
+      return driver(b);
+    }
+  }
+  if(b.possibilities[piecePos] == 2){
+    Node* current = b.currentNode;
+    int branch = 0;
+    if(possibleChiForward(b.counts,b.pieces[piecePos]-0)){
+      branch++;
+      breakdownForwardChi(b,piecePos-0);
+      driver(b);
+      resetCounts(b, current);
+    }
+    if(possibleChiForward(b.counts,b.pieces[piecePos]-1)){
+      branch++;
+      breakdownForwardChi(b,piecePos-1);
+      if(branch == 2){
+        return driver(b);
+      }
+      driver(b);
+      resetCounts(b, current);
+    }
+    if(possibleChiForward(b.counts,b.pieces[piecePos]-2)){
+      branch++;
+      breakdownForwardChi(b,piecePos-2);
+      if(branch == 2){
+        return driver(b);
+      }
+      driver(b);
+      resetCounts(b, current);
+    }
+    if(possiblePon(b.counts,b.pieces[piecePos])){
+      branch++;
+      breakdownPon(b, piecePos);
+      if(branch == 2){
+        return driver(b);
+      }
+      driver(b);
+      resetCounts(b, current);
+    }
+    if(possiblePair(b.counts,b.pieces[piecePos])){
+      branch++;
+      breakdownPair(b, piecePos);
+      if(branch == 2){
+        return driver(b);
+      }
+      driver(b);
+    }
+    std::cerr << "possibilities Failure: less than two branches taken." << std::endl;
+    std::ofstream os("error.gv");
+    b.rootNode->DumpAsDot(os);
+    os.close();
+    throw -5;
+    return;
+  }
+  if(b.possibilities[piecePos] == 3){
+    throw -1;
+    return;
+  }
+}
+
+auto Mahjong::breakdownHand(std::vector<Piece> _pieces) -> Node*{
+  Breakdown b;
+  b.pieces = _pieces;
+  countPieces(b);
+  std::sort(b.pieces.begin(), b.pieces.end());
+  b.pieces.erase(std::unique(b.pieces.begin(),b.pieces.end()),b.pieces.end());
+
+  b.rootNode = new Node{
+    b.id++, //id
     Node::Root, //type
     Piece::ERROR, //Start
     nullptr, //parent
     {}, // leaves
     0 //leafPosInParent
   };
+  b.currentNode = b.rootNode;
 
-  Node* currentNode = rootNode;
-  bool paired = false;
+  driver(b);
 
-  while(pieces.size() > 0){
-    int piecePos = 0;
-    for(size_t i = 0; i < pieces.size(); i++){
-      if(possibilities[i] <= possibilities[piecePos]){
-        piecePos = i;
-        if(possibilities[i] == minPossible){
-          break;
-        }
-      }
-    }
-    if(possibilities[piecePos] == 0){
-      Node* leaf = new Node{
-        id++, //id
-        Node::Single, //type
-        pieces[piecePos], //Start
-        currentNode, //parent
-        {}, // leaves
-        currentNode->leaves.size() //leafPosInParent
-      };
-      currentNode->leaves.push_back(leaf);
-      currentNode = leaf;
-      counts[pieces[piecePos].toUint8_t()] = 0;
-      pieces.erase(std::remove(pieces.begin(), pieces.end(), pieces[piecePos]), pieces.end());
-    } else if(possibilities[piecePos] == 1){
-      Piece start = Piece::ERROR;
-      Node::Type type = Node::Error;
-      if(anyPossibleChi(counts,pieces[piecePos])){
-        for(int i = 0; i < 3; i++){
-          if(possibleChiForward(counts,pieces[piecePos-i])){
-            start = pieces[piecePos-i];
-            int k = 0;
-            for(int j = 0; j < 3; j++){
-              counts[pieces[piecePos-i+k].toUint8_t()]--;
-              std::cout << "Count: " << int(counts[pieces[piecePos-i+k].toUint8_t()]) << " Piece: " << pieces[piecePos-i+k].toStr() << std::endl;
-              if(counts[pieces[piecePos-i+k].toUint8_t()] == 0){
-                std::cout << "Removed: at i: " << i << " j: " << j << "Piece: " << pieces[piecePos-i+k].toStr() << std::endl; 
-                pieces.erase(std::remove(pieces.begin(), pieces.end(), pieces[piecePos-i+k]), pieces.end());
-                k--;
-              }
-              k++;
-            }
-            piecePos = piecePos-i;
-            type = Node::ChiSet;
-            break;
-          }
-        }
-      }else if(possiblePon(counts,pieces[piecePos])){
-        start = pieces[piecePos];
-        type = Node::PonSet;
-        std::cout << pieces[piecePos].toStr() << std::endl;
-        std::cout << int(counts[pieces[piecePos].toUint8_t()]) << std::endl;
-        counts[pieces[piecePos].toUint8_t()]-=3;
-        if(counts[pieces[piecePos].toUint8_t()] == 0){
-          pieces.erase(std::remove(pieces.begin(), pieces.end(), pieces[piecePos]), pieces.end());
-        }
-      }else if(possiblePair(counts,pieces[piecePos])){
-        paired = true;
-        type = Node::Pair;
-        start = pieces[piecePos];
-        counts[pieces[piecePos].toUint8_t()]-=2;
-        if(counts[pieces[piecePos].toUint8_t()] == 0){
-          pieces.erase(std::remove(pieces.begin(), pieces.end(), pieces[piecePos]), pieces.end());
-        }
-      }
-      Node* leaf = new Node{
-        id++, //id
-        type, //type
-        start, //Start
-        currentNode, //parent
-        {}, // leaves
-        currentNode->leaves.size() //leafPosInParent
-      };
-      currentNode->leaves.push_back(leaf);
-      currentNode = leaf;
-    } else if(possibilities[piecePos] > 1){
-      std::cout << "poss: " << int(possibilities[piecePos]) << " piece: " << pieces[piecePos].toStr() << std::endl;
-      std::cout << "Pieces: ";
-      for(const auto p : pieces){
-        std::cout << p.toStr() << ' ';
-      }
-      std::cout << std::endl;
-      std::cout << "oops" << std::endl;
-      break;
-    }
-    minPossible = updatePossibilities(possibilities,pieces,counts, paired);
-  }
-
-
-  return rootNode;
+  return b.rootNode;
 }
