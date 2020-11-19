@@ -1,6 +1,8 @@
 import random
 from threading import Lock
-from libmahjong import MahjongAI, EventType, EngineEvent
+
+from libmahjong.libmahjong import PieceType
+from libmahjong.libmahjong import MahjongAI, EventType, EngineEvent
 from .player import Player
 from .gameevent import Event
 
@@ -61,8 +63,41 @@ class StubbornBot(MahjongAI, Player):
             print("TODO 2")
             return self.decision
 
+    def HandContains(self, suit, number):
+        for piece in self.hand:
+            if piece == suit | number:
+                return True
+        return False
+
     def DecideChi(self):
-        pass
+        if self.goal_yaku == "riichi":
+            self.decision.type = EventType.Decline
+            return self.decision  # Don't make calls
+        elif self.goal_yaku == "all_simples":
+            if self.decision.piece.isHonor() or self.decision.piece.isTerminal():
+                self.decision.type = EventType.Decline
+                return self.decision  # Don't make calls on honors or terminals
+
+            suits = [PieceType.BAMBOO_SUIT, PieceType.CHARACTER_SUIT, PieceType.PIN_SUIT]
+            for suit in suits:
+                if self.decision.piece.get_piece_num() == 7:
+                    if self.HandContains(suit, 8) and self.HandContains(suit, 9):
+                        self.decision.type = EventType.Decline
+                        return self.decision  # Don't chi if it'll include a 9 (terminal)
+                elif self.decision.piece.get_piece_num() == 8:
+                    if self.HandContains(suit, 7) and self.HandContains(suit, 9):
+                        self.decision.type = EventType.Decline
+                        return self.decision  # Don't chi if it'll include a 9 (terminal)
+            return self.decision  # Make the call if all conditions are met
+
+
+
+        elif self.goal_yaku == "outside":
+            if self.decision.piece.isHonor() or self.decision.piece.isTerminal():
+                return self.decision
+            else:
+                self.decision.type = EventType.Decline
+                return self.decision
 
     def DecidePon(self):
         pass
