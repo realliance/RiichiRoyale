@@ -23,7 +23,7 @@ class StubbornBot(MahjongAI, Player):
         self.hand = hand
         self.seat_wind = seatWind
         self.prevalent_wind = prevalentWind
-        self.goal_yaku = self.ChooseGoalYaku(self.hand)
+        self.goal_yaku = self.ChooseGoalYaku()
 
     def ReceiveEvent(self, e):
         if e.decision:
@@ -32,9 +32,19 @@ class StubbornBot(MahjongAI, Player):
             if e.type == EventType.Discard and e.player != self.player_id:
                 self.others_discarded_pieces.append(e.piece)
 
-    def ChooseGoalYaku(self, hand):
-        return random.choice(["riichi", "all_simples", "outside"])
+    def CountTerminalsAndHonors(self):
+        i = 0
+        for piece in self.hand:
+            if piece.isHonor() or piece.isTerminal():
+                i += 1
+        return i
 
+    def ChooseGoalYaku(self):
+        options = ["riichi", "outside"]
+        if self.CountTerminalsAndHonors() < 5:
+            return "all_simples"
+        else:
+            return random.choice(options)
 
 
     def PickDiscard(self):
@@ -116,7 +126,7 @@ class StubbornBot(MahjongAI, Player):
                 self.decision.type = EventType.Decline
                 return self.decision
 
-    # TODO 
+    # TODO
     def DecideKan(self):
         return self.DecidePon()
 
@@ -131,7 +141,7 @@ class StubbornBot(MahjongAI, Player):
         elif self.decision.type == EventType.Kan:
             self.decision = self.DecideKan()
         else:
-            print("Requested a decision for an unimplemented event type:", self.decision.type)
+            print("Requested a decision for an unimplemented event type:", self.decision)
 
         return self.decision
 
