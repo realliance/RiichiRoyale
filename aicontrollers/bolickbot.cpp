@@ -5,18 +5,18 @@
 #include <iostream>     // for endl, ostream, basic_ostream<>::__ostream_type
 #include <memory>       // for allocator_traits<>::value_type
 
-auto AngryDiscardoBot::Name() -> std::string{
+auto BolickBot::Name() -> std::string{
   return "AngryDiscardoBot";
 }
 
-auto AngryDiscardoBot::GameStart(int) -> void {}
+auto BolickBot::GameStart(int) -> void {}
 
-auto AngryDiscardoBot::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Wind, Mahjong::Wind) -> void {
+auto BolickBot::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Wind, Mahjong::Wind) -> void {
   hand = _hand;
   lastEvent.type = Mahjong::Event::Discard;
 }
 
-auto AngryDiscardoBot::ReceiveEvent(Mahjong::Event e) -> void{
+auto BolickBot::ReceiveEvent(Mahjong::Event e) -> void{
   if(e.decision){
     if(e.type <= lastEvent.type)
     lastEvent = e;
@@ -25,7 +25,7 @@ auto AngryDiscardoBot::ReceiveEvent(Mahjong::Event e) -> void{
   }
 }
 
-auto AngryDiscardoBot::RetrieveDecision() -> Mahjong::Event{
+auto BolickBot::RetrieveDecision() -> Mahjong::Event{
   if(lastEvent.type == Mahjong::Event::Discard){
     lastEvent.piece = hand[n].toUint8_t();
     n = (n+1)%hand.size();
