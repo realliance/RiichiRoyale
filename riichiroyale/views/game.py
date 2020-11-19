@@ -1,5 +1,5 @@
 from libmahjong import start_game, EventType, EngineEvent, PieceType
-from riichiroyale.game import Player, Match, process_event_queue, DialogManager
+from riichiroyale.game import Player, Match, process_event_queue, DialogManager, loadStory
 from .boardview import BoardView
 
 
@@ -33,6 +33,11 @@ class GameView(BoardView):
 
     def on_match_init(self):
         self.match = None
+        story = True
+        if(story):
+            storyInfo = loadStory.loadStory("./storyfiles/demo.txt")
+            self.ai_list = storyInfo[0]
+            dialog = storyInfo[1]
         self.match = Match(self.ai_list, self.game_manager, self.player_manager, self.sound_manager)
         self.match.start()
 

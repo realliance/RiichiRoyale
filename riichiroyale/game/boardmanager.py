@@ -78,7 +78,8 @@ def on_chi_event(
         match.current_board.current_turn = event.player
 
         if is_ai:
-            del event_player.hand[-3:]
+            del event_player.hand[-4:]
+            print(len(event_player.hand))
         else:
             event_player.hand.remove(event.piece)
             event_player.hand.remove(event.piece + 1)
@@ -111,7 +112,7 @@ def on_pon_event(
         del match.players[last_event.player].discard_pile[-1]
 
         if is_ai:
-            del event_player.hand[-2:]
+            del event_player.hand[-3:]
         else:
             event_player.hand.remove(event.piece)
             event_player.hand.remove(event.piece)
@@ -204,7 +205,7 @@ def on_kan_event(
         ]
 
         if is_ai:
-            del event_player.hand[-3:]
+            del event_player.hand[-4:]
         else:
             event_player.calls_avaliable = []
             event_player.hand.remove(event.piece)
@@ -495,6 +496,7 @@ def on_game_event(game_manager, event, match):
         EventType.Pon: on_pon_event,
         EventType.Ron: on_ron_event,
         EventType.ConvertedKan: on_converted_kan_event,
+        EventType.ConcealedKan: on_concealed_kan_event,
         EventType.Kan: on_kan_event,
         EventType.Tsumo: on_tsumo_event,
         EventType.Riichi: on_riichi_event,
