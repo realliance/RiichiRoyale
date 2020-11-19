@@ -91,7 +91,7 @@ class StubbornBot(MahjongAI, Player):
             return self.decision  # Make the call if all conditions are met
 
 
-
+        # TODO
         elif self.goal_yaku == "outside":
             if self.decision.piece.isHonor() or self.decision.piece.isTerminal():
                 return self.decision
@@ -100,10 +100,25 @@ class StubbornBot(MahjongAI, Player):
                 return self.decision
 
     def DecidePon(self):
-        pass
+        if self.goal_yaku == "riichi":
+            self.decision.type = EventType.Decline
+            return self.decision  # Don't make calls
+        elif self.goal_yaku == "all_simples":
+            if self.decision.piece.isHonor() or self.decision.piece.isTerminal():
+                self.decision.type = EventType.Decline
+                return self.decision  # Don't make calls on honors or terminals
+            else:
+                return self.decision
+        elif self.goal_yaku == "outside":
+            if self.decision.piece.isHonor() or self.decision.piece.isTerminal():
+                return self.decision
+            else:
+                self.decision.type = EventType.Decline
+                return self.decision
 
+    # TODO 
     def DecideKan(self):
-        pass
+        return self.DecidePon()
 
     def RetrieveDecision(self):
         if self.decision.type == EventType.Discard:
