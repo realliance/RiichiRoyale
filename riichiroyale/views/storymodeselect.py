@@ -155,5 +155,14 @@ def create_menu(game_manager, screen_width, screen_height):
         if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == back_button:
                 game_manager.set_active_view("main_menu")
+            i = 0
+            for button in stage_buttons:
+                if event.ui_element == button:
+                    game_manager.set_active_view("storymodegame")
+                    game_manager.get_active_view().load_match(matches[i])
+                    game_manager.get_active_view().on_match_start()
+                    break
+                i += 1
+
 
     return ui_manager, process_ui_event, stage_buttons

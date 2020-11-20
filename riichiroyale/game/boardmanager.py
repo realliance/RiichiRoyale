@@ -305,6 +305,8 @@ def on_concealed_kan_event(
 ):
     if is_decision:
         game_manager.board_manager.waiting_on_decision = True
+        game_manager.board_manager.last_decision_event = event
+        game_manager.board_manager.waiting_on_decision = True
         event_player.calls_avaliable += [Call.Concealed_Kan]
     else:
         if is_ai:

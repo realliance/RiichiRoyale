@@ -15,7 +15,8 @@ class GameView(BoardView):
         width_ratio,
         height_ratio,
         player_manager=None,
-        name="game"
+        name="game",
+        textbox_hook=None
     ):
         super().__init__(
             name,
@@ -28,6 +29,7 @@ class GameView(BoardView):
             screen_height,
             width_ratio,
             height_ratio,
+            textbox_hook=textbox_hook
         )
         self.player_manager = player_manager
         self.ai_list = ["Player"] + ["AngryDiscardoBot"] * 3

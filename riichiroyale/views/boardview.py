@@ -24,6 +24,7 @@ class BoardView(MenuView):
         screen_height,
         width_ratio,
         height_ratio,
+        textbox_hook=None
     ):
         ui_manager, process_ui_event = self.create_game_elements(
             screen_width, screen_height
@@ -64,6 +65,11 @@ class BoardView(MenuView):
         self.match = None
         self.board_render = None
         self.previous_player_calls_avaliable = []
+
+        if textbox_hook is not None:
+            self.new_textbox = textbox_hook
+        else:
+            self.new_textbox = new_text_box
 
     def on_match_init(self):
         """Called to initialize a new, default match. Should define self.match"""
@@ -164,8 +170,9 @@ class BoardView(MenuView):
                 self.dialogue_manager.get_current_page()
                 != self.buttons["text"].html_text
             ):
+                self.buttons["advance_text"].kill()
                 self.buttons["text"].kill()
-                self.new_text_box(self.dialogue_manager.get_current_page())
+                self.new_textbox(self.manager, self.buttons, self.dialogue_manager.get_current_page())
             self.buttons["text"].show()
             if (
                 len(self.player.calls_avaliable) != 0
@@ -258,7 +265,7 @@ class BoardView(MenuView):
         if self.dialogue_manager.is_last_page():
             self.on_dialogue_event_ending(self.dialogue_manager.current_event)
             self.dialogue_manager.current_event = None
-            self.buttons["advance_text"].hide()
+            self.buttons["advance_text"].kill()
             self.buttons["text"].kill()
         else:
             self.dialogue_manager.next_page()
@@ -456,24 +463,40 @@ class BoardView(MenuView):
                             self.buttons[button].hide()
                         return
                 # Dialogue UI
-                if event.ui_element == text_next:
+                if event.ui_element == self.buttons["advance_text"]:
                     self.on_dialogue_next_button_pressed()
 
         return ui_manager, process_ui_event
 
-    def new_text_box(self, text):
-        text_box_rect = pygame.Rect(0, 0, 600, 200)
-        text_box_rect.bottomleft = (400, -290)
-        text_box = pygame_gui.elements.UITextBox(
-            relative_rect=text_box_rect,
-            visible=False,
-            html_text=text,
-            manager=self.manager,
-            anchors={
-                "top": "bottom",
-                "bottom": "bottom",
-                "left": "left",
-                "right": "left",
-            },
-        )
-        self.buttons["text"] = text_box
+def new_text_box(gui_manager, button_map, text):
+    text_box_rect = pygame.Rect(0, 0, 600, 200)
+    text_box_rect.bottomleft = (400, -290)
+    text_box = pygame_gui.elements.UITextBox(
+        relative_rect=text_box_rect,
+        visible=False,
+        html_text=text,
+        manager=gui_manager,
+        anchors={
+            "top": "bottom",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "left",
+        },
+    )
+    text_next_button_rect = pygame.Rect(0, 0, 100, 50)
+    text_next_button_rect.bottomleft = (900, -230)
+    text_next = pygame_gui.elements.UIButton(
+        relative_rect=text_next_button_rect,
+        visible=False,
+        text="Next",
+        manager=gui_manager,
+        anchors={
+            "top": "bottom",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "left",
+        },
+    )
+
+    button_map["text"] = text_box
+    button_map["advance_text"] = text_next

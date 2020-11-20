@@ -6,4 +6,5 @@ from .gamemanager import *
 from .mainmenu import *
 from .freeplayselect import *
 from .storymodeselect import *
+from .storymodegame import *
 from .settings import *
