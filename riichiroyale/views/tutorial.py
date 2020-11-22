@@ -54,7 +54,7 @@ class TutorialView(BoardView):
             prefered_discards, calls, PieceType.THREE_PIN, wall, deadwall
         )
         self.match = None
-        self.match = self.match = Match(["Player"] + ["AngryDiscardoBot"] * 3, self.game_manager, self.player_manager, self.sound_manager)
+        self.match = self.match = Match(["Player"] + ["TotoBot"] * 3, self.game_manager, self.player_manager, self.sound_manager, wall=wall, deadwall=deadwall)
         self.match.start()
         self.pons = 0
 
@@ -64,7 +64,7 @@ class TutorialView(BoardView):
 
         self.dialogue_manager.start_event('intro')
 
-        self.match.new_board(wall=self.tutorial.wall+self.tutorial.deadwall)
+        #self.match.new_board(wall=self.tutorial.wall, deadwall=self.tutorial.deadwall)
 
     def on_tile_pressed(self, owner, tile_hand_index):
         tile = owner.hand[tile_hand_index]
@@ -81,6 +81,7 @@ class TutorialView(BoardView):
                 event.player = owner.player_id
                 event.decision = True
                 self.player_manager.MakeDecision(event)
+                self.tutorial.discard()
 
     def on_pon_button_pressed(self):
         if self.tutorial.next_call == "pon":
@@ -131,6 +132,7 @@ class TutorialView(BoardView):
             event.decision = True
 
             self.match.player_manager.MakeDecision(event)
+            #self.dialogue_manager.start_event("discard_tip")
             return True
         return False
 
@@ -147,10 +149,12 @@ class TutorialView(BoardView):
         self.dialogue_manager.start_event("ron")
 
     def on_dialogue_event_ending(self, event_name):
-        if self.dialogue_manager.current_event == "end":
+        print('Stage 1')
+        if event_name == "end":
             self.game_manager.set_active_view("main_menu")
             self.game_manager.sound_manager.play_music("lobby")
-        if self.dialogue_manager.current_event == "skip_pon":
+        if event_name == "skip_pon":
+            print('Stage 2')
             self.dialogue_manager.start_event("discard_tip")
             self.match.current_board.decision_pending = False
         else:

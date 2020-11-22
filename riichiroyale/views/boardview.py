@@ -252,10 +252,12 @@ class BoardView(MenuView):
 
     def on_dialogue_next_button_pressed(self):
         if self.dialogue_manager.is_last_page():
-            self.on_dialogue_event_ending(self.dialogue_manager.current_event)
-            self.dialogue_manager.current_event = None
-            self.buttons["advance_text"].hide()
-            self.buttons["text"].kill()
+            event = self.dialogue_manager.current_event
+            self.on_dialogue_event_ending(event)
+            if (event == self.dialogue_manager.current_event):
+                self.dialogue_manager.current_event = None
+                self.buttons["advance_text"].hide()
+                self.buttons["text"].kill()
         else:
             self.dialogue_manager.next_page()
 
