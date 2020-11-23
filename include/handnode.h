@@ -59,6 +59,7 @@ namespace Mahjong {
     static auto TypeToStr(uint8_t nodetype) -> std::string;
     auto DumpAsTGF(std::ostream& os) -> std::ostream&;
     auto DumpAsDot(std::ostream& os) -> std::ostream&;
+    auto AsBranchVectors() -> std::vector<std::vector<const Node*>>;
     auto begin() const -> const_iterator;
     auto end() const -> const_iterator;
     auto begin() -> iterator;

@@ -33,7 +33,6 @@ bool possibleChiForward(const int8_t* counts, Piece p){
   return false;
 }
 
-//this probably works well enough
 int possibleChis(const int8_t* counts, Piece p){
   return p.isHonor() ? 0 : ((possibleChiForward(counts,p) + possibleChiForward(counts,p-1) + possibleChiForward(counts,p-2)));
 }
@@ -254,7 +253,6 @@ auto driver(Breakdown& b) -> void {
       if(branch == 2){
         return driver(b);
       }
-      driver(b);
     }
     std::cerr << "possibilities Failure: less than two branches taken." << std::endl;
     std::ofstream os("error.gv");
@@ -264,7 +262,11 @@ auto driver(Breakdown& b) -> void {
     return;
   }
   if(b.possibilities[piecePos] == 3){
-    throw -1;
+    std::cerr << "possibilities Failure: more than three branches" << std::endl;
+    std::ofstream os("error.gv");
+    b.rootNode->DumpAsDot(os);
+    os.close();
+    throw -6;
     return;
   }
 }

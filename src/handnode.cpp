@@ -1,5 +1,5 @@
 #include "handnode.h"
-
+#include <stack>
 
 #include "mahjongns.h"
 using namespace Mahjong;
@@ -21,14 +21,14 @@ auto Node::end() -> iterator{
 }
 
 Node::~Node(){
-  std::vector<Node*> toDelete;
-  for(Node& node : *this){
-    if(parent){
-      toDelete.push_back(&node);
+  if(parent){
+    parent->leaves.erase(parent->leaves.begin()+leafPosInParent);
+    for(size_t i = 0; i < parent->leaves.size(); i++){
+      parent->leaves[i]->leafPosInParent = i;
     }
   }
-  for(Node* n : toDelete){
-    delete n;
+  for(Node* leaf : leaves){
+    delete leaf;
   }
 }
 
@@ -184,6 +184,11 @@ auto Node::DumpAsDot(std::ostream& os) -> std::ostream&{
   }
   os << "}" << std::endl;
   return os;
+}
+
+auto Node::AsBranchVectors() -> std::vector<std::vector<const Node*>>{
+  //TODO
+  return {{}};
 }
 
 auto operator<<(std::ostream& os, const Node& node) -> std::ostream&{
