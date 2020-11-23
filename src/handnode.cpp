@@ -1,5 +1,4 @@
 #include "handnode.h"
-#include <stack>
 
 #include "mahjongns.h"
 using namespace Mahjong;
@@ -187,8 +186,31 @@ auto Node::DumpAsDot(std::ostream& os) -> std::ostream&{
 }
 
 auto Node::AsBranchVectors() -> std::vector<std::vector<const Node*>>{
-  //TODO
-  return {{}};
+  std::vector<std::vector<const Node*>> branches;
+  std::vector<const Node*> nodeloc;
+  nodeloc.push_back(this);
+  while(!nodeloc.empty()){
+    if(!nodeloc.back()){
+      std::cout << "oof";
+    }
+    if(!nodeloc.back()->leaves.empty()){
+      nodeloc.push_back(nodeloc.back()->leaves[0]);
+    }else{
+      branches.push_back(nodeloc);
+      size_t next = nodeloc.back()->leafPosInParent+1;
+      while(nodeloc.back()->parent && nodeloc.back()->parent->leaves.size() <= next ){
+        nodeloc.pop_back();
+        next = nodeloc.back()->leafPosInParent+1;
+      }
+      if(!nodeloc.back()->parent){
+        nodeloc.pop_back();
+      }else{
+        nodeloc.pop_back();
+        nodeloc.push_back(nodeloc.back()->leaves[next]);
+      }
+    }
+  }
+  return branches;
 }
 
 auto operator<<(std::ostream& os, const Node& node) -> std::ostream&{
