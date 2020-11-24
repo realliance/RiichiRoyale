@@ -23,6 +23,7 @@ class StubbornBot(MahjongAI, Player):
 
     def GameStart(self, arg0):
         self.player_id = arg0
+        print("Assigned player with id", self.player_id)
 
     def RoundStart(self, hand, seatWind, prevalentWind):
         self.hand = hand
@@ -58,46 +59,55 @@ class StubbornBot(MahjongAI, Player):
         return i
 
     def ChooseGoalYaku(self):
-        options = ["riichi", "outside"]
-        if self.CountTerminalsAndHonors() < 5:
-            return "all_simples"
-        else:
-            return random.choice(options)
+        #options = ["riichi", "outside"]
+        #if self.CountTerminalsAndHonors() < 5:
+        #    return "all_simples"
+        #else:
+        #    return random.choice(options)
+        return "all_simples"
 
 
     def PickDiscard(self):
         if self.goal_yaku == "riichi":
             print("TODO 0")
+            print("Discarding:", self.decision.piece)
             return self.decision
         elif self.goal_yaku == "all_simples":
             if self.__isHonor(self.decision.piece) or self.__isTerminal(self.decision.piece):
+                print("Discarding:", self.decision.piece)
                 return self.decision  # Discard piece we just picked
             else:
                 for piece in self.hand:
                     if self.__isHonor(self.decision.piece) or self.__isTerminal(self.decision.piece):
                         self.decision.piece = piece
+                        print("After:", self.decision.piece)
                         return self.decision  # Discard first honor or terminal piece we find
                 # If we got here, then our hand has no more honors or terminals
                 print("TODO 1")
+                print("Discarding:", self.decision.piece)
                 return self.decision
         elif self.goal_yaku == "outside":
             if not (self.__isHonor(self.decision.piece) or self.__isTerminal(self.decision.piece)):
                 if not (Piece(self.decision.piece).get_piece_num() <= 3 or Piece(self.decision.piece).get_piece_num() >= 7):
+                    print("Discarding:", self.decision.piece)
                     return self.decision  # Discard piece we just picked
             for piece in self.hand:
                 if not (self.__isHonor(self.decision.piece) or self.__isTerminal(self.decision.piece)):
                     if not (Piece(piece).get_piece_num() <= 3 or Piece(piece).get_piece_num() >= 7):
                         self.decision.piece = piece
+                        print("Discarding:", self.decision.piece)
                         return self.decision  # Discard piece we just picked
 
             print("TODO 2")
-            print(self.decision)
-            print(self.decision.piece)
+
+            print("Discarding:",self.decision.piece)
             return self.decision
+        else:
+            print(self.goal_yaku)
 
     def HandContains(self, suit, number):
         for piece in self.hand:
-            if piece == suit | number:
+            if piece == int(suit) | number:
                 return True
         return False
 
@@ -112,11 +122,11 @@ class StubbornBot(MahjongAI, Player):
 
             suits = [PieceType.BAMBOO_SUIT, PieceType.CHARACTER_SUIT, PieceType.PIN_SUIT]
             for suit in suits:
-                if self.decision.piece.get_piece_num() == 7:
+                if Piece(self.decision.piece).get_piece_num() == 7:
                     if self.HandContains(suit, 8) and self.HandContains(suit, 9):
                         self.decision.type = EventType.Decline
                         return self.decision  # Don't chi if it'll include a 9 (terminal)
-                elif self.decision.piece.get_piece_num() == 8:
+                elif Piece(self.decision.piece).get_piece_num() == 8:
                     if self.HandContains(suit, 7) and self.HandContains(suit, 9):
                         self.decision.type = EventType.Decline
                         return self.decision  # Don't chi if it'll include a 9 (terminal)
@@ -152,9 +162,10 @@ class StubbornBot(MahjongAI, Player):
     def DecideKan(self):
         return self.DecidePon()
 
-    def RetrieveDecision(self):
+    def RetrieveDecision(self):  # Seems to fail if the player already has the same piece in their hand as the one they just drew
         if self.decision.type == EventType.Discard:
             self.hand.append(self.decision.piece)
+            print("Picking tile to discard for player", self.player_id, " drew piece:", self.decision.piece)
             self.decision = self.PickDiscard()
         elif self.decision.type == EventType.Pon:
             self.decision = self.DecidePon()
