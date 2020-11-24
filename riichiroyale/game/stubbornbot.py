@@ -68,6 +68,7 @@ class StubbornBot(MahjongAI, Player):
     def PickDiscard(self):
         if self.goal_yaku == "riichi":
             print("TODO 0")
+            return self.decision
         elif self.goal_yaku == "all_simples":
             if self.__isHonor(self.decision.piece) or self.__isTerminal(self.decision.piece):
                 return self.decision  # Discard piece we just picked
@@ -88,7 +89,10 @@ class StubbornBot(MahjongAI, Player):
                     if not (Piece(piece).get_piece_num() <= 3 or Piece(piece).get_piece_num() >= 7):
                         self.decision.piece = piece
                         return self.decision  # Discard piece we just picked
+
             print("TODO 2")
+            print(self.decision)
+            print(self.decision.piece)
             return self.decision
 
     def HandContains(self, suit, number):
