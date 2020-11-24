@@ -24,11 +24,12 @@ class Match(Thread):
         self.match_alive = True
         self.process_lock = Condition()
         self.current_board = None
-        self.current_board = Board(
-            wall=wall,
-            deadwall=deadwall,
-            dora_revealed=0,
-        )
+        if wall is not None and deadwall is not None:
+            self.current_board = Board(
+                wall=wall,
+                deadwall=deadwall,
+                dora_revealed=0,
+            )
 
     def new_board(self, wall=None, deadwall=None):
         self.current_board = None
@@ -54,9 +55,8 @@ class Match(Thread):
     def run(self):
         settings = GameSettings()
         settings.seat_controllers = self.ai_list
-        if(self.current_board.wall is not None):
-            wall = list(map(lambda tile: Piece(tile), self.current_board.wall+self.current_board.deadwall))
-            print('heyheehy')
+        if self.current_board is not None:
+            wall = list(map(Piece, self.current_board.wall+self.current_board.deadwall))
             settings.override_wall = wall
         start_game(settings, True)
         while self.match_alive:
