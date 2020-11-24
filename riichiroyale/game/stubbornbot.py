@@ -256,7 +256,10 @@ class StubbornBot(MahjongAI, Player):
 
     # TODO
     def DecideKan(self):
-        return self.DecidePon()
+        kanEvent = self.DecidePon()
+        if kanEvent.type != EventType.Decline:
+            self.hand.remove(self.decision.piece)  # Remove 4th piece
+        return kanEvent
 
     def RetrieveDecision(self):  # Seems to fail if the player already has the same piece in their hand as the one they just drew
         print("Player", self.player_id, "needs to make a decision.")
