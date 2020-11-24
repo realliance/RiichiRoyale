@@ -1,9 +1,10 @@
-version = 8
+version = 9
 
 [[matches]]
 stage = 0
 completed = false
 opponent = 'Johnathon "Turtling" Douglas'
+opponent_index = 2
 icon = 'opponent1.png'
 top_line_title = 'Johnathon'
 bottom_line_title = '"Turtling" Douglas'
@@ -26,6 +27,7 @@ on_both_lose="well, I guess we both have some improving to do."
 stage = 1
 completed = false
 opponent = 'Johnathon "Turtling" Douglas'
+opponent_index = 2
 icon = 'opponent1.png'
 ais = ['Fast Tanyao', 'AngryDiscardoBot', 'AngryDiscardoBot']
 intro=[
@@ -46,8 +48,9 @@ on_both_lose="well, I guess we both have some improving to do."
 stage = 2
 completed = false
 opponent = 'Johnathon "Turtling" Douglas'
+opponent_index = 2
 icon = 'opponent1.png'
-ais = ['Fast Tanyao', 'AngryDiscardoBot', 'AngryDiscardoBot']
+ais = ['AngryDiscardoBot', 'Fast Tanyao', 'AngryDiscardoBot']
 intro=[
     'Test',
     'This is a second dialogue line',
@@ -66,8 +69,9 @@ on_both_lose="well, I guess we both have some improving to do."
 stage = 3
 completed = false
 opponent = 'Johnathon "Turtling" Douglas'
+opponent_index = 2
 icon = 'opponent1.png'
-ais = ['Fast Tanyao', 'AngryDiscardoBot', 'AngryDiscardoBot']
+ais = ['AngryDiscardoBot', 'Fast Tanyao', 'AngryDiscardoBot']
 intro=[
     'Test',
     'This is a second dialogue line',
@@ -86,8 +90,9 @@ on_both_lose="well, I guess we both have some improving to do."
 stage = 4
 completed = false
 opponent = 'Johnathon "Turtling" Douglas'
+opponent_index = 2
 icon = 'opponent1.png'
-ais = ['Fast Tanyao', 'AngryDiscardoBot', 'AngryDiscardoBot']
+ais = ['AngryDiscardoBot', 'Fast Tanyao', 'AngryDiscardoBot']
 intro=[
     'Test',
     'This is a second dialogue line',
@@ -106,8 +111,9 @@ on_both_lose="well, I guess we both have some improving to do."
 stage = 5
 completed = false
 opponent = 'Johnathon "Turtling" Douglas'
+opponent_index = 2
 icon = 'opponent1.png'
-ais = ['Fast Tanyao', 'AngryDiscardoBot', 'AngryDiscardoBot']
+ais = ['AngryDiscardoBot', 'Fast Tanyao', 'AngryDiscardoBot']
 intro=[
     'Test',
     'This is a second dialogue line',

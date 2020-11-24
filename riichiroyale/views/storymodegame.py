@@ -5,6 +5,7 @@ from riichiroyale.game import Player, Match, process_event_queue, DialogManager,
 from riichiroyale.utils import load_image_resource
 from .game import GameView
 
+DIALOGUE_EVENT_PRIORITY = ["call_chi", "call_pon", "call_kan", "call_riichi", "call_ron", "on_player_wins", "on_player_loses", "on_both_lose", "intro"]
 
 class StoryModeGame(GameView):
     def __init__(
@@ -23,6 +24,8 @@ class StoryModeGame(GameView):
         self.ai_list = ["Player"] + ["AngryDiscardoBot"] * 3
         self.match = None
         self.match_dict = None
+        self.match_opponent = None
+        self.match_dialogue_possibilities = DIALOGUE_EVENT_PRIORITY
 
         super().__init__(
             game_manager,
@@ -42,16 +45,22 @@ class StoryModeGame(GameView):
         self.ai_list = ["Player"] + match_dict["ais"]
         self.match_dict = match_dict
         prefix = "<b>{}</b><br><br>".format(self.match_dict['opponent'])
+        self.match_opponent = self.match_dict['opponent_index']
         
-        for possible_event in ["intro", "call_pon", "call_chi", "call_kan", "call_ron", "call_riichi", "on_player_wins", "on_player_loses", "on_both_lose"]:
+        for possible_event in DIALOGUE_EVENT_PRIORITY:
             if possible_event in self.match_dict:
                 self.dialogue_manager.register_dialog_event(possible_event)
                 self.dialogue_manager.append_dialog_event(possible_event, list(map(lambda x: prefix + x, self.match_dict[possible_event])))
 
+    def play_oneshot_dialogue(self, event):
+        if event in self.match_dialogue_possibilities:
+            self.match_dialogue_possibilities.remove(event)
+            self.dialogue_manager.start_event(event)
+
     def on_round_start(self):
         super().on_round_start()
         if 'intro' in self.match_dict:
-            self.dialogue_manager.start_event('intro')
+            self.play_oneshot_dialogue('intro')
 
 
     def on_tile_pressed(self, owner, tile_hand_index):

@@ -28,7 +28,6 @@ from riichiroyale import (
 SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO = 16, 9
 STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT = 1366, 768
 
-
 def get_play_area_pos(screen):
     w, h = screen.get_size()
     play_area_height = h
@@ -51,7 +50,6 @@ def draw_loading_screen(screen, background, font, text):
 
     pygame.display.flip()
     pygame.display.update()
-
 
 def main():
     # Initialize screen
@@ -218,7 +216,7 @@ def main():
     clock = pygame.time.Clock()
 
     # Event loop
-    while 1:
+    while True:
         time_delta = clock.tick(60) / 1000.0
         pygame.event.pump()
         for event in pygame.event.get():

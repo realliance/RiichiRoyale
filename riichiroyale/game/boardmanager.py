@@ -14,7 +14,6 @@ class BoardManager:
         self.round_should_end = False
         self.game_should_end = False
 
-
 def convert_event(event):
     if isinstance(event.type, CombinedEventType):
         return event

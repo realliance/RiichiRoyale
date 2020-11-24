@@ -1,6 +1,7 @@
 import os
 import math
 import random
+import atexit
 import pygame_gui
 import pygame
 from copy import deepcopy
@@ -10,6 +11,9 @@ from riichiroyale import BoardRender
 from riichiroyale.game import Call
 from .menuview import MenuView
 
+def clean_up_board_view(board_view):
+    if board_view.match is not None:
+        board_view.match.match_alive = False
 
 class BoardView(MenuView):
     def __init__(
@@ -65,6 +69,8 @@ class BoardView(MenuView):
         self.match = None
         self.board_render = None
         self.previous_player_calls_avaliable = []
+
+        atexit.register(clean_up_board_view, self)
 
         if textbox_hook is not None:
             self.new_textbox = textbox_hook
