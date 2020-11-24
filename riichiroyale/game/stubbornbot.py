@@ -198,8 +198,6 @@ class StubbornBot(MahjongAI, Player):
                     if self.HandContains(suit, 7) and self.HandContains(suit, 9):
                         self.decision.type = EventType.Decline
                         return self.decision  # Don't chi if it'll include a 9 (terminal)
-            print(self.hand)
-            print(self.decision_to_act_on.piece)
             piecesRemoved = 0
             if self.decision_to_act_on.piece in self.hand:
                 piecesRemoved += 1
@@ -218,6 +216,18 @@ class StubbornBot(MahjongAI, Player):
         # TODO
         elif self.goal_yaku == "outside":
             if self.__isHonor(self.decision_to_act_on.piece) or self.__isTerminal(self.decision_to_act_on.piece):
+                piecesRemoved = 0
+                if self.decision_to_act_on.piece in self.hand:
+                    piecesRemoved += 1
+                    self.hand.remove(self.decision_to_act_on.piece)  # Remove pieces from hand.
+                if self.decision_to_act_on.piece + 1 in self.hand:
+                    piecesRemoved += 1
+                    self.hand.remove(self.decision_to_act_on.piece + 1)
+                if self.decision_to_act_on.piece + 2 in self.hand:
+                    piecesRemoved += 1
+                    self.hand.remove(self.decision_to_act_on.piece + 2)
+                print("REMOVED:", piecesRemoved)
+                self.decision.piece = self.decision_to_act_on.piece
                 return self.decision
             else:
                 self.decision.type = EventType.Decline
@@ -267,7 +277,6 @@ class StubbornBot(MahjongAI, Player):
             print("Picking tile to discard for player", self.player_id, " drew piece:", self.decision_to_act_on.piece)
             print("Hand after picking:", self.hand)
             self.decision = self.PickDiscard()
-            print(self.decision)
             self.hand.remove(self.decision.piece)
             print("Hand after discarding:", self.hand)
 
