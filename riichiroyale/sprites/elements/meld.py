@@ -88,10 +88,12 @@ def render_meld(board_render, meld, xpos, ypos, meld_rotation=0):
     group = Group()
     direction = meld.call_direction
 
+    tile_list = meld.tiles[::-1] if VERTICAL else meld.tiles
+
     i = 0
-    tile_length = len(meld.tiles)
+    tile_length = len(tile_list)
     while i < tile_length:
-        tile = meld.tiles[i]
+        tile = tile_list[i]
         rotation_i = 2 - i if meld_rotation in (1, 2) else i
         rotation = (
             ROTATED_MELD_PIECE

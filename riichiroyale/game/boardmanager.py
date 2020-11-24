@@ -50,7 +50,7 @@ def process_event_queue(game_manager, match):
             return
         match.player_manager.AddToEventQueue(next_event)
     on_game_event(game_manager, event, match)
-    process_event_queue(game_manager, match)
+    #process_event_queue(game_manager, match)
 
 
 def on_chi_event(
@@ -84,8 +84,11 @@ def on_chi_event(
             event_player.hand.remove(event.piece + 1)
             event_player.hand.remove(event.piece + 2)
 
+        piece_list = list(filter(lambda piece: piece != last_event.piece, [event.piece, event.piece + 1, event.piece + 2]))
+        print(piece_list)
+        
         event_player.melded_hand += [
-            Meld([event.piece, event.piece + 1, event.piece + 2], CallDirection.Left)
+            Meld([last_event.piece] + piece_list, CallDirection.Left)
         ]
         event_player.calls_avaliable = []
 

@@ -46,6 +46,7 @@ class BoardRender:
         self.small_dictionary = small_dictionary
         self.dictionary = dictionary
         self.player_pov = player_pov
+        self.player_bound_elements = []
         self.elements = []
 
         # Player Hand

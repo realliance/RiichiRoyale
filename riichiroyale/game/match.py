@@ -1,4 +1,4 @@
-from threading import Thread, Condition
+from threading import Thread, Condition, Lock
 from libmahjong import Wind, start_game, Piece, PieceType, GameSettings
 from .board import Board
 from .player import Player
@@ -23,6 +23,7 @@ class Match(Thread):
         self.match_ready = False
         self.match_alive = True
         self.process_lock = Condition()
+        self.match_lock = Lock()
 
     def new_board(self, wall=None, deadwall=None):
         self.current_board = None
@@ -61,7 +62,8 @@ class Match(Thread):
 
         with self.process_lock:
             self.process_lock.wait_for(lambda: self.player_manager.GetQueueLength() > 0)
-            process_event_queue(self.game_manager, self)
+            with self.match_lock:
+                process_event_queue(self.game_manager, self)
 
 
 
