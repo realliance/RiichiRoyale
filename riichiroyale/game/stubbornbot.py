@@ -83,15 +83,61 @@ class StubbornBot(MahjongAI, Player):
         for index, suit in enumerate(dragon_suits):
             if piece == suit:  # if piece is a dragon
                 if self.CountInHand(PieceType.HONOR_SUIT, 5 + index) == 3:  # If piece forms a triplet of dragons
-                    value += 1
+                    value += 2
 
         if piece == self.seat_wind or piece == self.prevalent_wind:
-            value += 1
+            value += 2
 
         if self.CountInHand(piece_temp.get_suit(), piece_temp.get_piece_num()) == 3:  # If piece forms a pon
-            value += 1
+            value += 2
 
-        # TODO: find sequences
+        if piece_temp.get_suit() in suits:  # piece is a numbered piece
+            # Check if piece completes non-terminal sequence
+            if self.goal_yaku == "riichi" or self.goal_yaku == "all_simples":
+                if piece_temp.get_piece_num() <= 7:
+                    if self.HandContains(piece_temp.get_suit(), piece_temp.get_piece_num()+1):
+                        value += 1
+                    if self.HandContains(piece_temp.get_suit(), piece_temp.get_piece_num()+2):
+                        value += 1
+                elif piece_temp.get_piece_num() >= 3:
+                    if self.HandContains(piece_temp.get_suit(), piece_temp.get_piece_num()-1):
+                        value += 1
+                    if self.HandContains(piece_temp.get_suit(), piece_temp.get_piece_num()-2):
+                        value += 1
+            # Really ugly code to check for terminal sequences
+            elif self.goal_yaku == "outside":
+                if piece_temp.get_piece_num() == 7:
+                    if self.HandContains(piece_temp.get_suit(), piece_temp.get_piece_num()+1):
+                        value += 1
+                    if self.HandContains(piece_temp.get_suit(), piece_temp.get_piece_num()+2):
+                        value += 1
+                elif piece_temp.get_piece_num() == 8:
+                    if self.HandContains(piece_temp.get_suit(), piece_temp.get_piece_num()+1):
+                        value += 1
+                    if self.HandContains(piece_temp.get_suit(), piece_temp.get_piece_num()-1):
+                        value += 1
+                elif piece_temp.get_piece_num() == 9:
+                    if self.HandContains(piece_temp.get_suit(), piece_temp.get_piece_num()-2):
+                        value += 1
+                    if self.HandContains(piece_temp.get_suit(), piece_temp.get_piece_num()-1):
+                        value += 1
+
+                elif piece_temp.get_piece_num() == 3:
+                    if self.HandContains(piece_temp.get_suit(), piece_temp.get_piece_num()-1):
+                        value += 1
+                    if self.HandContains(piece_temp.get_suit(), piece_temp.get_piece_num()-2):
+                        value += 1
+                elif piece_temp.get_piece_num() == 2:
+                    if self.HandContains(piece_temp.get_suit(), piece_temp.get_piece_num()+1):
+                        value += 1
+                    if self.HandContains(piece_temp.get_suit(), piece_temp.get_piece_num()-1):
+                        value += 1
+                elif piece_temp.get_piece_num() == 1:
+                    if self.HandContains(piece_temp.get_suit(), piece_temp.get_piece_num()+2):
+                        value += 1
+                    if self.HandContains(piece_temp.get_suit(), piece_temp.get_piece_num()+1):
+                        value += 1
+
 
         if piece_temp.is_red_five():
             value += 1
@@ -168,13 +214,13 @@ class StubbornBot(MahjongAI, Player):
     def CountInHand(self, suit, number):
         i = 0
         for piece in self.hand:
-            if piece == int(suit) | number:
+            if piece & 15 == (int(suit) | number) & 15:  # Count red fives as identical
                 i += 1
         return i
 
     def HandContains(self, suit, number):
         for piece in self.hand:
-            if piece == int(suit) | number:
+            if piece & 15 == (int(suit) | number) & 15:  # Count red fives as identical
                 return True
         return False
 
@@ -199,15 +245,22 @@ class StubbornBot(MahjongAI, Player):
                         self.decision.type = EventType.Decline
                         return self.decision  # Don't chi if it'll include a 9 (terminal)
             piecesRemoved = 0
+            print(self.hand)
+            # TODO: Fails on red fives
+            # Remove pieces from hand.
+            temp = Piece(self.decision_to_act_on.piece)
             if self.decision_to_act_on.piece in self.hand:
                 piecesRemoved += 1
-                self.hand.remove(self.decision_to_act_on.piece)  # Remove pieces from hand.
-            if self.decision_to_act_on.piece+1 in self.hand:
+                self.hand.remove(self.decision_to_act_on.piece)
+                print("Removed", self.decision_to_act_on.piece)
+            if self.decision_to_act_on.piece-1 in self.hand:
                 piecesRemoved += 1
-                self.hand.remove(self.decision_to_act_on.piece + 1)
-            if self.decision_to_act_on.piece + 2 in self.hand:
+                self.hand.remove(self.decision_to_act_on.piece - 1)
+                print("Removed", self.decision_to_act_on.piece - 1)
+            if self.decision_to_act_on.piece - 2 in self.hand:
                 piecesRemoved += 1
-                self.hand.remove(self.decision_to_act_on.piece + 2)
+                self.hand.remove(self.decision_to_act_on.piece - 2)
+                print("Removed", self.decision_to_act_on.piece - 2)
             print("REMOVED:", piecesRemoved)
             self.decision.piece = self.decision_to_act_on.piece
             return self.decision  # Make the call if all conditions are met
@@ -254,11 +307,10 @@ class StubbornBot(MahjongAI, Player):
                 self.decision.type = EventType.Decline
                 return self.decision
 
-    # TODO
     def DecideKan(self):
         kanEvent = self.DecidePon()
         if kanEvent.type != EventType.Decline:
-            self.hand.remove(self.decision.piece)  # Remove 4th piece
+            self.hand.remove(self.decision.piece)  # Remove 4th piece when calling Kan
         return kanEvent
 
     def RetrieveDecision(self):  # Seems to fail if the player already has the same piece in their hand as the one they just drew
