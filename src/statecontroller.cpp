@@ -2,8 +2,9 @@
 #include <vector>
 #include <functional>
 #include <random>
+#include <thread>
 #include "gamestate.h"
-#include "manager.h"
+#include "controllermanager.h"
 #include "player.h"
 #include "settings.h"
 #include "statefunctions.h"
@@ -12,8 +13,32 @@
 #include "mahjongns.h"
 using namespace Mahjong;
 
+static int threadIndex = 1;
+static std::map<int,bool> shouldHalt;
+
+using namespace Mahjong;
+
+auto Mahjong::StartGame(GameSettings settings, bool async) -> int {
+  if(async){
+    std::thread gameloop(&Mahjong::StateController, settings);
+    gameloop.detach();
+    return threadIndex;
+  }
+  StateController(settings);
+  return 0;
+}
+
+auto Mahjong::ExitGame(int game) -> void{
+  if(shouldHalt.contains(game)){
+    shouldHalt[game] = true;
+  }
+}
+
 auto Mahjong::StateController(GameSettings settings) -> void{
   GameState state;
+  int id = threadIndex++;
+  shouldHalt[id] = false;
+
   for(int i = 0; i < 4; i++){
     state.players[i].controller = GetController(settings.seatControllers[i])();
   }
@@ -28,8 +53,24 @@ auto Mahjong::StateController(GameSettings settings) -> void{
     state.seed = 0xBEEFBABE;
   }
   state.nextState = GameStart;
-  while(state.nextState != GameEnd){
-    state = state.nextState(state);
+  while(state.nextState != GameEnd && !shouldHalt[id]){
+    try{
+      state = state.nextState(state);
+    } catch(const unsigned int e){
+      switch (e)
+      {
+      case 0xFACEFEED: //Halted during controller decision
+        shouldHalt.erase(id);
+        return;
+      case 0xBAD22222: //Asked for decision too many times.
+        state.nextState = Error;
+        break;
+      default:
+        throw(e);
+      }      
+    }
   }
-  state.nextState(state);
+  if(state.nextState == GameEnd){
+    state.nextState(state);
+  }
 }

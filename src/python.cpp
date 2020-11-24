@@ -8,7 +8,8 @@
 #include <string>                    // for string
 #include <vector>                    // for vector
 #include "event.h"                   // for Event::Type, Event, Event::Chi
-#include "manager.h"                 // for GetAvailableControllers, Registe...
+#include "controllermanager.h"       // for GetAvailableControllers, Registe...
+#include "statefunctions.h"
 #include "piecetype.h"               // for Piece::Type, Piece, Piece::BAMBO...
 #include "playercontroller.h"        // for PlayerController
 #include "winds.h"                   // for Wind, East, North, South, West

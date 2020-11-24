@@ -57,18 +57,15 @@ auto Mahjong::Discard(GameState& state) -> GameState&{
 
   Event decision = DECLINE_EVENT;
   for(int i = 0; i < 4; i++){
-    while(needDecision[i]){
-      Event tempDecision = state.players[i].controller->RetrieveDecision();
-      if(ValidateDecision(state,i,tempDecision,false)){
-        needDecision[i] = false;
-        if(tempDecision.type < decision.type){ // lower is higher priority
-          tempDecision.player = i;
-          tempDecision.piece = static_cast<int16_t>(state.pendingPiece.toUint8_t());
-          decision = tempDecision;
-        }
-        if(tempDecision.type == Event::Ron){
-          state.hasRonned[i] = true;
-        }
+    if(needDecision[i]){
+      Event tempDecision = GetValidDecisionOrThrow(state,i,false);
+      if(tempDecision.type < decision.type){ // lower is higher priority
+        tempDecision.player = i;
+        tempDecision.piece = static_cast<int16_t>(state.pendingPiece.toUint8_t());
+        decision = tempDecision;
+      }
+      if(tempDecision.type == Event::Ron){
+        state.hasRonned[i] = true;
       }
     }
   }

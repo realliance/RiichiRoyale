@@ -10,6 +10,7 @@
 namespace Mahjong {
 
   struct GameState{
+    bool halt = false;
     int currentPlayer = -1;
     int turnNum = -1;
     int roundNum = 0;

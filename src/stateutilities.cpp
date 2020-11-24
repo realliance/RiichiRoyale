@@ -89,14 +89,25 @@ auto AskForDiscard(const GameState& state) -> Piece {
     }
   );
 
+  return GetValidDecisionOrThrow(state,state.currentPlayer, true).piece;
+}
+
+auto GetValidDecisionOrThrow(const GameState& state, int player, bool inHand) -> Event{
   Event decision;
   bool valid = false;
+  int i = 0;
   while(!valid){
-    decision = state.players[state.currentPlayer].controller->RetrieveDecision();
-    valid = ValidateDecision(state,state.currentPlayer, decision, true);
+    if(i > 100){
+      throw 0xBAD22222;
+    }
+    i++;
+    if(state.halt){
+      throw 0xFACEFEED;
+    }
+    decision = state.players[player].controller->RetrieveDecision();
+    valid = ValidateDecision(state,player, decision, inHand);
   }
-
-  return decision.piece;
+  return decision;
 }
 
 auto ValidateDecision(const GameState& state, int player, Event decision, bool inHand) -> bool {

@@ -32,10 +32,9 @@ auto Mahjong::KanDiscard(GameState& state) -> GameState&{
 
   bool haveRonned = false;
   for(int i = 0; i < 4; i++){
-    while(needDecision[i]){
-      Event tempDecision = state.players[i].controller->RetrieveDecision();
-      if(ValidateDecision(state,i,tempDecision,false)){
-        needDecision[i] = false;
+    if(needDecision[i]){
+      Event tempDecision = GetValidDecisionOrThrow(state,i,false);
+      if(tempDecision.type == Event::Ron){
         state.hasRonned[i] = true;
         haveRonned = true;
       }

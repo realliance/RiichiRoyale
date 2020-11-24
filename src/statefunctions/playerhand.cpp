@@ -51,9 +51,8 @@ auto Mahjong::PlayerHand(GameState& state) -> GameState&{
   }
 
   Event decision;
-  while(decisionAsked){
-    decision = state.players[state.currentPlayer].controller->RetrieveDecision();
-    decisionAsked = !ValidateDecision(state,state.currentPlayer, decision, true);
+  if(decisionAsked){
+    decision = GetValidDecisionOrThrow(state,state.currentPlayer, true);
   }
 
   state.pendingPiece = decision.piece;
