@@ -41,6 +41,7 @@ class BoardView(MenuView):
         self.screen_height_ratio = height_ratio
         self.game_manager = game_manager
         self.match_pov = None
+        self.lock_user_input = False
 
         # Fill background
         background = surface.Surface(screen.get_size())
@@ -76,6 +77,8 @@ class BoardView(MenuView):
             self.new_textbox = textbox_hook
         else:
             self.new_textbox = new_text_box
+
+        self.dialogue_elements = []
 
     def on_match_init(self):
         """Called to initialize a new, default match. Should define self.match"""
@@ -144,7 +147,7 @@ class BoardView(MenuView):
         if self.match_pov is None:
             return
 
-        if self.player.calls_avaliable != self.previous_player_calls_avaliable:
+        if self.player.calls_avaliable != self.previous_player_calls_avaliable and not self.lock_user_input:
             self.previous_player_calls_avaliable = deepcopy(self.player.calls_avaliable)
             if len(self.player.calls_avaliable) > 0:
                 self.buttons["skip"].show()
@@ -178,7 +181,8 @@ class BoardView(MenuView):
             ):
                 self.buttons["advance_text"].kill()
                 self.buttons["text"].kill()
-                self.new_textbox(self.manager, self.buttons, self.dialogue_manager.get_current_page())
+                for element in self.dialogue_elements: element.kill()
+                self.new_textbox(self.manager, self.buttons, self.dialogue_elements, self.dialogue_manager.get_current_page())
             self.buttons["text"].show()
             if (
                 len(self.player.calls_avaliable) != 0
@@ -273,6 +277,7 @@ class BoardView(MenuView):
             self.dialogue_manager.current_event = None
             self.buttons["advance_text"].kill()
             self.buttons["text"].kill()
+            for element in self.dialogue_elements: element.kill()
         else:
             self.dialogue_manager.next_page()
 

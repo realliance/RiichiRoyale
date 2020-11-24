@@ -538,6 +538,22 @@ def on_game_event(game_manager, event, match):
     ):
         match.current_board.current_turn = event.player
 
+    valid_dialogue_events = [
+        EventType.Chi,
+        EventType.Pon,
+        EventType.Ron,
+        EventType.ConvertedKan,
+        EventType.ConcealedKan,
+        EventType.Kan,
+        EventType.Riichi
+    ]
+
+    if hasattr(game_manager.get_active_view(), "receive_ai_events"):
+        if not is_decision:
+            if event.player == game_manager.get_active_view().receive_ai_events and event.type in valid_dialogue_events:
+                print('Registered Event', event.type)
+                game_manager.get_active_view().watched_ai_event_log += [event]
+
     EVENTS[event_type](
         game_manager,
         is_ai,

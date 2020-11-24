@@ -5,7 +5,16 @@ from riichiroyale.game import Player, Match, process_event_queue, DialogManager,
 from riichiroyale.utils import load_image_resource
 from .game import GameView
 
-DIALOGUE_EVENT_PRIORITY = ["call_chi", "call_pon", "call_kan", "call_riichi", "call_ron", "on_player_wins", "on_player_loses", "on_both_lose", "intro"]
+DIALOGUE_EVENT_PRIORITY = ["call_chi", "call_pon", "call_kan", "call_riichi", "call_ron", "on_player_wins", "on_player_loses", "on_both_lose", "intro"][::-1]
+EVENT_TYPE_TO_DIALOGUE = {
+    EventType.Chi: "call_chi",
+    EventType.Pon: "call_pon",
+    EventType.Ron: "call_ron",
+    EventType.ConvertedKan: "call_kan",
+    EventType.ConcealedKan: "call_kan",
+    EventType.Kan: "call_kan",
+    EventType.Riichi: "call_riichi"
+}
 
 class StoryModeGame(GameView):
     def __init__(
@@ -27,6 +36,10 @@ class StoryModeGame(GameView):
         self.match_opponent = None
         self.match_dialogue_possibilities = DIALOGUE_EVENT_PRIORITY
 
+        # Custom Flag to tell Board Manager to Fill this View's attribute with specific (watched) ai events
+        self.receive_ai_events = 2
+        self.watched_ai_event_log = []
+
         super().__init__(
             game_manager,
             screen,
@@ -38,7 +51,7 @@ class StoryModeGame(GameView):
             height_ratio,
             player_manager=player_manager,
             name="storymodegame",
-            textbox_hook=lambda uiM, bM, t: new_dialogue(self.match_dict, uiM, bM, t)
+            textbox_hook=lambda uiM, bM, dE, t: new_dialogue(self.match_dict, uiM, bM, dE, t)
         )
 
     def load_match(self, match_dict):
@@ -50,12 +63,19 @@ class StoryModeGame(GameView):
         for possible_event in DIALOGUE_EVENT_PRIORITY:
             if possible_event in self.match_dict:
                 self.dialogue_manager.register_dialog_event(possible_event)
-                self.dialogue_manager.append_dialog_event(possible_event, list(map(lambda x: prefix + x, self.match_dict[possible_event])))
+                elements = [prefix + self.match_dict[possible_event]] \
+                    if isinstance(self.match_dict[possible_event], str) \
+                    else list(map(lambda x: prefix + x, self.match_dict[possible_event]))
+
+                self.dialogue_manager.append_dialog_event(possible_event, elements)
 
     def play_oneshot_dialogue(self, event):
         if event in self.match_dialogue_possibilities:
             self.match_dialogue_possibilities.remove(event)
             self.dialogue_manager.start_event(event)
+            self.lock_user_input = True
+            return True
+        return False
 
     def on_round_start(self):
         super().on_round_start()
@@ -64,7 +84,7 @@ class StoryModeGame(GameView):
 
 
     def on_tile_pressed(self, owner, tile_hand_index):
-        if owner.my_turn:
+        if owner.my_turn and not self.lock_user_input:
             tile = owner.hand[tile_hand_index]
             if (
                 self.game_manager.board_manager.waiting_on_decision
@@ -137,6 +157,7 @@ class StoryModeGame(GameView):
         if event_name == "round_end":
             self.game_manager.set_active_view("main_menu")
             self.game_manager.sound_manager.play_music("lobby")
+        self.lock_user_input = False
 
     def _end_round_dialog(self):
         self.ai_game_active = False
@@ -162,19 +183,29 @@ class StoryModeGame(GameView):
         for button in self.buttons:
             self.buttons[button].hide()
 
+    def process_possible_dialogue_events(self):
+        if len(self.watched_ai_event_log) > 0:
+            queued_dialogue_events = list(map(lambda event: EVENT_TYPE_TO_DIALOGUE[event.type], self.watched_ai_event_log))
+            for event in DIALOGUE_EVENT_PRIORITY:
+                if event in queued_dialogue_events:
+                    if self.play_oneshot_dialogue(event):
+                        self.watched_ai_event_log = []
+                        return
+
     def update(self, time_delta):
+        self.process_possible_dialogue_events()
         if self.game_manager.board_manager.round_should_end:
             self._end_round_dialog()
 
         super().update(time_delta)
 
-def new_dialogue(match_dict, gui_manager, button_map, text):
+def new_dialogue(match_dict, gui_manager, button_map, element_list, text):
     icon_size = (125, 125)
     icon_rect = pygame.Rect(0, 0, icon_size[0], icon_size[1])
     icon_rect.bottomleft = (20, -270)
     logo_surface = pygame.Surface(icon_size, pygame.SRCALPHA)
     load_image_resource(match_dict['icon'], logo_surface, size=icon_size)
-    pygame_gui.elements.ui_image.UIImage(
+    icon = pygame_gui.elements.ui_image.UIImage(
         relative_rect=icon_rect,
         image_surface=logo_surface,
         manager=gui_manager,
@@ -212,3 +243,4 @@ def new_dialogue(match_dict, gui_manager, button_map, text):
 
     button_map["text"] = text_box
     button_map["advance_text"] = text_next
+    element_list += [icon]

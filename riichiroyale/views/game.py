@@ -117,6 +117,7 @@ class GameView(BoardView):
         if event_name == "round_end":
             self.game_manager.set_active_view("main_menu")
             self.game_manager.sound_manager.play_music("lobby")
+        self.lock_user_input = False
 
     def _end_round_dialog(self):
         self.ai_game_active = False
