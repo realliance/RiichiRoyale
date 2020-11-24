@@ -31,6 +31,7 @@ class StubbornBot(MahjongAI, Player):
         self.seat_wind = seatWind
         self.prevalent_wind = prevalentWind
         self.goal_yaku = self.ChooseGoalYaku()
+        print("AI", self.player_id, "chose goal of", self.goal_yaku)
 
     def ReceiveEvent(self, e):
         print(
@@ -47,8 +48,6 @@ class StubbornBot(MahjongAI, Player):
         else:
             if e.type == EventType.Discard and e.player != self.player_id:
                 self.others_discarded_pieces.append(e.piece)
-
-        self.decision_to_act_on = e
 
     def __isHonor(self, p):  # These functions aren't exported from the C++ code for some reason
         if type(p) == int:
@@ -180,6 +179,7 @@ class StubbornBot(MahjongAI, Player):
                 return True
         return False
 
+    # TODO: multichi
     def DecideChi(self):
         if self.goal_yaku == "riichi":
             self.decision.type = EventType.Decline
@@ -199,6 +199,20 @@ class StubbornBot(MahjongAI, Player):
                     if self.HandContains(suit, 7) and self.HandContains(suit, 9):
                         self.decision.type = EventType.Decline
                         return self.decision  # Don't chi if it'll include a 9 (terminal)
+            print(self.hand)
+            print(self.decision_to_act_on.piece)
+            piecesRemoved = 0
+            if self.decision_to_act_on.piece in self.hand:
+                piecesRemoved += 1
+                self.hand.remove(self.decision_to_act_on.piece)  # Remove pieces from hand.
+            if self.decision_to_act_on.piece+1 in self.hand:
+                piecesRemoved += 1
+                self.hand.remove(self.decision_to_act_on.piece + 1)
+            if self.decision_to_act_on.piece + 2 in self.hand:
+                piecesRemoved += 1
+                self.hand.remove(self.decision_to_act_on.piece + 2)
+            print("REMOVED:", piecesRemoved)
+            self.decision.piece = self.decision_to_act_on.piece
             return self.decision  # Make the call if all conditions are met
 
 
@@ -215,13 +229,17 @@ class StubbornBot(MahjongAI, Player):
             self.decision.type = EventType.Decline
             return self.decision  # Don't make calls
         elif self.goal_yaku == "all_simples":
-            if self.__isHonor(self.decision.piece) or self.__isTerminal(self.decision.piece):
+            if self.__isHonor(self.decision_to_act_on.piece) or self.__isTerminal(self.decision_to_act_on.piece):
                 self.decision.type = EventType.Decline
                 return self.decision  # Don't make calls on honors or terminals
             else:
+                self.hand.remove(self.decision.piece)  # Remove Pon'd pieces from hand
+                self.hand.remove(self.decision.piece)
                 return self.decision
         elif self.goal_yaku == "outside":
-            if self.__isHonor(self.decision.piece) or self.__isTerminal(self.decision.piece):
+            if self.__isHonor(self.decision_to_act_on.piece) or self.__isTerminal(self.decision_to_act_on.piece):
+                self.hand.remove(self.decision.piece)  # Remove Pon'd pieces from hand
+                self.hand.remove(self.decision.piece)
                 return self.decision
             else:
                 self.decision.type = EventType.Decline
@@ -232,7 +250,7 @@ class StubbornBot(MahjongAI, Player):
         return self.DecidePon()
 
     def RetrieveDecision(self):  # Seems to fail if the player already has the same piece in their hand as the one they just drew
-
+        print("Player", self.player_id, "needs to make a decision.")
         if self.decision_acted_on:
             print("Player", self.player_id, "made an invalid decision!")
             print(
