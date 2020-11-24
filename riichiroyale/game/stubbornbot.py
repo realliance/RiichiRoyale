@@ -41,6 +41,8 @@ class StubbornBot(MahjongAI, Player):
             if e.type == EventType.Discard and e.player != self.player_id:
                 self.others_discarded_pieces.append(e.piece)
 
+        self.decision_to_act_on = e
+
     def __isHonor(self, p):  # These functions aren't exported from the C++ code for some reason
         if type(p) == int:
             return (p & int(CHARACTER_SUIT)) == HONOR_SUIT
@@ -91,7 +93,6 @@ class StubbornBot(MahjongAI, Player):
             value += 1
 
         return value
-
 
     def PickDiscard(self):
         if self.goal_yaku == "riichi":
@@ -228,8 +229,8 @@ class StubbornBot(MahjongAI, Player):
         if self.decision_to_act_on.type == EventType.Discard:
 
             self.hand.append(self.decision_to_act_on.piece)
-            print("Hand after picking:", self.hand)
             print("Picking tile to discard for player", self.player_id, " drew piece:", self.decision_to_act_on.piece)
+            print("Hand after picking:", self.hand)
             self.decision = self.PickDiscard()
             self.hand.remove(self.decision.piece)
             print("Hand after discarding:", self.hand)
@@ -242,8 +243,9 @@ class StubbornBot(MahjongAI, Player):
 
         elif self.decision_to_act_on.type == EventType.Kan:
             self.decision = self.DecideKan()
+            
         else:
-            print("Requested a decision for an unimplemented event type:", self.decision.type)
+            print("Requested a decision for an unimplemented event type:", self.decision_to_act_on.type)
 
         return self.decision
 
