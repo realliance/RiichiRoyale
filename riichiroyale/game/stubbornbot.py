@@ -1,10 +1,15 @@
 import random
-from threading import Lock
 
-from libmahjong.libmahjong import PieceType
-from libmahjong.libmahjong import MahjongAI, EventType, EngineEvent
+import libmahjong
+from libmahjong.libmahjong import MahjongAI, EventType, EngineEvent, Piece, PieceType
+from libmahjong.libmahjong import ERROR, TERMINAL_BIT, CHARACTER_SUIT, HONOR_SUIT
+
 from .player import Player
 from .gameevent import Event
+
+
+
+
 
 class StubbornBot(MahjongAI, Player):
     def __init__(self):
@@ -32,10 +37,17 @@ class StubbornBot(MahjongAI, Player):
             if e.type == EventType.Discard and e.player != self.player_id:
                 self.others_discarded_pieces.append(e.piece)
 
+    def __isHonor(self, p):  # These functions aren't exported from the C++ code for some reason
+        return (p.get_raw_value() & int(CHARACTER_SUIT)) == HONOR_SUIT
+
+    def __isTerminal(self, p):
+        return (p.get_raw_value() & int(TERMINAL_BIT)) != ERROR
+
+
     def CountTerminalsAndHonors(self):
         i = 0
         for piece in self.hand:
-            if piece.isHonor() or piece.isTerminal():
+            if self.__isHonor(piece) or self.__isTerminal(piece):
                 i += 1
         return i
 
@@ -51,22 +63,22 @@ class StubbornBot(MahjongAI, Player):
         if self.goal_yaku == "riichi":
             print("TODO 0")
         elif self.goal_yaku == "all_simples":
-            if self.decision.piece.isHonor() or self.decision.piece.isTerminal():
+            if self.__isHonor(self.decision.piece) or self.__isTerminal(self.decision.piece):
                 return self.decision  # Discard piece we just picked
             else:
                 for piece in self.hand:
-                    if piece.isHonor() or piece.isTerminal():
+                    if self.__isHonor(self.decision.piece) or self.__isTerminal(self.decision.piece):
                         self.decision.piece = piece
                         return self.decision  # Discard first honor or terminal piece we find
                 # If we got here, then our hand has no more honors or terminals
                 print("TODO 1")
                 return self.decision
         elif self.goal_yaku == "outside":
-            if not (self.decision.piece.isHonor() or self.decision.piece.isTerminal()):
+            if not (self.__isHonor(self.decision.piece) or self.__isTerminal(self.decision.piece)):
                 if not (self.decision.piece.get_piece_num() <= 3 or self.decision.piece.get_piece_num() >= 7):
                     return self.decision  # Discard piece we just picked
             for piece in self.hand:
-                if not (piece.isHonor() or piece.isTerminal()):
+                if not (self.__isHonor(self.decision.piece) or self.__isTerminal(self.decision.piece)):
                     if not (piece.get_piece_num() <= 3 or piece.get_piece_num() >= 7):
                         self.decision.piece = piece
                         return self.decision  # Discard piece we just picked
@@ -84,7 +96,7 @@ class StubbornBot(MahjongAI, Player):
             self.decision.type = EventType.Decline
             return self.decision  # Don't make calls
         elif self.goal_yaku == "all_simples":
-            if self.decision.piece.isHonor() or self.decision.piece.isTerminal():
+            if self.__isHonor(self.decision.piece) or self.isTerminal(self.decision.piece):
                 self.decision.type = EventType.Decline
                 return self.decision  # Don't make calls on honors or terminals
 
@@ -103,7 +115,7 @@ class StubbornBot(MahjongAI, Player):
 
         # TODO
         elif self.goal_yaku == "outside":
-            if self.decision.piece.isHonor() or self.decision.piece.isTerminal():
+            if self.__isHonor(self.decision.piece) or self.__isTerminal(self.decision.piece):
                 return self.decision
             else:
                 self.decision.type = EventType.Decline
@@ -114,13 +126,13 @@ class StubbornBot(MahjongAI, Player):
             self.decision.type = EventType.Decline
             return self.decision  # Don't make calls
         elif self.goal_yaku == "all_simples":
-            if self.decision.piece.isHonor() or self.decision.piece.isTerminal():
+            if self.__isHonor(self.decision.piece) or self.__isTerminal(self.decision.piece):
                 self.decision.type = EventType.Decline
                 return self.decision  # Don't make calls on honors or terminals
             else:
                 return self.decision
         elif self.goal_yaku == "outside":
-            if self.decision.piece.isHonor() or self.decision.piece.isTerminal():
+            if self.__isHonor(self.decision.piece) or self.__isTerminal(self.decision.piece):
                 return self.decision
             else:
                 self.decision.type = EventType.Decline

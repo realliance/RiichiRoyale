@@ -29,7 +29,6 @@ auto AlphabeticalBot::ReceiveEvent(Mahjong::Event e) -> void{
         {
             if (e.type < decisionToTake.type)
             {
-                //std::cout <<"Choosing "<< e.type << std::endl;
                 decisionToTake = e;
             }
         }
@@ -61,6 +60,18 @@ auto AlphabeticalBot::ReceiveEvent(Mahjong::Event e) -> void{
             if (e.decision && e.player == this->id) {
                 //std::cout << "Player " << this->id << " pushing piece into hand: " << e.piece << std::endl;
                 hand.push_back(e.piece);
+            }
+            break;
+        case Mahjong::Event::Tsumo:
+            if (e.decision) {
+                decisionToTake = e;
+            }
+            break;
+        default:
+            if (e.decision)
+            {
+                decisionToTake = e;
+                std::cout<<"Warning: Possibly unimplemented event type." <<std::endl;
             }
             break;
     }
