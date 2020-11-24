@@ -114,13 +114,13 @@ class StubbornBot(MahjongAI, Player):
             return self.decision
 
         elif self.goal_yaku == "all_simples":
-            if self.__isHonor(self.decision_to_act_on.piece) or self.__isTerminal(self.decision_to_act_on.piece):
+            if self.decision_to_act_on.piece != 0 and (self.__isHonor(self.decision_to_act_on.piece) or self.__isTerminal(self.decision_to_act_on.piece)):
+                self.decision.piece = self.decision_to_act_on.piece
                 print("Discarding:", self.decision_to_act_on.piece)
                 return self.decision  # Discard piece we just picked
             else:
                 for piece in self.hand:
-                    if self.__isHonor(self.decision_to_act_on.piece) or self.__isTerminal(
-                            self.decision_to_act_on.piece):
+                    if self.__isHonor(piece) or self.__isTerminal(piece):
                         self.decision.piece = piece
                         print("Discarding:", self.decision.piece)
                         return self.decision  # Discard first honor or terminal piece we find
@@ -138,18 +138,17 @@ class StubbornBot(MahjongAI, Player):
                 print("Discarding:", self.decision.piece)
                 return self.decision
         elif self.goal_yaku == "outside":
-            if not (self.__isHonor(self.decision_to_act_on.piece) or self.__isTerminal(self.decision_to_act_on.piece)):
-                if not (Piece(self.decision_to_act_on.piece).get_piece_num() <= 3 or Piece(
-                        self.decision_to_act_on.piece).get_piece_num() >= 7):
+            if self.decision_to_act_on.piece != 0 and (not (self.__isHonor(self.decision_to_act_on.piece) or self.__isTerminal(self.decision_to_act_on.piece))):
+                if not (Piece(self.decision_to_act_on.piece).get_piece_num() <= 3 or Piece(self.decision_to_act_on.piece).get_piece_num() >= 7):
+                    self.decision.piece = self.decision_to_act_on.piece
                     print("Discarding:", self.decision.piece)
                     return self.decision  # Discard piece we just picked
             for piece in self.hand:
-                if not (self.__isHonor(self.decision_to_act_on.piece) or self.__isTerminal(
-                        self.decision_to_act_on.piece)):
+                if not (self.__isHonor(self.decision_to_act_on.piece) or self.__isTerminal(self.decision_to_act_on.piece)):
                     if not (Piece(piece).get_piece_num() <= 3 or Piece(piece).get_piece_num() >= 7):
                         self.decision.piece = piece
                         print("Discarding:", self.decision.piece)
-                        return self.decision  # Discard piece we just picked
+                        return self.decision
 
             # If we got here, then our hand has no more non-terminal pieces
             lowestIndex = 0
@@ -164,7 +163,7 @@ class StubbornBot(MahjongAI, Player):
             print("Discarding:", self.decision.piece)
             return self.decision
         else:
-            print(self.goal_yaku)
+            print(self.goal_yaku, "discarding unimplemented")
 
     def CountInHand(self, suit, number):
         i = 0
@@ -263,10 +262,12 @@ class StubbornBot(MahjongAI, Player):
             return self.decision_to_act_on
 
         if self.decision_to_act_on.type == EventType.Discard:
-            self.hand.append(self.decision_to_act_on.piece)
+            if self.decision_to_act_on.piece != 0:
+                self.hand.append(self.decision_to_act_on.piece)
             print("Picking tile to discard for player", self.player_id, " drew piece:", self.decision_to_act_on.piece)
             print("Hand after picking:", self.hand)
             self.decision = self.PickDiscard()
+            print(self.decision)
             self.hand.remove(self.decision.piece)
             print("Hand after discarding:", self.hand)
 
