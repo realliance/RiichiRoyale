@@ -180,9 +180,10 @@ class BoardRender:
             element.force_render()
 
     def draw(self, background):
-        for element in self.elements:
-            element.notify(self.surface, background)
-            element.draw(self.surface, background)
+        with self.match.players[self.player_pov].lock:
+            for element in self.elements:
+                element.notify(self.surface, background)
+                element.draw(self.surface, background)
 
 
 def center_info_state(match):

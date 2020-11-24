@@ -44,7 +44,7 @@ auto GentlemanBot::RetrieveDecision() -> Mahjong::Event{
     lastEvent.type = Mahjong::Event::ConcealedKan;
   }
   else if(lastEvent.type == Mahjong::Event::Discard){
-    lastEvent.piece = getDiscard();
+    lastEvent.piece = getDiscard().toUint8_t();
   }
   else{
     lastEvent.type = Mahjong::Event::Decline;
@@ -55,30 +55,38 @@ auto GentlemanBot::RetrieveDecision() -> Mahjong::Event{
 }
 
 
-void countPieces(int8_t* counts, const std::vector<Piece>& pieces){
+void countpieces(int8_t* counts, const std::vector<Mahjong::Piece>& pieces){
   for(const auto & p : pieces){
     counts[p.toUint8_t()]++;
   }
 }
 
 
-auto getDiscard() -> Mahjong::Piece{
+auto GentlemanBot::getDiscard() -> Mahjong::Piece{
 
-  std::vector<Piece> freePieces;
-  std::vector<Piece> preferedDiscards;
-  std::vector<Piece> secondTierDiscards;
-  std::vector<Piece> thirdTierDiscards;
+  std::vector<Mahjong::Piece> freePieces;
+  std::vector<Mahjong::Piece> preferedDiscards;
+  std::vector<Mahjong::Piece> secondTierDiscards;
+  std::vector<Mahjong::Piece> thirdTierDiscards;
   
   int8_t counts[256] = {};
-  Node* symbolicHand = breakdownHand(hand);
+  Mahjong::Node* symbolicHand = Mahjong::breakdownHand(hand);
+  Mahjong::Node* currentNode = symbolicHand;
 
-  if(symbolicHand->type == Node::Single){
-    freePieces.push(symbolicHand->start)
+  while(true) {
+    if(currentNode->type == Mahjong::Node::Single){
+      freePieces.push_back(currentNode->start);
+    }
+    if(currentNode->leaves.size() == 0){
+      break;
+    }
+    
+    currentNode = currentNode->leaves[0];
   }
 
   delete symbolicHand;
   
-  countPieces(counts, freePieces);
+  countpieces(counts, freePieces);
 
   for(const auto & p : freePieces){
     if(counts[p.toUint8_t()]==2){
@@ -91,22 +99,22 @@ auto getDiscard() -> Mahjong::Piece{
       thirdTierDiscards.push_back(p);
     }
     else{
-      preferedDiscards.pushback(p);
+      preferedDiscards.push_back(p);
     }
   }
 
-  for(const auto & p : preferedDiscards){
-    if(p.isHonor){
+  for(const auto &p : preferedDiscards){
+    if(p.isHonor()){
       return p;
     }
   }
-  for(const auto & p : preferedDiscards){
+  for(const auto &p : preferedDiscards){
       return p;
   }
-  for(const auto & p : secondTierDiscards){
+  for(const auto &p : secondTierDiscards){
       return p;
   }
-  for(const auto & p : thirdTierDiscards){
+  for(const auto &p : thirdTierDiscards){
       return p;
   }
 

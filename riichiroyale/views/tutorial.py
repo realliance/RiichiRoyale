@@ -132,7 +132,7 @@ class TutorialView(BoardView):
             event.decision = True
 
             self.match.player_manager.MakeDecision(event)
-            #self.dialogue_manager.start_event("discard_tip")
+            self.dialogue_manager.start_event("discard_tip")
             return True
         return False
 

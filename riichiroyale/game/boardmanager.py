@@ -151,7 +151,7 @@ def on_ron_event(
 
 def on_converted_kan_event(
     game_manager,
-    _is_ai,
+    is_ai,
     is_decision,
     event,
     _match,
@@ -171,7 +171,10 @@ def on_converted_kan_event(
                 melds.converted_kan = True
                 break
 
-        event_player.hand.remove(event.piece)
+        if is_ai:
+            del event_player.hand[-1:]
+        else:
+            event_player.hand.remove(event.piece)
         event_player.calls_avaliable = []
         game_manager.board_manager.last_decision_event = None
         game_manager.board_manager.waiting_on_decision = False
@@ -239,7 +242,7 @@ def on_riichi_event(
     is_ai,
     is_decision,
     event,
-    match,
+    _match,
     event_player,
     _pov_player,
     _extra_player,
@@ -255,11 +258,9 @@ def on_riichi_event(
             event_player.hand.remove(event.piece)
         game_manager.board_manager.waiting_on_decision = False
         game_manager.board_manager.last_decision_event = None
-        event_player.calls_avaliable += []
+        event_player.calls_avaliable = []
         event_player.discard_pile += [event.piece]
         event_player.riichi_declared = True
-        match.current_board.next_turn()
-
 
 def on_discard_event(
     game_manager,
@@ -303,6 +304,8 @@ def on_concealed_kan_event(
     _extra_player,
 ):
     if is_decision:
+        game_manager.board_manager.waiting_on_decision = True
+        game_manager.board_manager.last_decision_event = event
         game_manager.board_manager.waiting_on_decision = True
         event_player.calls_avaliable += [Call.Concealed_Kan]
     else:

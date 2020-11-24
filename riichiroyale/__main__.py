@@ -18,7 +18,11 @@ from riichiroyale import (
     SoundManager,
     BoardManager,
     TutorialView,
-    PlayerManager
+    PlayerManager,
+    bootstrap_base_storage,
+    get_object,
+    StoryModeSelect,
+    StoryModeGame
 )
 
 SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO = 16, 9
@@ -56,6 +60,8 @@ def main():
     pygame.display.set_caption("Riichi Royale")
 
     current_path = os.path.dirname(os.path.realpath(__file__))
+
+    bootstrap_base_storage()
 
     # Init Logging
     logging.basicConfig(
@@ -156,10 +162,24 @@ def main():
     freeplay_menu = FreePlaySelect(
         game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT
     )
+    storymode_menu = StoryModeSelect(
+        game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT
+    )
     settings_menu = Settings(
         game_manager, STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT
     )
     game_view = GameView(
+        game_manager,
+        screen,
+        tile_dictionary,
+        small_tile_dictionary,
+        STARTING_SCREEN_WIDTH,
+        STARTING_SCREEN_HEIGHT,
+        SCREEN_WIDTH_RATIO,
+        SCREEN_HEIGHT_RATIO,
+        player_manager=player_manager,
+    )
+    storymode_game_view = StoryModeGame(
         game_manager,
         screen,
         tile_dictionary,
@@ -187,6 +207,8 @@ def main():
     game_manager.add_view(game_view)
     game_manager.add_view(tutorial_view)
     game_manager.add_view(freeplay_menu)
+    game_manager.add_view(storymode_menu)
+    game_manager.add_view(storymode_game_view)
     game_manager.set_active_view("main_menu")
 
     draw_loading_screen(screen, clear_background, font, "Done!")

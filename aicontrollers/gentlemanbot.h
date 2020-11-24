@@ -23,5 +23,5 @@ private:
 
   Mahjong::Event lastEvent;
 
-  auto Discard() -> Mahjong::Piece;
+  auto getDiscard() -> Mahjong::Piece;
 };

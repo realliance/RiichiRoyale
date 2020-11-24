@@ -1,9 +1,12 @@
+import pygame
+import pygame_gui
 from libmahjong import start_game, EventType, EngineEvent, PieceType
 from riichiroyale.game import Player, Match, process_event_queue, DialogManager, loadStory
-from .boardview import BoardView
+from riichiroyale.utils import load_image_resource
+from .game import GameView
 
 
-class GameView(BoardView):
+class StoryModeGame(GameView):
     def __init__(
         self,
         game_manager,
@@ -15,13 +18,14 @@ class GameView(BoardView):
         width_ratio,
         height_ratio,
         player_manager=None,
-        name="game",
-        textbox_hook=None
     ):
+        self.player_manager = player_manager
+        self.ai_list = ["Player"] + ["AngryDiscardoBot"] * 3
+        self.match = None
+        self.match_dict = None
+
         super().__init__(
-            name,
             game_manager,
-            DialogManager(),
             screen,
             tile_dict,
             small_tile_dict,
@@ -29,19 +33,26 @@ class GameView(BoardView):
             screen_height,
             width_ratio,
             height_ratio,
-            textbox_hook=textbox_hook
+            player_manager=player_manager,
+            name="storymodegame",
+            textbox_hook=lambda uiM, bM, t: new_dialogue(self.match_dict, uiM, bM, t)
         )
-        self.player_manager = player_manager
-        self.ai_list = ["Player"] + ["AngryDiscardoBot"] * 3
 
-    def on_match_init(self):
-        self.match = None
-        self.match = Match(self.ai_list, self.game_manager, self.player_manager, self.sound_manager)
-        self.match.start()
+    def load_match(self, match_dict):
+        self.ai_list = ["Player"] + match_dict["ais"]
+        self.match_dict = match_dict
+        prefix = "<b>{}</b><br><br>".format(self.match_dict['opponent'])
+        
+        for possible_event in ["intro", "call_pon", "call_chi", "call_kan", "call_ron", "call_riichi", "on_player_wins", "on_player_loses", "on_both_lose"]:
+            if possible_event in self.match_dict:
+                self.dialogue_manager.register_dialog_event(possible_event)
+                self.dialogue_manager.append_dialog_event(possible_event, list(map(lambda x: prefix + x, self.match_dict[possible_event])))
 
-    def on_pov_init(self):
-        if self.player_manager is None:
-            self.match_pov = 0
+    def on_round_start(self):
+        super().on_round_start()
+        if 'intro' in self.match_dict:
+            self.dialogue_manager.start_event('intro')
+
 
     def on_tile_pressed(self, owner, tile_hand_index):
         if owner.my_turn:
@@ -147,3 +158,48 @@ class GameView(BoardView):
             self._end_round_dialog()
 
         super().update(time_delta)
+
+def new_dialogue(match_dict, gui_manager, button_map, text):
+    icon_size = (125, 125)
+    icon_rect = pygame.Rect(0, 0, icon_size[0], icon_size[1])
+    icon_rect.bottomleft = (20, -270)
+    logo_surface = pygame.Surface(icon_size, pygame.SRCALPHA)
+    load_image_resource(match_dict['icon'], logo_surface, size=icon_size)
+    pygame_gui.elements.ui_image.UIImage(
+        relative_rect=icon_rect,
+        image_surface=logo_surface,
+        manager=gui_manager,
+        anchors={"left": "left", "right": "left", "top": "bottom", "bottom": "bottom"},
+    )
+
+    text_box_rect = pygame.Rect(0, 0, 1366 - 40, 200)
+    text_box_rect.bottomleft = (20, -70)
+    text_box = pygame_gui.elements.UITextBox(
+        relative_rect=text_box_rect,
+        visible=False,
+        html_text=text,
+        manager=gui_manager,
+        anchors={
+            "top": "bottom",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "left",
+        },
+    )
+    text_next_button_rect = pygame.Rect(0, 0, 100, 50)
+    text_next_button_rect.bottomleft = (-120, -20)
+    text_next = pygame_gui.elements.UIButton(
+        relative_rect=text_next_button_rect,
+        visible=False,
+        text="Next",
+        manager=gui_manager,
+        anchors={
+            "top": "bottom",
+            "bottom": "bottom",
+            "left": "right",
+            "right": "right",
+        },
+    )
+
+    button_map["text"] = text_box
+    button_map["advance_text"] = text_next

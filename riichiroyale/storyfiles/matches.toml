@@ -1,0 +1,124 @@
+version = 8
+
+[[matches]]
+stage = 0
+completed = false
+opponent = 'Johnathon "Turtling" Douglas'
+icon = 'opponent1.png'
+top_line_title = 'Johnathon'
+bottom_line_title = '"Turtling" Douglas'
+ais = ['Fast Tanyao', 'AngryDiscardoBot', 'AngryDiscardoBot']
+intro=[
+    'Test',
+    'This is a second dialogue line',
+    "Let's get started"
+]
+call_pon='haha!'
+call_chi='hoho!'
+call_kan='hehe!'
+call_ron='nothing personal kid.'
+call_riichi='uh ohh'
+on_player_wins="wow! you're not half bad kid."
+on_player_loses="hehe, better luck next time."
+on_both_lose="well, I guess we both have some improving to do."
+
+[[matches]]
+stage = 1
+completed = false
+opponent = 'Johnathon "Turtling" Douglas'
+icon = 'opponent1.png'
+ais = ['Fast Tanyao', 'AngryDiscardoBot', 'AngryDiscardoBot']
+intro=[
+    'Test',
+    'This is a second dialogue line',
+    "Let's get started"
+]
+call_pon='haha!'
+call_chi='hoho!'
+call_kan='hehe!'
+call_ron='nothing personal kid.'
+call_riichi='uh ohh'
+on_player_wins="wow! you're not half bad kid."
+on_player_loses="hehe, better luck next time."
+on_both_lose="well, I guess we both have some improving to do."
+
+[[matches]]
+stage = 2
+completed = false
+opponent = 'Johnathon "Turtling" Douglas'
+icon = 'opponent1.png'
+ais = ['Fast Tanyao', 'AngryDiscardoBot', 'AngryDiscardoBot']
+intro=[
+    'Test',
+    'This is a second dialogue line',
+    "Let's get started"
+]
+call_pon='haha!'
+call_chi='hoho!'
+call_kan='hehe!'
+call_ron='nothing personal kid.'
+call_riichi='uh ohh'
+on_player_wins="wow! you're not half bad kid."
+on_player_loses="hehe, better luck next time."
+on_both_lose="well, I guess we both have some improving to do."
+
+[[matches]]
+stage = 3
+completed = false
+opponent = 'Johnathon "Turtling" Douglas'
+icon = 'opponent1.png'
+ais = ['Fast Tanyao', 'AngryDiscardoBot', 'AngryDiscardoBot']
+intro=[
+    'Test',
+    'This is a second dialogue line',
+    "Let's get started"
+]
+call_pon='haha!'
+call_chi='hoho!'
+call_kan='hehe!'
+call_ron='nothing personal kid.'
+call_riichi='uh ohh'
+on_player_wins="wow! you're not half bad kid."
+on_player_loses="hehe, better luck next time."
+on_both_lose="well, I guess we both have some improving to do."
+
+[[matches]]
+stage = 4
+completed = false
+opponent = 'Johnathon "Turtling" Douglas'
+icon = 'opponent1.png'
+ais = ['Fast Tanyao', 'AngryDiscardoBot', 'AngryDiscardoBot']
+intro=[
+    'Test',
+    'This is a second dialogue line',
+    "Let's get started"
+]
+call_pon='haha!'
+call_chi='hoho!'
+call_kan='hehe!'
+call_ron='nothing personal kid.'
+call_riichi='uh ohh'
+on_player_wins="wow! you're not half bad kid."
+on_player_loses="hehe, better luck next time."
+on_both_lose="well, I guess we both have some improving to do."
+
+[[matches]]
+stage = 5
+completed = false
+opponent = 'Johnathon "Turtling" Douglas'
+icon = 'opponent1.png'
+ais = ['Fast Tanyao', 'AngryDiscardoBot', 'AngryDiscardoBot']
+intro=[
+    'Test',
+    'This is a second dialogue line',
+    "Let's get started"
+]
+call_pon='haha!'
+call_chi='hoho!'
+call_kan='hehe!'
+call_ron='nothing personal kid.'
+call_riichi='uh ohh'
+on_player_wins="wow! you're not half bad kid."
+on_player_loses="hehe, better luck next time."
+on_both_lose="well, I guess we both have some improving to do."
+
