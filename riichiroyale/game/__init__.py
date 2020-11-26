@@ -9,3 +9,4 @@ from .boardmanager import *
 from .gameevent import *
 from .dialogmanager import *
 from .playermanager import *
+from .bolickbot import *
