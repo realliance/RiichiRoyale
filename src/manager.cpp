@@ -3,6 +3,8 @@
 #include <bolickbot.h>         // for ThriceBot
 #include <fasttanyao.h>
 #include <alphabeticalbot.h>   // for AlphabeticalBot
+#include <totobot.h>
+#include <gentlemanbot.h>
 #include <map>                 // for map, map<>::mapped_type
 #include <string>              // for string, operator+
 #include <thread>              // for thread
@@ -29,9 +31,11 @@ auto Mahjong::StartGame(GameSettings settings, bool async) -> void {
 
 static std::map<std::string,newControllerInst> availableControllers = {
   {"AngryDiscardoBot",[]() -> PlayerController* {return new AngryDiscardoBot;}},
+  {"Fast Tanyao",[]() -> PlayerController* {return new FastTanyao;}},
+  {"TotoBot",[]() -> PlayerController* {return new TotoBot;}},
+  {"GentlemanBot",[]() -> PlayerController* {return new GentlemanBot;}},
   {"AlphabeticalBot",[]() -> PlayerController* {return new AlphabeticalBot;}},
   {"ThriceBot",[]() -> PlayerController* {return new BolickBot;}},
-  {"Fast Tanyao",[]() -> PlayerController* {return new FastTanyao;}}
 };
 
 auto Mahjong::GetAvailableControllers() -> std::vector<std::string> {

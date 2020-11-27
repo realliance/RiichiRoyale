@@ -9,4 +9,8 @@ target_sources(RiichiRoyale
     "${DIR}/fasttanyao.h"
     "${DIR}/alphabeticalbot.cpp"
     "${DIR}/alphabeticalbot.h"
+    "${DIR}/totobot.cpp"
+    "${DIR}/totobot.h"
+    "${DIR}/gentlemanbot.cpp"
+    "${DIR}/gentlemanbot.h"
 )

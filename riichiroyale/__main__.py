@@ -200,6 +200,7 @@ def main():
         STARTING_SCREEN_HEIGHT,
         SCREEN_WIDTH_RATIO,
         SCREEN_HEIGHT_RATIO,
+        player_manager=player_manager,
     )
 
     game_manager.add_view(main_menu)

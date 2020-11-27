@@ -7,7 +7,7 @@ from .boardmanager import process_event_queue
 
 class Match(Thread):
     def __init__(
-        self, ai_list, game_manager, player_manager=None, sound_manager=None, two_wind_game=False, starting_score=25000
+        self, ai_list, game_manager, player_manager=None, sound_manager=None, two_wind_game=False, starting_score=25000, wall=None, deadwall=None
     ):
         super().__init__()
         self.ai_list = ai_list
@@ -24,6 +24,13 @@ class Match(Thread):
         self.match_alive = True
         self.process_lock = Condition()
         self.match_lock = Lock()
+        self.current_board = None
+        if wall is not None and deadwall is not None:
+            self.current_board = Board(
+                wall=wall,
+                deadwall=deadwall,
+                dora_revealed=0,
+            )
 
     def new_board(self, wall=None, deadwall=None):
         self.current_board = None
@@ -49,6 +56,9 @@ class Match(Thread):
     def run(self):
         settings = GameSettings()
         settings.seat_controllers = self.ai_list
+        if self.current_board is not None:
+            wall = list(map(Piece, self.current_board.wall+self.current_board.deadwall))
+            settings.override_wall = wall
         start_game(settings, True)
         while self.match_alive:
             self.on_update()
