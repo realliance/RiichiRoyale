@@ -240,9 +240,8 @@ class StubbornBot(MahjongAI, Player):
             piecesRemoved = 0
             print(self.hand)
             # TODO: Fails on red fives
-            # Remove pieces from hand.
             temp = Piece(self.decision_to_act_on.piece)
-            if self.decision_to_act_on.piece+1 in self.hand:
+            if self.decision_to_act_on.piece+1 in self.hand:  # Remove pieces from hand.
                 piecesRemoved += 1
                 self.hand.remove(self.decision_to_act_on.piece + 1)
                 print("Removed", self.decision_to_act_on.piece + 1)
@@ -257,10 +256,10 @@ class StubbornBot(MahjongAI, Player):
 
         elif self.goal_yaku == "outside":
             # TODO
-            if not (self.__isHonor(self.decision_to_act_on.piece) or self.__isTerminal(self.decision_to_act_on.piece)):
-                self.decision.type = EventType.Decline
+            temp = Piece(self.decision_to_act_on.piece)
+            if not (self.__isHonor(self.decision_to_act_on.piece) or temp.get_piece_num() == 7 or temp.get_piece_num() == 1):
+                self.decision.type = EventType.Decline  # Don't call unless it would countain an honor or terminal
                 return self.decision
-
             else:
                 piecesRemoved = 0
                 if self.decision_to_act_on.piece + 1 in self.hand: #  Remove pieces from hand.
