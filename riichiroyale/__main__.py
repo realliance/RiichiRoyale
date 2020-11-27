@@ -22,7 +22,8 @@ from riichiroyale import (
     bootstrap_base_storage,
     get_object,
     StoryModeSelect,
-    StoryModeGame
+    StoryModeGame,
+    StubbornBot
 )
 
 SCREEN_WIDTH_RATIO, SCREEN_HEIGHT_RATIO = 16, 9
@@ -97,6 +98,8 @@ def main():
     player_manager = PlayerManager()
     register_ai(player_manager, "Player")
     print(avaliable_ais())
+    stubborn_bot = StubbornBot()
+    register_ai(stubborn_bot, "StubbornBot")
 
     # Set Icon
     pygame.display.set_icon(tile_dictionary[PieceType.GREEN_DRAGON])

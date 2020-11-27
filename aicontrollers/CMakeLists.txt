@@ -7,4 +7,6 @@ target_sources(RiichiRoyale
     "${DIR}/bolickbot.cpp"
     "${DIR}/fasttanyao.cpp"
     "${DIR}/fasttanyao.h"
+    "${DIR}/alphabeticalbot.cpp"
+    "${DIR}/alphabeticalbot.h"
 )
