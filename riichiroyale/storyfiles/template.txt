@@ -1,6 +1,0 @@
-value will be one if completed 0 otherwise
-number of AI's below
-AIname
-AIname
-... until number is correct
-some Id For Dialog

@@ -97,9 +97,11 @@ def main():
     # Register Python AIs
     player_manager = PlayerManager()
     register_ai(player_manager, "Player")
-    print(avaliable_ais())
+
     stubborn_bot = StubbornBot()
     register_ai(stubborn_bot, "StubbornBot")
+
+    print(avaliable_ais())
 
     # Set Icon
     pygame.display.set_icon(tile_dictionary[PieceType.GREEN_DRAGON])
