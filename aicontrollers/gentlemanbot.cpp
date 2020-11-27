@@ -16,18 +16,27 @@ auto GentlemanBot::GameStart(int) -> void {}
 auto GentlemanBot::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Wind, Mahjong::Wind) -> void {
   hand = _hand;
   lastEvent.type = Mahjong::Event::Discard;
+
 }
 
 auto GentlemanBot::ReceiveEvent(Mahjong::Event e) -> void{
 
   if(e.decision){
+    if(e.type <= lastEvent.type)
     lastEvent = e;
-  }
-  else if(e.type == Mahjong::Event::Discard){
-    hand.push_back(e.piece);
-    
 
+    if(e.type == Mahjong::Event::Discard){
+      std::cout << "Added Piece\n";
+      hand.push_back(e.piece);
+      lastEvent.piece = getDiscard().toUint8_t();
+      std::cout << lastEvent.piece <<"\n";
+    }
+    else{
+      std::cout << "choice to make";
+    }
   }
+  
+  
 }
 
 auto GentlemanBot::RetrieveDecision() -> Mahjong::Event{
@@ -38,17 +47,18 @@ auto GentlemanBot::RetrieveDecision() -> Mahjong::Event{
     lastEvent.type = Mahjong::Event::Tsumo;
   }
   else if (lastEvent.type == Mahjong::Event::Riichi){
+    std::cout << "RIICHI ALERT";
     lastEvent.type = Mahjong::Event::Riichi;
   }
   else if (lastEvent.type == Mahjong::Event::ConcealedKan){
     lastEvent.type = Mahjong::Event::ConcealedKan;
   }
-  else if(lastEvent.type == Mahjong::Event::Discard){
-    lastEvent.piece = getDiscard().toUint8_t();
-  }
-  else{
+  else if(lastEvent.type != Mahjong::Event::Discard){
+    std::cout << "DECLINED";
     lastEvent.type = Mahjong::Event::Decline;
   }
+
+
   Mahjong::Event e = lastEvent;
   lastEvent.type = Mahjong::Event::Discard; // lowest """priority""" event type
   return e;
@@ -84,6 +94,7 @@ auto GentlemanBot::getDiscard() -> Mahjong::Piece{
     currentNode = currentNode->leaves[0];
   }
 
+
   delete symbolicHand;
   
   countpieces(counts, freePieces);
@@ -105,17 +116,33 @@ auto GentlemanBot::getDiscard() -> Mahjong::Piece{
 
   for(const auto &p : preferedDiscards){
     if(p.isHonor()){
+      for(int i=0; i<hand.size(); i++){
+        if(hand[i].toUint8_t() == p.toUint8_t())
+        hand.erase(hand.begin()+i);
+      }
       return p;
     }
   }
-  for(const auto &p : preferedDiscards){
+  for(const auto &p : preferedDiscards){for(int i=0; i<hand.size(); i++){
+        if(hand[i].toUint8_t() == p.toUint8_t())
+        hand.erase(hand.begin()+i);
+      }
       return p;
   }
   for(const auto &p : secondTierDiscards){
+    for(int i=0; i<hand.size(); i++){
+        if(hand[i].toUint8_t() == p.toUint8_t())
+        hand.erase(hand.begin()+i);
+      }
       return p;
   }
   for(const auto &p : thirdTierDiscards){
+    for(int i=0; i<hand.size(); i++){
+        if(hand[i].toUint8_t() == p.toUint8_t())
+        hand.erase(hand.begin()+i);
+      }
       return p;
   }
+
 
 }
