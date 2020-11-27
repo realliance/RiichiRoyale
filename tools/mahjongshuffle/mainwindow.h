@@ -34,10 +34,12 @@ protected:
   Gtk::CheckButton loopButton;
   Gtk::Label isStdForm;
   Gtk::Label errorPercent;
+  Gtk::Label heavenPercent;
   int dots = 0;
 
   private:
   int errorRate = 0;
+  int heavenRate = 0;
   int total = 0;
   auto getFilePath(Mahjong::Piece p) -> std::string;
   std::string path;

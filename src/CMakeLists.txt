@@ -8,7 +8,7 @@ target_sources(RiichiRoyale
     "${DIR}/handnode.cpp"
     "${DIR}/hands.cpp"
     "${DIR}/handtree.cpp"
-    "${DIR}/manager.cpp"
+    "${DIR}/controllermanager.cpp"
     "${DIR}/meld.cpp"
     "${DIR}/piecetype.cpp"
     "${DIR}/player.cpp"

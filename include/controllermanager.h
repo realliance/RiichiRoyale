@@ -18,5 +18,4 @@ namespace Mahjong{
 #ifndef NO_PYBIND
   auto RegisterPythonController(pybind11::object pythonController, std::string Name) -> bool;
 #endif
-  auto StartGame(GameSettings settings, bool async) -> void;
 };

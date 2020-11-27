@@ -184,3 +184,7 @@ settings.json
 
 # CMake
 cmake-build-debug
+
+# Graph Formats
+*.gv
+*.tgf

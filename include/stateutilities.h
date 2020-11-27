@@ -19,5 +19,6 @@ namespace Mahjong{
   auto AskForDiscard(const GameState& state) -> Piece;
   auto CountPieces(const GameState& state, int player, Piece p) -> uint8_t;
   auto ValidateDecision(const GameState& state, int player, Event decision, bool inHand) -> bool;
+  auto GetValidDecisionOrThrow(const GameState& state, int player, bool inHand) -> Event;
 
 };

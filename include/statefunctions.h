@@ -4,6 +4,9 @@
 
 namespace Mahjong{
 
+  auto StartGame(GameSettings settings, bool async) -> int;
+  auto ExitGame(int game) -> void;
+
   auto StateController(GameSettings settings) -> void;
 
   using StateFunction = auto (*)(GameState&) -> GameState&;

@@ -120,7 +120,6 @@ namespace Mahjong{
     };
     
   private:
-    static const std::map<uint8_t,std::string> STR_MAP;
     uint8_t p;
   };
 };

@@ -1,7 +1,8 @@
 #include <iostream>
 #include <gdkmm/pixbuf.h>
 #include <algorithm>
- #include <fstream>
+#include <fstream>
+#include <sstream>
 
 #include "analysis.h"
 #include "handnode.h"
@@ -25,7 +26,8 @@ MainWindow::MainWindow()
   stdformbutton = Gtk::CheckButton("Standard form");
   stdformbutton.set_active(false);
 
-  errorPercent = Gtk::Label("Error rate: ");
+  errorPercent = Gtk::Label("Error rate:");
+  heavenPercent = Gtk::Label("Heaven rate:");
 
   path = "../../build/_deps/riichimahjongtiles-src/Regular";
   auto Hand = walls.TakeHand();
@@ -51,13 +53,14 @@ MainWindow::MainWindow()
   add(grid);
   grid.set_column_spacing(10);
   grid.set_row_spacing(10);
-  grid.attach(button,5,1,2);
-  grid.attach(sortButton,7,1);
-  grid.attach(stdformbutton,10,1,2);
-  grid.attach(isStdForm,2,1,3);
-  grid.attach(stopButton,8,1,1);
-  grid.attach(loopButton,9,1,1);
-  grid.attach(errorPercent,12,1,2);
+  grid.attach(button,3,1,2);
+  grid.attach(sortButton,5,1);
+  grid.attach(stdformbutton,8,1,2);
+  grid.attach(isStdForm,0,1,3);
+  grid.attach(stopButton,6,1,1);
+  grid.attach(loopButton,7,1,1);
+  grid.attach(errorPercent,10,1,2);
+  grid.attach(heavenPercent,12,1,2);
   grid.show_all();
 }
 
@@ -72,8 +75,9 @@ void MainWindow::on_button_clicked()
   }
   std::vector<Mahjong::Piece> Hand;
   int i =0;
+  bool notstop = true;
   do{
-    if(i % 1000 == 0){
+    if(i % 1000 == 0 && loopButton.get_active()){
       std::cout << "============== " << i << " ==============" << std::endl;
     }
     i++;
@@ -103,24 +107,68 @@ void MainWindow::on_button_clicked()
       dotsStr = "...";
     }
     Mahjong::Node* root = breakdownHand(Hand);
-    if(root){
+    bool stdform = true;
+    int cnt = 0;
+    bool branched = false;
+    bool newbranch = false;
+    int nn = 0;
+    for(const auto & n : *root){
+      if(newbranch){
+        newbranch = false;
+        stdform = true;
+      }
+      if(n.type == Mahjong::Node::Single || n.type == Mahjong::Node::Error){
+        stdform = false;
+        if(!branched){
+          break;
+        }
+      }
+      if(n.leaves.size() > 1){
+        nn++;
+        if(nn > 5){
+          std::cout << "stopped at:=== " << i << " ==============" << std::endl;
+          notstop = false;
+        }
+        branched = true;
+      }
+      cnt++;
+      if(n.leaves.empty()){
+        if(stdform){
+          break;
+        }
+        newbranch = true;
+      }
+    }
+    if(stdform && cnt > 4){
+      isStdForm.set_text("In Standard Form"+dotsStr);
+      if(!stdformbutton.get_active()){
+        std::cout << "stopped at:=== " << i << " ==============" << std::endl;
+        heavenRate++;
+        isStdForm.set_text("Blessing of Heaven"+dotsStr);
+        notstop = false;
+      }
+    }else {
+      isStdForm.set_text("Not Standard Form"+dotsStr);
+      if(stdformbutton.get_active()){
+        std::cout << "stopped at:=== " << i << " ==============" << std::endl;
+        errorRate++;
+        isStdForm.set_text("Error Case Found"+dotsStr);
+        stopButton.set_active();
+      }
+    }
+    if(!(notstop && loopButton.get_active() && i< 1000000 && !stopButton.get_active())){
       std::ofstream os("hand.gv");
       root->DumpAsDot(os);
       os.close();
-      
-      if(root->leaves.size() > 0 && root->leaves[0]->type != Mahjong::Node::Single && root->leaves[0]->type != Mahjong::Node::Error){
-        isStdForm.set_text("In Standard Form"+dotsStr);
-      }else {
-        isStdForm.set_text("Not Standard Form"+dotsStr);
-      }
-      delete root;
-    }else{
-      errorRate++;
-      isStdForm.set_text("Error Case Found"+dotsStr);
-      stopButton.set_active();
     }
-  }while(loopButton.get_active() && i< 10000000);
-  errorPercent.set_text("Error rate: " + std::to_string((float)errorRate/total));
+    delete root;
+  }while(notstop && loopButton.get_active() && i< 1000000 && !stopButton.get_active());
+  std::stringstream err;
+  err << (double)errorRate/total;
+  errorPercent.set_text("Error rate: " + err.str());
+  std::stringstream heaven;
+  heaven << (double)heavenRate/total;
+  heavenPercent.set_text("Heaven rate: " + heaven.str());
   for(int i = 0; i < 14; i ++){
     int width = 100;
     auto top = Gdk::Pixbuf::create_from_file(getFilePath(Hand[i].toUint8_t()));

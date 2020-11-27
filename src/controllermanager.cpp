@@ -1,4 +1,4 @@
-#include "manager.h"
+#include "controllermanager.h"
 #include <angrydiscardobot.h>  // for AngryDiscardoBot
 #include <bolickbot.h>         // for ThriceBot
 #include <fasttanyao.h>
@@ -7,7 +7,6 @@
 #include <gentlemanbot.h>
 #include <map>                 // for map, map<>::mapped_type
 #include <string>              // for string, operator+
-#include <thread>              // for thread
 #include <vector>              // for vector
 #include "statefunctions.h"    // for StateController
 #include "playercontroller.h"
@@ -19,15 +18,6 @@
 #endif
 
 using namespace Mahjong;
-
-auto Mahjong::StartGame(GameSettings settings, bool async) -> void {
-  if(async){
-    std::thread gameloop(&Mahjong::StateController, settings);
-    gameloop.detach();
-  }else{
-    StateController(settings);
-  }
-}
 
 static std::map<std::string,newControllerInst> availableControllers = {
   {"AngryDiscardoBot",[]() -> PlayerController* {return new AngryDiscardoBot;}},
