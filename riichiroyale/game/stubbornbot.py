@@ -234,16 +234,9 @@ class StubbornBot(MahjongAI, Player):
                 self.decision.type = EventType.Decline
                 return self.decision  # Don't make calls on honors or terminals
 
-            suits = [PieceType.BAMBOO_SUIT, PieceType.CHARACTER_SUIT, PieceType.PIN_SUIT]
-            for suit in suits:
-                if Piece(self.decision_to_act_on.piece).get_piece_num() == 7:
-                    if self.HandContains(suit, 8) and self.HandContains(suit, 9):
-                        self.decision.type = EventType.Decline
-                        return self.decision  # Don't chi if it'll include a 9 (terminal)
-                elif Piece(self.decision_to_act_on.piece).get_piece_num() == 8:
-                    if self.HandContains(suit, 7) and self.HandContains(suit, 9):
-                        self.decision.type = EventType.Decline
-                        return self.decision  # Don't chi if it'll include a 9 (terminal)
+            if Piece(self.decision_to_act_on.piece).get_piece_num() == 7: # Don't chi if it'll include a 9
+                self.decision.type = EventType.Decline
+                return self.decision
             piecesRemoved = 0
             print(self.hand)
             # TODO: Fails on red fives
@@ -253,22 +246,26 @@ class StubbornBot(MahjongAI, Player):
                 piecesRemoved += 1
                 self.hand.remove(self.decision_to_act_on.piece)
                 print("Removed", self.decision_to_act_on.piece)
-            if self.decision_to_act_on.piece-1 in self.hand:
+            if self.decision_to_act_on.piece+1 in self.hand:
                 piecesRemoved += 1
-                self.hand.remove(self.decision_to_act_on.piece - 1)
-                print("Removed", self.decision_to_act_on.piece - 1)
-            if self.decision_to_act_on.piece - 2 in self.hand:
+                self.hand.remove(self.decision_to_act_on.piece + 1)
+                print("Removed", self.decision_to_act_on.piece + 1)
+            if self.decision_to_act_on.piece + 2 in self.hand:
                 piecesRemoved += 1
-                self.hand.remove(self.decision_to_act_on.piece - 2)
-                print("Removed", self.decision_to_act_on.piece - 2)
+                self.hand.remove(self.decision_to_act_on.piece + 2)
+                print("Removed", self.decision_to_act_on.piece + 2)
             print("REMOVED:", piecesRemoved)
             self.decision.piece = self.decision_to_act_on.piece
             return self.decision  # Make the call if all conditions are met
 
 
-        # TODO
         elif self.goal_yaku == "outside":
-            if self.__isHonor(self.decision_to_act_on.piece) or self.__isTerminal(self.decision_to_act_on.piece):
+            # TODO
+            if not (self.__isHonor(self.decision_to_act_on.piece) or self.__isTerminal(self.decision_to_act_on.piece)):
+                self.decision.type = EventType.Decline
+                return self.decision
+
+            else:
                 piecesRemoved = 0
                 if self.decision_to_act_on.piece in self.hand:
                     piecesRemoved += 1
@@ -281,9 +278,6 @@ class StubbornBot(MahjongAI, Player):
                     self.hand.remove(self.decision_to_act_on.piece + 2)
                 print("REMOVED:", piecesRemoved)
                 self.decision.piece = self.decision_to_act_on.piece
-                return self.decision
-            else:
-                self.decision.type = EventType.Decline
                 return self.decision
 
     def DecidePon(self):
