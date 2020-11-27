@@ -1,5 +1,6 @@
 #include "manager.h"
 #include <angrydiscardobot.h>  // for AngryDiscardoBot
+#include <bolickbot.h>         // for ThriceBot
 #include <map>                 // for map, map<>::mapped_type
 #include <string>              // for string, operator+
 #include <thread>              // for thread

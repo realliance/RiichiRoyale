@@ -40,15 +40,15 @@ void BolickBot::assignweights()
     {
       if(j != i)
       {
-        if(hand[i].weight == 2 && discardHas(hand[i].peice) == 2)
+        if(hand[i].weight == 2 && discardHas(hand[i].piece) == 2)
         {
           hand[i].weight = -1;
         }
-        else if(discardHas(hand[i].peice) == 3)
+        else if(discardHas(hand[i].piece) == 3)
         {
           hand[i].weight = -1;
         }
-        else if(hand[i].peice.getSuit() == hand[j].peice.getSuit() && hand[i].peice.getPieceNum() == hand[j].peice.getPieceNum())
+        else if(hand[i].piece.getSuit() == hand[j].piece.getSuit() && hand[i].piece.getPieceNum() == hand[j].piece.getPieceNum())
         {
           hand[i].weight += 1;
           hand[j].weight += 1;
@@ -100,7 +100,7 @@ auto BolickBot::RetrieveDecision() -> Mahjong::Event
 {
   if(lastEvent.type == Mahjong::Event::Discard)
   {
-    lastEvent.peice = popDiscard();
+    lastEvent.piece = popDiscard().toUint8_t();
   }
   Mahjong::Event e = lastEvent;
   lastEvent.type = Mahjong::Event::Discard; // lowest """priority""" event type
@@ -117,8 +117,8 @@ Mahjong::Piece BolickBot::popDiscard()
       indexOfLowest = i;
     }
   }
-  Mahjong::Piece p = hand[indexOfLowest].peice;
-  hand.erase(hand.begin+indexOfLowest);
+  Mahjong::Piece p = hand[indexOfLowest].piece;
+  hand.erase(hand.begin()+indexOfLowest);
   discarded.push_back(p);
   return p;
 }
