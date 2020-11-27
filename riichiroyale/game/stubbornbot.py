@@ -242,10 +242,6 @@ class StubbornBot(MahjongAI, Player):
             # TODO: Fails on red fives
             # Remove pieces from hand.
             temp = Piece(self.decision_to_act_on.piece)
-            if self.decision_to_act_on.piece in self.hand:
-                piecesRemoved += 1
-                self.hand.remove(self.decision_to_act_on.piece)
-                print("Removed", self.decision_to_act_on.piece)
             if self.decision_to_act_on.piece+1 in self.hand:
                 piecesRemoved += 1
                 self.hand.remove(self.decision_to_act_on.piece + 1)
@@ -254,7 +250,7 @@ class StubbornBot(MahjongAI, Player):
                 piecesRemoved += 1
                 self.hand.remove(self.decision_to_act_on.piece + 2)
                 print("Removed", self.decision_to_act_on.piece + 2)
-            print("REMOVED:", piecesRemoved)
+            print("REMOVED:", piecesRemoved)  # Should always show 2
             self.decision.piece = self.decision_to_act_on.piece
             return self.decision  # Make the call if all conditions are met
 
@@ -267,16 +263,13 @@ class StubbornBot(MahjongAI, Player):
 
             else:
                 piecesRemoved = 0
-                if self.decision_to_act_on.piece in self.hand:
-                    piecesRemoved += 1
-                    self.hand.remove(self.decision_to_act_on.piece)  # Remove pieces from hand.
-                if self.decision_to_act_on.piece + 1 in self.hand:
+                if self.decision_to_act_on.piece + 1 in self.hand: #  Remove pieces from hand.
                     piecesRemoved += 1
                     self.hand.remove(self.decision_to_act_on.piece + 1)
                 if self.decision_to_act_on.piece + 2 in self.hand:
                     piecesRemoved += 1
                     self.hand.remove(self.decision_to_act_on.piece + 2)
-                print("REMOVED:", piecesRemoved)
+                print("REMOVED:", piecesRemoved)  # Should always show 2
                 self.decision.piece = self.decision_to_act_on.piece
                 return self.decision
 
