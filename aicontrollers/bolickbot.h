@@ -21,13 +21,13 @@ class BolickBot : public Mahjong::PlayerController
 	  auto ReceiveEvent(Mahjong::Event e) -> void;
 	  auto RetrieveDecision() -> Mahjong::Event;
 	private:
-    assignweights() -> void;
+    void assignweights(void);
+    int discardHas(Mahjong::Piece);
+    Mahjong::Piece popDiscard(void);
 	  std::vector<handTile> hand;
 	  std::vector<Mahjong::Piece> discarded;
 	  Mahjong::Event lastEvent;
 	  Mahjong::Wind swind;
 	  Mahjong::Wind pwind;
     int pid;
-	  
-	  
 };

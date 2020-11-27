@@ -22,7 +22,7 @@ auto BolickBot::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Wind s, M
   {
     handTile h;
     h.piece = m;
-    h.weight = 0;
+    h.weight = 1;
     hand.push_back(h);
   }
   assignweights();
@@ -32,47 +32,67 @@ auto BolickBot::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Wind s, M
 }
 
 
-
-
-
 void BolickBot::assignweights()
 {
-  
-  
-  
-  
-  
+  for(int i =0; i < hand.size();i++)
+  {
+    for(int j = i; j < hand.size();j++)
+    {
+      if(j != i)
+      {
+        if(hand[i].weight == 2 && discardHas(hand[i].peice) == 2)
+        {
+          hand[i].weight = -1;
+        }
+        else if(discardHas(hand[i].peice) == 3)
+        {
+          hand[i].weight = -1;
+        }
+        else if(hand[i].peice.getSuit() == hand[j].peice.getSuit() && hand[i].peice.getPieceNum() == hand[j].peice.getPieceNum())
+        {
+          hand[i].weight += 1;
+          hand[j].weight += 1;
+        }
+      }
+    }
+  }
 }
 
 
-
+int BolickBot::discardHas(Mahjong::Piece check)
+{
+  int has = 0;
+  for(Mahjong::Piece p : discarded)
+  {
+    if(check.getSuit() == p.getSuit() && check.getPieceNum() == p.getPieceNum())
+    {
+      has++;
+    }
+  }
+  return has;
+}
 
 
 auto BolickBot::ReceiveEvent(Mahjong::Event e) -> void
 {
   if(e.decision)
   {
-    lastEvent = e;
-    
-    
-    
-    
-    
+    if(e.type <= lastEvent.type)
+    {
+      lastEvent = e;
+    }
   }
-  else if(e.type == Mahjong::Event::Discard && e.player == pid)
+  if(e.type == Mahjong::Event::Discard && e.player == pid)
   {
-    
-    
-    hand.push_back(e.piece);
+    handTile h;
+    h.piece = e.piece;
+    h.weight = 1;
+    hand.push_back(h);
     assignweights();
   }
   else if(e.type == Mahjong::Event::Discard)
   {
     discarded.push_back(e.piece);
-  }
-  else if(e.type == )
-  {
-      
   }
 }
 
@@ -80,20 +100,28 @@ auto BolickBot::RetrieveDecision() -> Mahjong::Event
 {
   if(lastEvent.type == Mahjong::Event::Discard)
   {
-    
+    lastEvent.peice = popDiscard();
   }
-  
   Mahjong::Event e = lastEvent;
-  
-  
-  
-  
-  discarded.push_back(e.piece);
   lastEvent.type = Mahjong::Event::Discard; // lowest """priority""" event type
   return e;
 }
 
-
+Mahjong::Piece BolickBot::popDiscard()
+{
+  int indexOfLowest = 0;
+  for (int i = 0; i < hand.size();i++)
+  {
+    if(hand[i].weight < hand[indexOfLowest].weight)
+    {
+      indexOfLowest = i;
+    }
+  }
+  Mahjong::Piece p = hand[indexOfLowest].peice;
+  hand.erase(hand.begin+indexOfLowest);
+  discarded.push_back(p);
+  return p;
+}
 
 
 
