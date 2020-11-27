@@ -26,6 +26,7 @@ auto Mahjong::StartGame(GameSettings settings, bool async) -> void {
 
 static std::map<std::string,newControllerInst> availableControllers = {
   {"AngryDiscardoBot",[]() -> PlayerController* {return new AngryDiscardoBot;}},
+  {"ThriceBot",[]() -> PlayerController* {return new BolickBot;}},
 };
 
 auto Mahjong::GetAvailableControllers() -> std::vector<std::string> {

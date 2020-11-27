@@ -7,7 +7,7 @@
 
 auto BolickBot::Name() -> std::string
 {
-  return "BolickBot";
+  return "ThriceBot";
 }
 
 auto BolickBot::GameStart(int id) -> void 
