@@ -23,3 +23,10 @@ class Player:
     def full_hand(self):
         meld_tiles = len(self.melded_hand) * 3
         return self.hand + meld_tiles
+
+    def reset(self):
+        self.discard_pile = []
+        self.melded_hand = []
+        self.hand = []
+        self.riichi_declared = False
+        self.hand_open = False

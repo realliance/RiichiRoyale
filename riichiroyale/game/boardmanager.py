@@ -11,6 +11,7 @@ class BoardManager:
         self.last_event = None
         self.last_decision_event = None
         self.waiting_on_decision = False
+        self._point_diff_count = 0
         self.round_should_end = False
         self.game_should_end = False
 
@@ -338,7 +339,7 @@ def on_decline_event(
 
 
 def on_dora_event(
-    _game_manager,
+    game_manager,
     _is_ai,
     _is_decision,
     event,
@@ -349,6 +350,7 @@ def on_dora_event(
 ):
     match.current_board.deadwall[match.current_board.dora_revealed * 2] = event.piece
     match.current_board.dora_revealed += 1
+    game_manager.board_manager._point_diff_count = 0
 
 
 def on_point_diff_event(
@@ -362,7 +364,9 @@ def on_point_diff_event(
     _extra_player,
 ):
     match.delta_scores[event.player] += event.piece.get_raw_value() * 1000
-    game_manager.board_manager.round_should_end = True
+    game_manager.board_manager._point_diff_count += 1
+    if game_manager.board_manager._point_diff_count >= 4:
+        game_manager.board_manager.round_should_end = True
 
 
 def on_end_event(

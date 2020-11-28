@@ -180,7 +180,6 @@ class BoardRender:
         )
 
     def update(self, callback_handler=None):
-        # Notify elements to check state changes
         for element in self.elements:
             element.update(callback_handler=callback_handler)
 

@@ -65,6 +65,18 @@ class Match(Thread):
         while self.match_alive:
             self.on_update()
 
+    def start_next_round(self):
+        self.scores = list(map(lambda x: x[0] + x[1], zip(self.scores, self.delta_scores)))
+        self.delta_scores = [0] * 4
+        self.player_manager.reset()
+        self.player_manager.next_round()
+        self.new_board()
+        for i in range(4):
+            if i != self.player_manager.player_id:
+                self.players[i].reset()
+                self.players[i].hand = [Piece(PieceType.ERROR)] * 13
+        self.game_manager.board_manager.round_should_end = False
+
     def on_update(self):
         if not self.match_ready and self.player_manager.player_id is None:
             return
@@ -72,18 +84,14 @@ class Match(Thread):
             print("Player ID Found, bootstrapping...")
             self.bootstrap_match()
 
-        if self.game_manager.board_manager.round_should_end:
-            sleep(5)
-            self.game_manager.board_manager.round_should_end = False
-            self.scores = list(map(lambda x: x[0] + x[1], zip(self.scores, self.delta_scores)))
-            self.delta_scores = [0] * 4
-            self.player_manager.next_round()
-            # Wait for last point diff and then sleep
-
         with self.process_lock:
             self.process_lock.wait_for(lambda: self.player_manager.GetQueueLength() > 0)
             with self.match_lock:
                 process_event_queue(self.game_manager, self)
+        
+        if self.game_manager.board_manager.round_should_end:
+            sleep(7)
+            self.start_next_round()
 
 
 

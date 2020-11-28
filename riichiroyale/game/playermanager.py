@@ -1,5 +1,5 @@
 from threading import Lock
-from libmahjong import MahjongAI, EventType, EngineEvent
+from libmahjong import MahjongAI, EventType, EngineEvent, PieceType
 from .player import Player
 from .gameevent import Event
 
@@ -19,6 +19,8 @@ class PlayerManager(MahjongAI, Player):
       self.player_id = player_id
 
   def RoundStart(self, hand, seatWind, prevalentWind):
+    print('====ROUND START CALLED====')
+    print(list(map(lambda x: PieceType(x.get_raw_value()), hand)))
     with self.lock:
       if len(self.hand) == 0:
         self.hand = hand
