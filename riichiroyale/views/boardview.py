@@ -117,6 +117,7 @@ class BoardView(MenuView):
             self.play_area,
             self.match,
             self.match_pov,
+            self.game_manager.board_manager
         )
         self.board_render.update()
         self.board_render.force_redraw()
@@ -451,7 +452,7 @@ class BoardView(MenuView):
             "tsumo": tsumo_button,
             "skip": skip_button,
             "text": text_box,
-            "advance_text": text_next,
+            "advance_text": text_next
         }
 
         def process_ui_event(event):

@@ -1,7 +1,7 @@
 import pygame
 import pygame_gui
 from libmahjong import start_game, EventType, EngineEvent, PieceType
-from riichiroyale.game import Player, Match, process_event_queue, DialogManager, loadStory
+from riichiroyale.game import Player, Match, process_event_queue, DialogManager, loadStory, get_object
 from riichiroyale.utils import load_image_resource
 from .game import GameView
 
@@ -54,6 +54,10 @@ class StoryModeGame(GameView):
             textbox_hook=lambda uiM, bM, dE, t: new_dialogue(self.match_dict, uiM, bM, dE, t)
         )
 
+    def _end_round_dialog(self):
+        # Skip for Own Round Handling
+        pass
+
     def load_match(self, match_dict):
         self.ai_list = ["Player"] + match_dict["ais"]
         self.match_dict = match_dict
@@ -81,7 +85,6 @@ class StoryModeGame(GameView):
         super().on_round_start()
         if 'intro' in self.match_dict:
             self.play_oneshot_dialogue('intro')
-
 
     def on_tile_pressed(self, owner, tile_hand_index):
         if owner.my_turn and not self.lock_user_input:
@@ -159,30 +162,6 @@ class StoryModeGame(GameView):
             self.game_manager.sound_manager.play_music("lobby")
         self.lock_user_input = False
 
-    def _end_round_dialog(self):
-        self.ai_game_active = False
-        self.game_manager.board_manager.round_should_end = False
-        self.dialogue_manager.register_dialog_event("round_end")
-        self.dialogue_manager.append_dialog_event(
-            "round_end", ["Round Complete! Now for the Results..."]
-        )
-        i = 0
-        for score in self.match.scores:
-            self.dialogue_manager.append_dialog_event(
-                "round_end", ["Player {0} was awarded {1} points!".format(i + 1, score)]
-            )
-            i += 1
-        self.dialogue_manager.append_dialog_event(
-            "round_end",
-            [
-                "Thank you for playing a demo match of Riichi Royale! Press Next to return to the main menu."
-            ],
-        )
-        self.dialogue_manager.start_event("round_end")
-        self.player.calls_avaliable = []
-        for button in self.buttons:
-            self.buttons[button].hide()
-
     def process_possible_dialogue_events(self):
         if len(self.watched_ai_event_log) > 0:
             queued_dialogue_events = list(map(lambda event: EVENT_TYPE_TO_DIALOGUE[event.type], self.watched_ai_event_log))
@@ -194,17 +173,20 @@ class StoryModeGame(GameView):
 
     def update(self, time_delta):
         self.process_possible_dialogue_events()
-        if self.game_manager.board_manager.round_should_end:
-            self._end_round_dialog()
-
         super().update(time_delta)
 
 def new_dialogue(match_dict, gui_manager, button_map, element_list, text):
+    icon_path = None
+    for entry in get_object('boticons')['bot']:
+        if entry['ai'] == match_dict['ais'][1]:
+            icon_path = entry['icon']
+            break
+
     icon_size = (125, 125)
     icon_rect = pygame.Rect(0, 0, icon_size[0], icon_size[1])
     icon_rect.bottomleft = (20, -270)
     logo_surface = pygame.Surface(icon_size, pygame.SRCALPHA)
-    load_image_resource(match_dict['icon'], logo_surface, size=icon_size)
+    load_image_resource(icon_path, logo_surface, size=icon_size)
     icon = pygame_gui.elements.ui_image.UIImage(
         relative_rect=icon_rect,
         image_surface=logo_surface,

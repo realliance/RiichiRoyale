@@ -361,7 +361,7 @@ def on_point_diff_event(
     _pov_player,
     _extra_player,
 ):
-    match.scores[event.player] += event.piece.get_raw_value() * 1000
+    match.delta_scores[event.player] += event.piece.get_raw_value() * 1000
     game_manager.board_manager.round_should_end = True
 
 

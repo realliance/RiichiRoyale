@@ -20,10 +20,22 @@ class PlayerManager(MahjongAI, Player):
 
   def RoundStart(self, hand, seatWind, prevalentWind):
     with self.lock:
-      self.hand = hand
+      if len(self.hand) == 0:
+        self.hand = hand
+        self.hand.sort()
+        self.seat_wind = seatWind
+        self.prevalent_wind = prevalentWind
+      else:
+        self.next_round_hand = hand
+        self.next_round_seat = seatWind
+        self.next_round_prevalent_wind = prevalentWind
+
+  def next_round(self):
+    with self.lock:
+      self.hand = self.next_round_hand
       self.hand.sort()
-      self.seat_wind = seatWind
-      self.prevalent_wind = prevalentWind
+      self.seat_wind = self.next_round_seat
+      self.prevalent_wind = self.next_round_prevalent_wind
 
   def ReceiveEvent(self, event):
     should_notify = True

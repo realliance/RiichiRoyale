@@ -1,11 +1,10 @@
-version = 10
+version = 11
 
 [[matches]]
 stage = 0
 completed = false
 opponent = 'Rookie Johnson'
 opponent_index = 2
-icon = 'koala.png'
 ais = ['AngryDiscardoBot', 'AlphabeticalBot', 'AngryDiscardoBot']
 intro=[
     'So you wanna take on the champs of Riichi Mahjong?',
@@ -22,7 +21,6 @@ stage = 1
 completed = false
 opponent = '"Better than Average" Joe'
 opponent_index = 2
-icon = 'polar-bear.png'
 top_line_title = '"Better than Average"'
 bottom_line_title = "Joe"
 ais = ['AngryDiscardoBot', 'StubbornBot', 'AngryDiscardoBot']
@@ -50,7 +48,6 @@ stage = 2
 completed = false
 opponent = 'The Gentleman'
 opponent_index = 2
-icon = 'spy.png'
 ais = ['AngryDiscardoBot', 'GentlemanBot', 'AngryDiscardoBot']
 intro=[
     "...",
@@ -75,7 +72,6 @@ stage = 3
 completed = false
 opponent = 'Speeding Sam'
 opponent_index = 2
-icon = 'turtle.png'
 ais = ['GentlemanBot', 'Fast Tanyao', 'AngryDiscardoBot']
 intro=[
     'Hey!',
@@ -98,7 +94,6 @@ stage = 4
 completed = false
 opponent = 'Champion Junie'
 opponent_index = 2
-icon = 'fox-head.png'
 ais = ['AngryDiscardoBot', 'ThriceBot', 'AngryDiscardoBot']
 intro=[
     'Welcome, challenger.',

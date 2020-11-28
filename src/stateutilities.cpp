@@ -98,6 +98,7 @@ auto GetValidDecisionOrThrow(const GameState& state, int player, bool inHand) ->
   int i = 0;
   while(!valid){
     if(i > 100){
+      std::cerr << "ERROR: Player Controller sent invalid event too many times." << std::endl;
       throw 0xBAD22222;
     }
     i++;

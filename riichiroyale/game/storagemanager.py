@@ -2,6 +2,19 @@ import os
 import sys
 import toml
 
+def ensure_storyfile(name):
+    if not does_object_exist(name):
+        with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'storyfiles', '{}.toml'.format(name)), 'r') as file:
+            save_object(name, toml.loads(file.read()))
+
+def perform_version_check(name):
+    data = dict()
+    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'storyfiles', '{}.toml'.format(name)), 'r') as file:
+        data = toml.loads(file.read())
+    stored_matches = get_object(name)
+    if data['version'] > stored_matches['version']:
+        save_object(name, data)
+
 def get_object(object_name):
     _ensure_base_storage_dir_created()
     with open(_name_to_path(object_name), 'r') as file:
@@ -17,18 +30,14 @@ def does_object_exist(object_name):
 
 def bootstrap_base_storage():
     _ensure_base_storage_dir_created()
-    if not does_object_exist('matches'):
-        with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'storyfiles', 'matches.toml'), 'r') as file:
-            save_object('matches', toml.loads(file.read()))
+    ensure_storyfile('matches')
+    ensure_storyfile('boticons')
+    
     perform_verion_checking()
 
 def perform_verion_checking():
-    current_matches = dict()
-    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'storyfiles', 'matches.toml'), 'r') as file:
-        current_matches = toml.loads(file.read())
-    stored_matches = get_object('matches')
-    if current_matches['version'] > stored_matches['version']:
-        save_object('matches', current_matches)
+    perform_version_check('matches')
+    perform_version_check('boticons')
 
 
 def _ensure_base_storage_dir_created():

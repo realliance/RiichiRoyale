@@ -8,8 +8,8 @@ from .elements import (
     render_vertical_discard_pile,
     render_dora_pile,
     render_hidden_hand,
+    render_score_screen
 )
-
 
 class StatefulBoardElement:
     def __init__(self, default_value, get_value, render):
@@ -40,7 +40,7 @@ def calculate_against_player_pov(player_pov, offset):
 
 
 class BoardRender:
-    def __init__(self, small_dictionary, dictionary, surface, match, player_pov):
+    def __init__(self, small_dictionary, dictionary, surface, match, player_pov, board_manager):
         self.match = match
         self.surface = surface
         self.small_dictionary = small_dictionary
@@ -48,6 +48,7 @@ class BoardRender:
         self.player_pov = player_pov
         self.player_bound_elements = []
         self.elements = []
+        self.board_manager = board_manager
 
         # Player Hand
         self.elements.append(
@@ -168,6 +169,13 @@ class BoardRender:
         self.elements.append(
             StatefulBoardElement(
                 0, lambda: self.match.current_board.dora_revealed, lambda: render_dora_pile(self)
+            )
+        )
+
+        # End Screen
+        self.elements.append(
+            StatefulBoardElement(
+                False, lambda: board_manager.round_should_end, lambda: render_score_screen(self)
             )
         )
 

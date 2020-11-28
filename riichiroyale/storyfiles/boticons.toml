@@ -1,0 +1,36 @@
+version = 2
+
+[[bot]]
+name="Rookie Johnson"
+ai="AlphabeticalBot"
+icon="koala.png"
+
+[[bot]]
+name="BtA Joe"
+ai="StubbornBot"
+icon="polar-bear.png"
+
+[[bot]]
+name="The Gentleman"
+ai="GentlemanBot"
+icon="spy.png"
+
+[[bot]]
+name="Speeding Sam"
+ai="Fast Tanyao"
+icon="turtle.png"
+
+[[bot]]
+name="Champion Junie"
+ai="ThriceBot"
+icon="fox-head.png"
+
+[[bot]]
+name="The Opportunist"
+ai="AngryDiscardoBot"
+icon="person.png"
+
+[[bot]]
+name="You"
+ai="Player"
+icon="person.png"
