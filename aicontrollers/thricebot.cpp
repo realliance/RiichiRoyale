@@ -5,15 +5,18 @@
 #include <iostream>     // for endl, ostream, basic_ostream<>::__ostream_type
 #include <memory>       // for allocator_traits<>::value_type
 
+
 auto ThriceBot::Name() -> std::string
 {
   return "ThriceBot";
 }
 
+
 auto ThriceBot::GameStart(int id) -> void 
 {
   pid = id;
 }
+
 
 auto ThriceBot::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Wind s, Mahjong::Wind p) -> void 
 {
@@ -23,14 +26,14 @@ auto ThriceBot::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Wind s, M
     h.piece = m;
     if(m.isHonor())
     {
-		h.weight = 1.5;
-	}
-	else
-	{
-		h.weight = 1;
+      h.weight = 1.5;
     }
-    hand.push_back(h);
-  }
+    else
+    {
+      h.weight = 1;
+    }
+      hand.push_back(h);
+    }
   assignweights();
   lastEvent.type = Mahjong::Event::Discard;
   swind = s;
@@ -65,6 +68,45 @@ void ThriceBot::assignweights()
 }
 
 
+handTile ThriceBot::assignTileWeight(handTile h1)
+{
+  handTile h;
+  h.piece = h1.piece;
+  h.weight = h1.weight;
+  for(int i =0; i < hand.size();i++)
+  {
+    if(hand[i].piece.getSuit() == h.piece.getSuit() && hand[i].piece.getPieceNum() == h.piece.getPieceNum())
+    {
+      hand[i].weight += 1;
+      h.weight += 1;
+    }
+  }
+  return h;
+}
+
+
+void ThriceBot::checkDiscard()
+{
+	for(int i =0; i < hand.size();i++)
+  {
+		for(int j = i; j < hand.size();j++)
+		{
+		  if(j != i)
+		  {
+        if((int)hand[i].weight == 2 && discardHas(hand[i].piece) == 2)
+        {
+          hand[i].weight = -1;
+        }
+        else if(discardHas(hand[i].piece) == 3)
+        {
+          hand[i].weight = -1;
+        }
+		  }
+		}
+	}
+}
+
+
 int ThriceBot::discardHas(Mahjong::Piece check)
 {
   int has = 0;
@@ -94,14 +136,15 @@ auto ThriceBot::ReceiveEvent(Mahjong::Event e) -> void
     h.piece = e.piece;
     if(h.piece.isHonor())
     {
-		h.weight = 1.5;
-	}
-	else
-	{
-		h.weight = 1;
+      h.weight = 1.5;
     }
+    else
+    {
+      h.weight = 1;
+    }
+    h = assignTileWeight(h);
     hand.push_back(h);
-    assignweights();
+    checkDiscard();
   }
   else if(e.type == Mahjong::Event::Discard)
   {
@@ -115,10 +158,55 @@ auto ThriceBot::RetrieveDecision() -> Mahjong::Event
   {
     lastEvent.piece = popDiscard().toUint8_t();
   }
+  else if(lastEvent.type == Mahjong::Event::Pon)
+  {
+    Mahjong::Piece p = lastEvent.piece;
+    if(!checkTile(p))
+    {
+      lastEvent.type = Mahjong::Event::Decline;
+    }
+  }
+  else if(lastEvent.type == Mahjong::Event::Chi)
+  {
+    Mahjong::Piece p = lastEvent.piece;
+    if(!checkTile(p))
+    {
+      lastEvent.type = Mahjong::Event::Decline;
+    }
+  }
+  else if(lastEvent.type == Mahjong::Event::Riichi)
+  {
+    Mahjong::Piece p = lastEvent.piece;
+    if(discardHas(p) > 2)
+    {
+      lastEvent.type = Mahjong::Event::Decline;
+    }
+  }
   Mahjong::Event e = lastEvent;
   lastEvent.type = Mahjong::Event::Discard; // lowest """priority""" event type
   return e;
 }
+
+
+bool ThriceBot::checkTile(Mahjong::Piece p)
+{
+  int j = 0;
+  for(int i =0; i < hand.size();i++)
+  {
+    if(hand[i].piece.getSuit() == p.getSuit() && hand[i].piece.getPieceNum() == p.getPieceNum())
+    {
+      j++;
+    }
+  }
+  if(j == 2 || j ==3)
+  {
+    return true;
+  }
+  return false;
+}
+
+
+
 
 Mahjong::Piece ThriceBot::popDiscard()
 {

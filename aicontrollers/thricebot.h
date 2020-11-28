@@ -25,6 +25,9 @@ class ThriceBot : public Mahjong::PlayerController
 	  void assignweights(void);
 	  int discardHas(Mahjong::Piece);
 	  Mahjong::Piece popDiscard(void);
+	  handTile assignTileWeight(handTile);
+	  void checkDiscard(void);
+	  bool checkTile(Mahjong::Piece);
 	  //instance vars
 	  std::vector<handTile> hand;
 	  std::vector<Mahjong::Piece> discarded;
