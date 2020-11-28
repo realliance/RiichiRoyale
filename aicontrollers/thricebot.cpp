@@ -152,6 +152,7 @@ auto ThriceBot::ReceiveEvent(Mahjong::Event e) -> void
   }
 }
 
+
 auto ThriceBot::RetrieveDecision() -> Mahjong::Event
 {
   if(lastEvent.type == Mahjong::Event::Discard)
@@ -177,7 +178,7 @@ auto ThriceBot::RetrieveDecision() -> Mahjong::Event
   else if(lastEvent.type == Mahjong::Event::Riichi)
   {
     Mahjong::Piece p = lastEvent.piece;
-    if(discardHas(p) > 2)
+    if(discardHas(p) == 3)
     {
       lastEvent.type = Mahjong::Event::Decline;
     }
@@ -204,8 +205,6 @@ bool ThriceBot::checkTile(Mahjong::Piece p)
   }
   return false;
 }
-
-
 
 
 Mahjong::Piece ThriceBot::popDiscard()
