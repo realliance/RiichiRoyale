@@ -92,7 +92,7 @@ auto ThriceBot::ReceiveEvent(Mahjong::Event e) -> void
   {
     handTile h;
     h.piece = e.piece;
-    if(e.piece.isHonor())
+    if(h.piece.isHonor())
     {
 		h.weight = 1.5;
 	}
