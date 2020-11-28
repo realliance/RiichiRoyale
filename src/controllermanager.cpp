@@ -1,6 +1,6 @@
 #include "controllermanager.h"
 #include <angrydiscardobot.h>  // for AngryDiscardoBot
-#include <bolickbot.h>         // for ThriceBot
+#include <thricebot.h>         // for ThriceBot
 #include <fasttanyao.h>
 #include <alphabeticalbot.h>   // for AlphabeticalBot
 #include <totobot.h>
@@ -25,7 +25,7 @@ static std::map<std::string,newControllerInst> availableControllers = {
   {"TotoBot",[]() -> PlayerController* {return new TotoBot;}},
   {"GentlemanBot",[]() -> PlayerController* {return new GentlemanBot;}},
   {"AlphabeticalBot",[]() -> PlayerController* {return new AlphabeticalBot;}},
-  {"ThriceBot",[]() -> PlayerController* {return new BolickBot;}},
+  {"ThriceBot",[]() -> PlayerController* {return new ThriceBot;}},
 };
 
 auto Mahjong::GetAvailableControllers() -> std::vector<std::string> {

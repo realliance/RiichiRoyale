@@ -5,14 +5,14 @@
 #include <playercontroller.h>
 #include <piecetype.h>
 #include <winds.h>
+
 struct handTile
 {
   Mahjong::Piece piece;
   float weight;
 };
 
-
-class BolickBot : public Mahjong::PlayerController
+class ThriceBot : public Mahjong::PlayerController
 {
 	public:
 	  auto Name() -> std::string;
@@ -21,9 +21,11 @@ class BolickBot : public Mahjong::PlayerController
 	  auto ReceiveEvent(Mahjong::Event e) -> void;
 	  auto RetrieveDecision() -> Mahjong::Event;
 	private:
+	  //private functions
 	  void assignweights(void);
 	  int discardHas(Mahjong::Piece);
 	  Mahjong::Piece popDiscard(void);
+	  //instance vars
 	  std::vector<handTile> hand;
 	  std::vector<Mahjong::Piece> discarded;
 	  Mahjong::Event lastEvent;

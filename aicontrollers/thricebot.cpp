@@ -1,21 +1,21 @@
-#include "bolickbot.h"
+#include "thricebot.h"
 #include "event.h"      // for Event, Decline
 #include "piecetype.h"  // for Piece
 #include "winds.h"      // for Wind
 #include <iostream>     // for endl, ostream, basic_ostream<>::__ostream_type
 #include <memory>       // for allocator_traits<>::value_type
 
-auto BolickBot::Name() -> std::string
+auto ThriceBot::Name() -> std::string
 {
   return "ThriceBot";
 }
 
-auto BolickBot::GameStart(int id) -> void 
+auto ThriceBot::GameStart(int id) -> void 
 {
   pid = id;
 }
 
-auto BolickBot::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Wind s, Mahjong::Wind p) -> void 
+auto ThriceBot::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Wind s, Mahjong::Wind p) -> void 
 {
   for(Mahjong::Piece m : _hand)
   {
@@ -38,7 +38,7 @@ auto BolickBot::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Wind s, M
 }
 
 
-void BolickBot::assignweights()
+void ThriceBot::assignweights()
 {
   for(int i =0; i < hand.size();i++)
   {
@@ -65,7 +65,7 @@ void BolickBot::assignweights()
 }
 
 
-int BolickBot::discardHas(Mahjong::Piece check)
+int ThriceBot::discardHas(Mahjong::Piece check)
 {
   int has = 0;
   for(Mahjong::Piece p : discarded)
@@ -79,7 +79,7 @@ int BolickBot::discardHas(Mahjong::Piece check)
 }
 
 
-auto BolickBot::ReceiveEvent(Mahjong::Event e) -> void
+auto ThriceBot::ReceiveEvent(Mahjong::Event e) -> void
 {
   if(e.decision)
   {
@@ -109,7 +109,7 @@ auto BolickBot::ReceiveEvent(Mahjong::Event e) -> void
   }
 }
 
-auto BolickBot::RetrieveDecision() -> Mahjong::Event
+auto ThriceBot::RetrieveDecision() -> Mahjong::Event
 {
   if(lastEvent.type == Mahjong::Event::Discard)
   {
@@ -120,7 +120,7 @@ auto BolickBot::RetrieveDecision() -> Mahjong::Event
   return e;
 }
 
-Mahjong::Piece BolickBot::popDiscard()
+Mahjong::Piece ThriceBot::popDiscard()
 {
   int indexOfLowest = 0;
   for (int i = 0; i < hand.size();i++)
