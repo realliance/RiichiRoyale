@@ -18,6 +18,7 @@ namespace Mahjong {
     int counters = 0;
     int lastCall = -1;
     int lastCaller = -1;
+    bool concealedKan = false;
     int seed = 0;
     Piece pendingPiece;
     auto (*nextState)(struct GameState&) -> struct GameState&;

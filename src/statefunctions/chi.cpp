@@ -45,6 +45,7 @@ auto Mahjong::Chi(GameState& state) -> GameState& {
   state.hands[state.lastCaller].live.push_back(state.pendingPiece);
   state.hands[state.lastCaller].sort();
   state.lastCall = state.turnNum;
+  state.concealedKan = false;
   state.turnNum++;
 
   if(RemovePieces(state,state.lastCaller,chiStart,1) != 1 || RemovePieces(state,state.lastCaller,chiStart+1,1) != 1 || RemovePieces(state,state.lastCaller,chiStart+2,1) != 1){

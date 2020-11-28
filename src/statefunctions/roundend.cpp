@@ -10,6 +10,7 @@ auto Mahjong::RoundEnd(GameState& state) -> GameState& {
   state.currentPlayer = -1;
   state.turnNum = -1;
   state.lastCall = -1;
+  state.concealedKan = false;
   state.lastCaller = -1;
   state.pendingPiece = Piece::ERROR;
   state.hasRonned = { false, false, false, false };

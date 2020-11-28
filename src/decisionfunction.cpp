@@ -8,6 +8,7 @@
 #include "piecetype.h"
 #include "stateutilities.h"
 #include "hands.h"
+#include "analysis.h"
 
 
 using namespace Mahjong;
@@ -16,13 +17,19 @@ auto Mahjong::CanRon(const GameState& state, int player) -> bool{ //TODO: I real
   GameState& tmpState = const_cast<GameState&>(state);
   tmpState.hands[player].live.push_back(state.pendingPiece);
   tmpState.hands[player].sort();
-  // if(state.currentState == AfterConcealedKanDiscard){
-  //   if(isThirteenOrphans(state,player)){
-  //     return true;
-  //   }else{
-  //     return false;
-  //   }
-  // }
+  if(state.concealedKan){
+    if(isThirteenOrphans(state,player)){
+      tmpState.hands[player].live.erase(
+        std::find(state.hands[player].live.begin(),state.hands[player].live.end(),state.pendingPiece)
+      );
+      return true;
+    }else{
+      tmpState.hands[player].live.erase(
+        std::find(state.hands[player].live.begin(),state.hands[player].live.end(),state.pendingPiece)
+      );
+      return false;
+    }
+  }
   bool canRon = isComplete(state,player);
   tmpState.hands[player].live.erase(
     std::find(state.hands[player].live.begin(),state.hands[player].live.end(),state.pendingPiece)
@@ -64,8 +71,7 @@ auto Mahjong::CanChi(const GameState& state, int player) -> bool{
 }
 
 auto Mahjong::CanTsumo(const GameState& state) -> bool{
-  bool canTsumo = isComplete(state,state.currentPlayer);
-  return canTsumo;
+  return isComplete(state,state.currentPlayer);
 }
 
 auto Mahjong::CanConvertedKan(const GameState& state) -> bool{
@@ -82,5 +88,18 @@ auto Mahjong::CanConcealedKan(const GameState& state) -> bool{
 }
 
 auto Mahjong::CanRiichi(const GameState& state) -> bool{
-  return !state.hands[state.currentPlayer].riichi && isInAValidFormat(state,state.currentPlayer) == Tenpai ? true : false;
+  if(state.hands[state.currentPlayer].riichi){
+    return false;
+  }
+  if(state.hands[state.currentPlayer].open){
+    return false;
+  }
+  const Node* root = breakdownHand(state.hands[state.currentPlayer].live);
+  for(const auto& branch : root->AsBranchVectors()){
+    if(!isInTenpai(state.hands[state.currentPlayer].live).empty()){
+      delete root;
+      return true;
+    }
+  }
+  return false;
 }
