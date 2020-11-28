@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "gamestate.h"
-#include "manager.h"
+#include "controllermanager.h"
 #include "piecetype.h"
 #include "stateutilities.h"
 
