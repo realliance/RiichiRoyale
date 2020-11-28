@@ -57,13 +57,17 @@ namespace Mahjong {
       using iterator_category = std::forward_iterator_tag;
     };
     static auto TypeToStr(uint8_t nodetype) -> std::string;
-    auto DumpAsTGF(std::ostream& os) -> std::ostream&;
-    auto DumpAsDot(std::ostream& os) -> std::ostream&;
-    auto AsBranchVectors() -> std::vector<std::vector<const Node*>>;
+    auto DumpAsTGF(std::ostream& os) const -> std::ostream&;
+    auto DumpAsDot(std::ostream& os) const -> std::ostream&;
+    auto AsBranchVectors() const -> std::vector<std::vector<const Node*>>;
+    auto IsComplete() const -> bool;
     auto begin() const -> const_iterator;
     auto end() const -> const_iterator;
     auto begin() -> iterator;
     auto end() -> iterator;
+    inline auto operator==(const Node rhs) const -> bool{
+      return type == rhs.type && start == rhs.start;
+    }
   };
 
 };

@@ -22,6 +22,7 @@ target_sources(graphHandTree
     "${RiichiRoyale_SOURCE_DIR}/src/handtree.cpp"
     "${RiichiRoyale_SOURCE_DIR}/src/piecetype.cpp"
     "${RiichiRoyale_SOURCE_DIR}/src/possiblesets.cpp"
+    "${RiichiRoyale_SOURCE_DIR}/src/walls.cpp"
 )
 target_link_libraries(graphHandTree ${GTKMM_LIBRARIES})
 target_include_directories(graphHandTree PRIVATE "${RiichiRoyale_SOURCE_DIR}/include")

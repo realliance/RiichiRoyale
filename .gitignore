@@ -185,3 +185,5 @@ settings.json
 # Graph Formats
 *.gv
 *.tgf
+
+release

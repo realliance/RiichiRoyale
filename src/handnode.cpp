@@ -213,6 +213,22 @@ auto Node::AsBranchVectors() -> std::vector<std::vector<const Node*>>{
   return branches;
 }
 
+auto Node::IsComplete() -> bool {
+  for(const auto & branch : this->AsBranchVectors()){
+    bool stdform = true;
+    for(const auto & node : branch){
+      if(node->type == Node::Single){
+        stdform = false;
+        break;
+      }
+    }
+    if(stdform){
+      return true;
+    }
+  }
+  return false;
+}
+
 auto operator<<(std::ostream& os, const Node& node) -> std::ostream&{
     os << "{ id: " << node.id << ", type:" << Node::TypeToStr(node.type);
     os << ", start:" << node.start.toStr();
