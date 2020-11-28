@@ -8,7 +8,7 @@
 struct handTile
 {
   Mahjong::Piece piece;
-  int weight;
+  float weight;
 };
 
 
@@ -21,13 +21,13 @@ class BolickBot : public Mahjong::PlayerController
 	  auto ReceiveEvent(Mahjong::Event e) -> void;
 	  auto RetrieveDecision() -> Mahjong::Event;
 	private:
-    void assignweights(void);
-    int discardHas(Mahjong::Piece);
-    Mahjong::Piece popDiscard(void);
+	  void assignweights(void);
+	  int discardHas(Mahjong::Piece);
+	  Mahjong::Piece popDiscard(void);
 	  std::vector<handTile> hand;
 	  std::vector<Mahjong::Piece> discarded;
 	  Mahjong::Event lastEvent;
 	  Mahjong::Wind swind;
 	  Mahjong::Wind pwind;
-    int pid;
+      int pid;
 };

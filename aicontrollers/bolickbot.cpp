@@ -17,12 +17,18 @@ auto BolickBot::GameStart(int id) -> void
 
 auto BolickBot::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Wind s, Mahjong::Wind p) -> void 
 {
-  //hand = _hand;
   for(Mahjong::Piece m : _hand)
   {
     handTile h;
     h.piece = m;
-    h.weight = 1;
+    if(m.isHonor())
+    {
+		h.weight = 1.5;
+	}
+	else
+	{
+		h.weight = 1;
+    }
     hand.push_back(h);
   }
   assignweights();
@@ -40,7 +46,7 @@ void BolickBot::assignweights()
     {
       if(j != i)
       {
-        if(hand[i].weight == 2 && discardHas(hand[i].piece) == 2)
+        if((int)hand[i].weight == 2 && discardHas(hand[i].piece) == 2)
         {
           hand[i].weight = -1;
         }
@@ -86,7 +92,14 @@ auto BolickBot::ReceiveEvent(Mahjong::Event e) -> void
   {
     handTile h;
     h.piece = e.piece;
-    h.weight = 1;
+    if(e.piece.isHonor())
+    {
+		h.weight = 1.5;
+	}
+	else
+	{
+		h.weight = 1;
+    }
     hand.push_back(h);
     assignweights();
   }
