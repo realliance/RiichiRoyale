@@ -141,8 +141,9 @@ class TutorialView(BoardView):
         if self.tutorial.next_call == "ron":
             self.tutorial.call()
             self.dialogue_manager.start_event("end")
-            self.match.current_board.decision_pending = False
-            self.player.make_decision(Call.Ron)
+            self.match.player_manager.MakeDecision(
+                self.game_manager.board_manager.last_decision_event.raw_event_b
+            )
             return True
         return False
 
