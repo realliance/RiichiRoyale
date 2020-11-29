@@ -11,6 +11,7 @@ auto Mahjong::GameStart(GameState& state) -> GameState& {
     state.players[i].points = 25000;
     state.players[i].controller->GameStart(i);
   }
+  state.g.seed(state.seed);
   state.nextState = RoundStart;
   return state;
 }

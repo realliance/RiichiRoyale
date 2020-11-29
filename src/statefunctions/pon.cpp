@@ -24,6 +24,7 @@ auto Mahjong::Pon(GameState& state) -> GameState&{
   state.hands[state.lastCaller].live.push_back(state.pendingPiece);
   state.hands[state.lastCaller].sort();
   state.lastCall = state.turnNum;
+  state.concealedKan = false;
   state.turnNum++;
 
   if(RemovePieces(state,state.lastCaller,state.pendingPiece,3) != 3){

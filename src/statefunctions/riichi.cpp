@@ -19,6 +19,7 @@ auto Mahjong::Riichi(GameState& state) -> GameState& {
   state.hands[state.currentPlayer].riichiRound = state.turnNum;
   state.hands[state.currentPlayer].riichiPieceDiscard = state.hands[state.currentPlayer].discards.size();
   state.hands[state.currentPlayer].riichi = true;
+  state.riichiSticks++;
   
   state.nextState = Discard;
   return state;

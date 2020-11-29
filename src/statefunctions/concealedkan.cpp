@@ -21,7 +21,7 @@ auto Mahjong::ConcealedKan(GameState& state) -> GameState&{
     state.nextState = Error;
   }
   state.hands[state.currentPlayer].melds.push_back({ Meld::ConcealedKan, state.pendingPiece });
-  
+  state.concealedKan = true;
   state.nextState = KanDiscard;
   return state;
 }

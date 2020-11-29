@@ -23,6 +23,7 @@ auto Mahjong::ConvertedKan(GameState& state) -> GameState&{
     state.nextState = Error;
     return state;
   }
+  state.concealedKan = false;
   for(auto& meld : state.hands[state.currentPlayer].melds){
     if(meld.type == Meld::Pon && meld.start == state.pendingPiece){
       meld.type = Meld::Kan;

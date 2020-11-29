@@ -10,20 +10,24 @@ auto Mahjong::RoundEnd(GameState& state) -> GameState& {
   state.currentPlayer = -1;
   state.turnNum = -1;
   state.lastCall = -1;
+  state.concealedKan = false;
   state.lastCaller = -1;
   state.pendingPiece = Piece::ERROR;
-  state.hasRonned = { false, false, false, false };
+  state.hasRonned = {};
+  
+  state.hands = {};
 
   //TODO: scoring
   for(int i = 0; i < 4; i ++){
     AlertPlayers(state, Event{
       Event::PointDiff,
       i,
-      0,
+      static_cast<int16_t>(state.scores[i]/100),
       false
     });
   }
-  
+  state.scores = {};
+
   state.nextState = RoundStart;
   return state;
 }

@@ -188,3 +188,5 @@ cmake-build-debug
 # Graph Formats
 *.gv
 *.tgf
+
+release

@@ -106,7 +106,7 @@ auto Node::TypeToStr(uint8_t nodetype) -> std::string{
   }
 }
 
-auto Node::DumpAsTGF(std::ostream& os) -> std::ostream&{
+auto Node::DumpAsTGF(std::ostream& os) const -> std::ostream&{
   std::vector<std::string> nodes;
   std::vector<std::string> connections;
   for(const auto & node : *this){
@@ -159,7 +159,7 @@ auto NodeTypeToShapeStr(uint8_t nodetype) -> std::string{
   }
 }
 
-auto Node::DumpAsDot(std::ostream& os) -> std::ostream&{
+auto Node::DumpAsDot(std::ostream& os) const -> std::ostream&{
   std::vector<std::string> nodes;
   std::vector<std::string> connections;
   for(const auto & node : *this){
@@ -185,7 +185,7 @@ auto Node::DumpAsDot(std::ostream& os) -> std::ostream&{
   return os;
 }
 
-auto Node::AsBranchVectors() -> std::vector<std::vector<const Node*>>{
+auto Node::AsBranchVectors() const -> std::vector<std::vector<const Node*>>{
   std::vector<std::vector<const Node*>> branches;
   std::vector<const Node*> nodeloc;
   nodeloc.push_back(this);
@@ -211,6 +211,22 @@ auto Node::AsBranchVectors() -> std::vector<std::vector<const Node*>>{
     }
   }
   return branches;
+}
+
+auto Node::IsComplete() const -> bool {
+  for(const auto & branch : this->AsBranchVectors()){
+    bool stdform = true;
+    for(const auto & node : branch){
+      if(node->type == Node::Single){
+        stdform = false;
+        break;
+      }
+    }
+    if(stdform){
+      return true;
+    }
+  }
+  return false;
 }
 
 auto operator<<(std::ostream& os, const Node& node) -> std::ostream&{

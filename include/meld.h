@@ -6,10 +6,10 @@
 namespace Mahjong{
 
   struct Meld{
-    enum Type {
+    enum Type { //order here is important. add any new types carefully
       Chi,
+      Pon, 
       Kan,
-      Pon,
       ConcealedKan
     };
     Type type;

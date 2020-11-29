@@ -176,3 +176,54 @@ auto Mahjong::GetPossibleStdFormHand() -> std::vector<Piece>{
   }
   return hand;
 }
+
+auto Mahjong::TestStdForm(std::vector<Piece> hand) -> bool {
+  Node* root = breakdownHand(hand);
+  auto branches = root->AsBranchVectors();
+  for(const auto& branch: branches){
+    bool complete = true;
+    std::vector<const Node*> singles;
+    for(const auto& node: branch){
+      if(node->type == Node::Single){
+        complete = false;
+        break;
+      }
+    }
+    if(complete){
+      delete root;
+      return true;
+    }
+  }
+  delete root;
+  return false;
+}
+
+auto TestValid(std::vector<Piece> hand) -> bool {
+  std::map<Piece,bool> pieces;
+  for(const auto& piece : hand){
+    if(pieces.contains(piece)){
+      return false;
+    }
+    pieces[piece] = true;
+  }
+  return true;
+}
+
+auto Mahjong::GetPossibleTenpaiHand(bool replacement) -> std::vector<Piece>{
+  std::vector<Piece> tenpaihand = GetPossibleStdFormHand();
+  std::random_device rd;
+  std::mt19937 g(rd());
+  std::shuffle(tenpaihand.begin(),tenpaihand.end(),g);
+  std::uniform_int_distribution<> pieceIndex(0,13);
+  std::uniform_int_distribution<> pieceSelect(0,33);
+  int ind = pieceIndex(g);
+  if(!replacement){
+    tenpaihand.erase(tenpaihand.begin()+ind);
+    return tenpaihand;
+  }
+  tenpaihand[ind] = PIECE_SET[pieceSelect(g)];
+  while(TestStdForm(tenpaihand) && !TestValid(tenpaihand)){
+    tenpaihand[ind] = PIECE_SET[pieceSelect(g)];
+  }
+  return tenpaihand;
+}
