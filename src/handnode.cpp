@@ -191,8 +191,14 @@ auto Node::AsBranchVectors() const -> std::vector<std::vector<const Node*>>{
   nodeloc.push_back(this);
   while(!nodeloc.empty()){
     if(!nodeloc.back()->leaves.empty()){
+
       nodeloc.push_back(nodeloc.back()->leaves[0]);
     }else{
+      for(const auto& node : nodeloc){
+        if(node->id > 100){
+          std::cout << "oof" << std::endl;
+        }
+      }
       branches.push_back(nodeloc);
       size_t next = nodeloc.back()->leafPosInParent+1;
       while(nodeloc.back()->parent && nodeloc.back()->parent->leaves.size() <= next ){

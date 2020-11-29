@@ -65,9 +65,6 @@ namespace Mahjong {
     auto end() const -> const_iterator;
     auto begin() -> iterator;
     auto end() -> iterator;
-    inline auto operator==(const Node rhs) const -> bool{
-      return type == rhs.type && start == rhs.start;
-    }
   };
 
 };

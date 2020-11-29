@@ -75,11 +75,12 @@ auto GetValidDecisionOrThrow(const GameState& state, int player, bool inHand) ->
   int i = 0;
   while(!valid){
     if(i > 100){
+      std::cerr << "WARNING: Player Controller sent invalid event too many times." << std::endl;
+      std::cerr << "Decision.type: " << decision.type << " Decision.piece " << decision.piece << " player: " << player << " inHand: " << (inHand ? "true" : "false") << std::endl;
       decision.type = inHand ? Event::Discard : Event::Decline;
       if(inHand){
         decision.piece = static_cast<int16_t>(state.pendingPiece.toUint8_t());
       }
-      std::cerr << "WARNING: Player Controller sent invalid event too many times." << std::endl;
       if(ValidateDecision(state,player, decision, inHand)){
         return decision;
       }else{

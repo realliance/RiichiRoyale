@@ -390,7 +390,7 @@ namespace Mahjong {
         if(i==j ){
           continue;
         }
-        if(*branch[i] == *branch[j]){
+        if(branch[i]->type == branch[j]->type && branch[i]->start == branch[j]->start){
           return 1;
         }
       }
@@ -866,7 +866,7 @@ namespace Mahjong {
         if(i==j ){
           continue;
         }
-        if(*branch[i] == *branch[j]){
+        if(branch[i]->type == branch[j]->type && branch[i]->start == branch[j]->start){
           twice++;
         }
       }

@@ -14,17 +14,17 @@ using namespace Mahjong;
 
 
 auto Mahjong::Riichi(GameState& state) -> GameState& {  
-  AlertPlayers(state,Event{
-    Event::Riichi, // type
-    state.currentPlayer, // player
-    static_cast<int16_t>(Piece(Piece::ERROR).toUint8_t()), // piece
-    false, // decision
-  });
-
   //we should ask the players but
   // deadlines prevent this
   // -alice
   state.pendingPiece = getRiichiDiscard(state.hands[state.currentPlayer].live)[0];
+
+  AlertPlayers(state,Event{
+    Event::Riichi, // type
+    state.currentPlayer, // player
+    static_cast<int16_t>(Piece(state.pendingPiece).toUint8_t()), // piece
+    false, // decision
+  });
 
   state.hands[state.currentPlayer].riichiRound = state.turnNum;
   state.hands[state.currentPlayer].riichiPieceDiscard = state.hands[state.currentPlayer].discards.size();
