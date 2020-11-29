@@ -30,6 +30,7 @@ auto Mahjong::Chi(GameState& state) -> GameState& {
   // ui oof
   Piece chiStart = GetChiStart(state, state.lastCaller);
   if(chiStart == Piece::ERROR ){
+    std::cerr << "Failed to get start of Chi" << std::endl;
     state.nextState = Error;
     return state;
   }
@@ -57,6 +58,7 @@ auto Mahjong::Chi(GameState& state) -> GameState& {
   state.turnNum++;
 
   if(RemovePieces(state,state.lastCaller,chiStart,1) != 1 || RemovePieces(state,state.lastCaller,chiStart+1,1) != 1 || RemovePieces(state,state.lastCaller,chiStart+2,1) != 1){
+    std::cerr << "Not Enough Pieces to remove in Chi" << std::endl;
     state.nextState = Error;
     return state;
   }

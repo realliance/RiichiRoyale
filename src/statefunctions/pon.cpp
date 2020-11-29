@@ -34,6 +34,7 @@ auto Mahjong::Pon(GameState& state) -> GameState&{
   state.turnNum++;
 
   if(RemovePieces(state,state.lastCaller,state.pendingPiece,3) != 3){
+    std::cerr << "Not enough pieces to remove in Pon" << std::endl;
     state.nextState = Error;
     return state;
   }

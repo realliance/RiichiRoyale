@@ -18,6 +18,7 @@ auto Mahjong::ConcealedKan(GameState& state) -> GameState&{
     false, // decision
   });
   if(RemovePieces(state,state.currentPlayer,state.pendingPiece,4) != 4){
+    std::cerr << "Not Enough pieces to remove in ConcealedKan" << std::endl;
     state.nextState = Error;
   }
   state.hands[state.currentPlayer].melds.push_back({ Meld::ConcealedKan, state.pendingPiece });

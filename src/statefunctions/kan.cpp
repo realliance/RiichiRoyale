@@ -33,6 +33,7 @@ auto Mahjong::Kan(GameState& state) -> GameState&{
   state.turnNum++;
 
   if(RemovePieces(state,state.lastCaller,state.pendingPiece,4) != 4){
+    std::cerr << "Not Enough Pieces to remove in kan" << std::endl;
     state.nextState = Error;
     return state;
   }

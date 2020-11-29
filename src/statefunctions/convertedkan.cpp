@@ -20,6 +20,7 @@ auto Mahjong::ConvertedKan(GameState& state) -> GameState&{
     false, // decision
   });
   if(RemovePieces(state,state.currentPlayer,state.pendingPiece,1) != 1){
+    std::cerr << "Not Enough pieces to remove in ConvertedKan" << std::endl;
     state.nextState = Error;
     return state;
   }
@@ -31,6 +32,7 @@ auto Mahjong::ConvertedKan(GameState& state) -> GameState&{
       return state;
     }
   }
+  std::cerr << "Could Not find matching pon" << std::endl;
   state.nextState = Error;
   return state;
 }

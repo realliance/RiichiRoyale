@@ -63,6 +63,7 @@ auto Mahjong::StateController(GameSettings settings) -> void{
         shouldHalt.erase(id);
         return;
       case 0xBAD22222: //Asked for decision too many times.
+        std::cerr << "Asked for decision too many times" << std::endl;
         state.nextState = Error;
         break;
       default:
