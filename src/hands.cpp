@@ -1,6 +1,7 @@
 #include "hands.h"
 #include <stddef.h>
 #include <array>
+#include <fstream>
 #include <map>
 #include <vector>
 //#include <ext/alloc_traits.h>
@@ -49,45 +50,34 @@ std::vector<yakuFunc> yakumanFunctions = {
 namespace Mahjong {
 
   auto scoreHand(const GameState& state, int player) -> Score{
-    const Node* root = breakdownHand(state.hands[state.currentPlayer].live);
+    const Node* root = breakdownHand(state.hands[player].live);
     Score s;
     s.han = 0;
     s.yakuman = 0;
     s.fu = 0;
-    int basepoints = 0;
+    if(!root->IsComplete() && 
+       !isThirteenOrphans(state,player) &&
+       !isSevenPairs(state,player)){
+      delete root;
+      return s;
+    }
     for(const auto& branch : root->AsBranchVectors()){
-      int branchhan = 0;
-      int branchyakumans = 0;
-      if(!root->IsComplete() && 
-         !isThirteenOrphans(state,player,branch) &&
-         !isSevenPairs(state,player,branch)){
-        continue;
+      Score branchscore;
+      for(const auto& node : branch){
+        if(node->type == Node::Single){
+          continue;
+        }
       }
+
       for(auto yakuFunction : yakuFunctions){
-        branchhan += yakuFunction(state,player, branch);
+        branchscore.han += yakuFunction(state,player, branch);
       }
       for(auto yakuFunction : yakumanFunctions){
-        branchyakumans += yakuFunction(state,player, branch);
+        branchscore.yakuman += yakuFunction(state,player, branch);
       }
-      if(s.yakuman > 0 || branchyakumans > 0){
-        s.yakuman = branchyakumans > s.yakuman ? branchyakumans : s.yakuman;
-        continue;
-      }
-      if(s.han >= 5 || branchhan >= 5){
-        s.han = branchhan > s.han ? branchhan : s.han;
-        continue;
-      }
-      int fu = getFu(state,player,branch);
-      if(basepoints == 0){
-        s.han = branchhan;
-        s.fu = fu;
-        basepoints = fu*(2<<(1+branchhan));
-      }
-      int branchbase = fu*(2<<(1+branchhan));
-      if(branchbase > basepoints){
-        s.han = branchhan;
-        s.fu = fu;
-        basepoints = branchbase;
+      branchscore.fu = getFu(state,player,branch);
+      if(getBasicPoints(branchscore) > getBasicPoints(s)){
+        s = branchscore;
       }
     }
     delete root;
@@ -220,12 +210,18 @@ namespace Mahjong {
 
   auto isComplete(const GameState& state, int player) -> bool{
     const Node* root = breakdownHand(state.hands[player].live);
+    if(!root->IsComplete() && 
+      !isThirteenOrphans(state,player) &&
+      !isSevenPairs(state,player)){
+      return false;
+    }
     for(const auto& branch : root->AsBranchVectors()){
-      if(!root->IsComplete() && 
-         !isThirteenOrphans(state,player,branch) &&
-         !isSevenPairs(state,player,branch)){
-        continue;
+      for(const auto& node : branch){
+        if(node->type == Node::Single){
+          continue;
+        }
       }
+
       for(auto yakuFunction : yakuFunctions){
         if(yakuFunction(state,player, branch) > 0){
           delete root;
