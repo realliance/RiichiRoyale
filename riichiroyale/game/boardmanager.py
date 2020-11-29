@@ -495,8 +495,6 @@ def on_discard_ron_event(
     else:
         extra_player.hand += [event.piece]
         game_manager.board_manager.waiting_on_decision = False
-        game_manager.board_manager.round_should_end = True
-
 
 def on_game_event(game_manager, event, match):
     is_ai = event.player != match.player_manager.player_id

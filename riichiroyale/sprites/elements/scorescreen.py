@@ -31,7 +31,7 @@ def render_score_screen(board_render):
     winner_names = []
 
     array = numpy.array(total_scores)
-    temp = array.argsort()
+    temp = array.argsort()[::-1]
     ranks = numpy.empty_like(temp)
     ranks[temp] = numpy.arange(len(array))
 
