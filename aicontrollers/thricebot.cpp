@@ -210,6 +210,9 @@ bool ThriceBot::checkTile(Mahjong::Piece p)
 
 Mahjong::Piece ThriceBot::popDiscard()
 {
+  if(hand.empty()){
+    return Mahjong::Piece::ERROR;
+  }
   int indexOfLowest = 0;
   for (size_t i = 0; i < hand.size();i++)
   {

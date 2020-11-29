@@ -632,26 +632,26 @@ namespace Mahjong {
     for(const auto& node : branch){
       if(node->type == Node::PonSet){
         if(node->start.getSuit() == Piece::BAMBOO_SUIT){
-          bambooPon[node->start.getPieceNum()] = true;
+          bambooPon[node->start.getPieceNum()-1] = true;
         }
         if(node->start.getSuit() == Piece::CHARACTER_SUIT){
-          charPon[node->start.getPieceNum()] = true;
+          charPon[node->start.getPieceNum()-1] = true;
         }
         if(node->start.getSuit() == Piece::PIN_SUIT){
-          pinPon[node->start.getPieceNum()] = true;
+          pinPon[node->start.getPieceNum()-1] = true;
         }
       }
     }
     for(const auto& meld : state.hands[player].melds){
       if(meld.type >= Meld::Pon){
         if(meld.start.getSuit() == Piece::BAMBOO_SUIT){
-          bambooPon[meld.start.getPieceNum()] = true;
+          bambooPon[meld.start.getPieceNum()-1] = true;
         }
         if(meld.start.getSuit() == Piece::CHARACTER_SUIT){
-          charPon[meld.start.getPieceNum()] = true;
+          charPon[meld.start.getPieceNum()-1] = true;
         }
         if(meld.start.getSuit() == Piece::PIN_SUIT){
-          pinPon[meld.start.getPieceNum()] = true;
+          pinPon[meld.start.getPieceNum()-1] = true;
         }
       }
     }
