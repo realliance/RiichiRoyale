@@ -125,7 +125,7 @@ auto ValidateDecision(const GameState& state, int player, Event decision, bool i
     case Event::ConvertedKan:
       return CanConvertedKan(state);
     case Event::Riichi:
-      return CanRiichi(state) && CountPieces(state,player,decision.piece) > 0;
+      return CanRiichi(state);
     case Event::Discard:
       return CountPieces(state,player,decision.piece) > 0;
     case Event::Decline:
