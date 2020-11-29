@@ -11,7 +11,7 @@ auto AlphabeticalBot::Name() -> std::string{
 
 auto AlphabeticalBot::GameStart(int id) -> void{
     this->id = id;
-    std::cout << "Started player " << id << std::endl;
+    //std::cout << "Started player " << id << std::endl;
 }
 
 auto AlphabeticalBot::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Wind, Mahjong::Wind) -> void {
@@ -21,8 +21,8 @@ auto AlphabeticalBot::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Win
 }
 
 auto AlphabeticalBot::ReceiveEvent(Mahjong::Event e) -> void{
-    const Mahjong::Piece eventPiece = Mahjong::Piece(e.piece);
-    //std::cout << "Player " << id <<" got event " << e << std::endl;
+    // const Mahjong::Piece eventPiece = Mahjong::Piece(e.piece);
+    ////std::cout << "Player " << id <<" got event " << e << std::endl;
     if (e.type <= Mahjong::Event::Discard && e.decision && e.player == this->id)
     {
         if (e.type == Mahjong::Event::Discard)
@@ -58,7 +58,7 @@ auto AlphabeticalBot::ReceiveEvent(Mahjong::Event e) -> void{
             break;
         case Mahjong::Event::Discard:
             if (e.decision && e.player == this->id) {
-                //std::cout << "Player " << this->id << " pushing piece into hand: " << e.piece << std::endl;
+                ////std::cout << "Player " << this->id << " pushing piece into hand: " << e.piece << std::endl;
                 hand.push_back(e.piece);
             }
             break;
@@ -71,7 +71,7 @@ auto AlphabeticalBot::ReceiveEvent(Mahjong::Event e) -> void{
             if (e.decision)
             {
                 decisionToTake = e;
-                std::cout<<"Warning: Possibly unimplemented event type: " << e.type <<std::endl;
+                //std::cout<<"Warning: Possibly unimplemented event type: " << e.type <<std::endl;
             }
             break;
     }
@@ -82,12 +82,12 @@ auto AlphabeticalBot::RetrieveDecision() -> Mahjong::Event{
     {
         auto indexToDiscard = getDiscardPiece();
         decisionToTake.piece = hand[indexToDiscard].raw_value();
-        //std::cout << "Removing piece "<< indexToDiscard <<std::endl;
+        ////std::cout << "Removing piece "<< indexToDiscard <<std::endl;
         hand.erase(hand.begin() + indexToDiscard);
     }
     auto final = this->decisionToTake;
     this->decisionToTake.type = Mahjong::Event::Discard;
-    //std::cout << "Sending decision "<< final <<std::endl;
+    ////std::cout << "Sending decision "<< final <<std::endl;
     return final;
 }
 
@@ -109,6 +109,6 @@ auto AlphabeticalBot::getDiscardPiece() -> int{
             index = i;
         }
     }
-    //std::cout << "getDiscardPiece(): " << index << std::endl;
+    ////std::cout << "getDiscardPiece(): " << index << std::endl;
     return index;
 } 
