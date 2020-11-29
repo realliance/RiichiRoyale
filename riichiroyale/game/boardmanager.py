@@ -21,7 +21,11 @@ def convert_event(event):
         return event
 
     event_piece = event.piece.get_raw_value() if isinstance(event.piece, Piece) else event.piece
-    return Event(event.type, event.player, Piece(int(event_piece)), event.decision)
+    event_piece_value = int(event_piece)
+    if event_piece_value >= 0:
+        return Event(event.type, event.player, Piece(event_piece_value), event.decision)
+
+    return Event(event.type, event.player, event_piece_value, event.decision)
 
 def process_event_queue(game_manager, match):
     event = match.player_manager.Pop()
@@ -52,7 +56,6 @@ def process_event_queue(game_manager, match):
             return
         match.player_manager.AddToEventQueue(next_event)
     on_game_event(game_manager, event, match)
-    #process_event_queue(game_manager, match)
 
 
 def on_chi_event(
@@ -151,7 +154,9 @@ def on_ron_event(
         event_player.calls_avaliable = []
         game_manager.board_manager.waiting_on_decision = False
         game_manager.board_manager.did_exhaustive_draw = False
-        game_manager.board_manager.round_should_end = True
+    else:
+        game_manager.board_manager.waiting_on_decision = True
+        event_player.calls_avaliable += [Call.Ron]
 
 
 def on_converted_kan_event(
@@ -287,7 +292,7 @@ def on_discard_event(
     else:
         game_manager.board_manager.waiting_on_decision = False
         if not is_ai:
-            if event.piece in event_player.hand:
+            if not event_player.riichi_declared:
                 event_player.hand.remove(event.piece)
                 event_player.hand.sort()
         elif len(match.current_board.wall) > 0:

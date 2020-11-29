@@ -1,5 +1,6 @@
 from threading import Thread, Condition, Lock
 from time import sleep
+import numpy
 from libmahjong import Wind, start_game, Piece, PieceType, GameSettings, Wind, halt_game
 from .board import Board
 from .player import Player
@@ -45,7 +46,7 @@ class Match(Thread):
             deadwall=deadwall,
             dora_revealed=0,
         )
-        #self.current_board.current_dealer = 
+        self.current_board.current_dealer = (self.round_number - 1) % 4
 
     def play_clack(self):
         if self.sound_manager is not None:
@@ -57,8 +58,8 @@ class Match(Thread):
                 self.players += [self.player_manager]
             else:
                 self.players += [Player("Bot {}".format(i), starting_hand=[Piece(PieceType.ERROR)] * 13, player_id=i)]
-        self.new_board()
         self.round_number = 1
+        self.new_board()
 
         self.match_ready = True
     
@@ -76,11 +77,13 @@ class Match(Thread):
 
     def start_next_round(self):
         self.scores = list(map(lambda x: x[0] + x[1], zip(self.scores, self.delta_scores)))
+        winner_indices = numpy.argwhere(numpy.array(self.delta_scores) > 0).flatten()
         self.delta_scores = [0] * 4
         self.player_manager.reset()
         self.player_manager.next_round()
-        self.round_number += 1
-        self.east_prevalent = not (self.east_prevalent and self.player_manager.prevalent_wind != Wind.East)
+        if self.current_board.current_dealer not in winner_indices:
+            self.round_number += 1
+            self.east_prevalent = not (self.east_prevalent and self.player_manager.prevalent_wind != Wind.East)
         self.new_board()
         for i in range(4):
             if i != self.player_manager.player_id:
@@ -97,7 +100,7 @@ class Match(Thread):
             self.bootstrap_match()
 
         with self.process_lock:
-            self.process_lock.wait_for(lambda: self.player_manager.GetQueueLength() > 0, timeout=1000)
+            self.process_lock.wait_for(lambda: self.player_manager.GetQueueLength() > 0, timeout=500)
             with self.match_lock:
                 process_event_queue(self.game_manager, self)
         
