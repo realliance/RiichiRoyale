@@ -301,6 +301,7 @@ def on_discard_event(
         game_manager.board_manager.waiting_on_decision = True
     else:
         game_manager.board_manager.waiting_on_decision = False
+        match.play_clack()
         if not is_ai:
             if not event_player.riichi_declared:
                 event_player.hand.remove(event.piece)

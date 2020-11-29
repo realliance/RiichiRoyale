@@ -75,7 +75,6 @@ class TutorialView(BoardView):
                 self.game_manager.board_manager.waiting_on_decision
                 and len(owner.calls_avaliable) == 0
             ):
-                self.match.play_clack()
                 event = EngineEvent()
                 event.type = EventType.Discard
                 event.piece = int(tile.get_raw_value())
