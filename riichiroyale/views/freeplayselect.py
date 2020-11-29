@@ -3,13 +3,24 @@ from pygame import surface
 from libmahjong import avaliable_ais
 import pygame
 import pygame_gui
+from riichiroyale.game import get_object
 from .menuview import MenuView
 
+VALID_AI_OPTIONS = ["AngryDiscardoBot", "Fast Tanyao", "GentlemanBot", "StubbornBot", "ThriceBot", "TotoBot"]
 
 class FreePlaySelect(MenuView):
     def __init__(self, game_manager, screen_width, screen_height):
+        bot_map = get_object('boticons')['bot']
+
+        self.ai_lookup = dict()
+
+        for bot in bot_map:
+            if bot['ai'] in VALID_AI_OPTIONS:
+                self.ai_lookup[bot['name']] = bot['ai']
+
+
         ui_manager, process_ui_event = create_menu(
-            game_manager, screen_width, screen_height
+            game_manager, screen_width, screen_height, self.ai_lookup
         )
         super().__init__("freeplayselect", ui_manager)
         self.screen_width = screen_width
@@ -18,16 +29,16 @@ class FreePlaySelect(MenuView):
         self.background = surface.Surface((screen_width, screen_height)).convert_alpha()
         self.background.fill((7, 99, 36))
         self.process_ui_event = lambda x: process_ui_event(self, x)
-        self.selected_bots = ["AngryDiscardoBot"] * 3
+        self.selected_bots = ["Bystander"] * 3
 
     def draw(self, screen):
         screen.blit(self.background, (0, 0))
         super().draw(screen)
 
 
-def create_menu(game_manager, screen_width, screen_height):
+def create_menu(game_manager, screen_width, screen_height, ai_lookup):
     current_path = os.path.dirname(os.path.realpath(__file__))
-    avaliable_opponents = list(filter(lambda x: x != "Player", avaliable_ais()))
+    avaliable_opponents = ai_lookup.keys()
 
     ui_manager = pygame_gui.UIManager(
         (screen_width, screen_height),
@@ -63,7 +74,7 @@ def create_menu(game_manager, screen_width, screen_height):
       dropdown_rect.topleft = (DROPDOWN_START_RECT[0], DROPDOWN_START_RECT[1] + y_offset + 100)
       dropdown = pygame_gui.elements.UIDropDownMenu(
         options_list=avaliable_opponents,
-        starting_option="AngryDiscardoBot",
+        starting_option="Bystander",
         relative_rect=dropdown_rect,
         manager=ui_manager
       )
@@ -107,7 +118,7 @@ def create_menu(game_manager, screen_width, screen_height):
                 game_manager.set_active_view("main_menu")
             if event.ui_element == play_button:
                 game_manager.set_active_view("game")
-                game_manager.get_active_view().ai_list = ["Player"] + view.selected_bots
+                game_manager.get_active_view().ai_list = ["Player"] + list(map(lambda x: ai_lookup[x], view.selected_bots))
                 game_manager.get_active_view().on_match_start()
         if event.user_type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
             for x in range(3):
