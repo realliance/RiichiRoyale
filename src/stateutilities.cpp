@@ -17,29 +17,6 @@ auto GetSeat(int round, int player) -> Wind{
   return static_cast<Wind>((player+3*(round%4))%4);
 }
 
-// Score given player
-auto ScorePlayers(const GameState&) -> std::array<int16_t,4> {
-  // std::array<bool,4> isWinner = {false,false,false,false};
-  // std::array<int16_t,4> points = {0,0,0,0};
-  // for(const auto & winner : state.winners){
-  //   int16_t handValue;
-  //   if(state.currentState == AfterExhaustiveDraw){
-  //     handValue = (30/state.winners.size())*(state.winners.size()<4);
-  //   }else{
-  //     handValue = 30; // placeholder for actual score calcuation later
-  //   }
-  //   points[winner.player] += handValue;
-  //   points[state.currentPlayer] -= handValue;
-  //   isWinner[winner.player] = true;
-  // }
-  // for(int i = 0; i < 4; i++){
-  //   if(state.hands[i].riichi && !isWinner[i]){
-  //     points[i] -= 10;
-  //   }
-  // }
-  // return points;
-  return {0,0,0,0};
-}
 
 // Push Event to Player Queue
 auto AlertPlayers(const GameState& state, Event e) -> void {
@@ -98,8 +75,17 @@ auto GetValidDecisionOrThrow(const GameState& state, int player, bool inHand) ->
   int i = 0;
   while(!valid){
     if(i > 100){
-      std::cerr << "ERROR: Player Controller sent invalid event too many times." << std::endl;
-      throw 0xBAD22222;
+      decision.type = inHand ? Event::Discard : Event::Decline;
+      if(inHand){
+        decision.piece = static_cast<int16_t>(state.pendingPiece.toUint8_t());
+      }
+      std::cerr << "WARNING: Player Controller sent invalid event too many times." << std::endl;
+      if(ValidateDecision(state,player, decision, inHand)){
+        return decision;
+      }else{
+        std::cerr << "ERROR: was not able to recover from invalid event." << std::endl;
+        throw 0xBAD22222;
+      }
     }
     i++;
     if(state.halt){

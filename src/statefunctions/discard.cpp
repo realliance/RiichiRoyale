@@ -94,7 +94,7 @@ auto Mahjong::Discard(GameState& state) -> GameState&{
       state.nextState = Kan;
       break;
     default:
-      std::cerr << "Invalid Decision Type in Discard" << std::endl;
+      std::cerr << "Invalid Decision Type in Discard: " << decision.type << std::endl;
       state.nextState = Error;
       break;
   }
