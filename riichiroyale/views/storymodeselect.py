@@ -22,6 +22,9 @@ class StoryModeSelect(MenuView):
         self.matches = get_object('matches')['matches']
         self.stage_buttons = stage_buttons
 
+    def on_view_enter(self):
+        self.matches = get_object('matches')['matches']
+
     def draw(self, screen):
         screen.blit(self.background, (0, 0))
         super().draw(screen)

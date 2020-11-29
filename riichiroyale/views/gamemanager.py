@@ -13,6 +13,8 @@ class GameManager:
 
     def set_active_view(self, name):
         self.current_view = name
+        if hasattr(self.views[self.current_view], "on_view_enter"):
+            self.views[self.current_view].on_view_enter()
 
     def get_active_view(self):
         return self.views[self.current_view]
