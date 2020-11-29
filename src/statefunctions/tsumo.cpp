@@ -18,14 +18,7 @@ auto Mahjong::Tsumo(GameState& state) -> GameState&{
   state.scores[state.currentPlayer] += state.riichiSticks * 1000;
   state.riichiSticks = 0;
   state.scores[state.currentPlayer] += state.counters * 300;
-  // if(state.currentPlayer == state.roundNum%4){
-    
-  //   if(amount % 100){
-  //     amount = amount+(100-(amount%100));
-  //   }
-  //   state.scores[state.currentPlayer] += 6 * basicPoints;
-  // }else{
-  // }
+
   for(int i = 0; i < 4; i++){
     if(i == state.currentPlayer){
       if(state.hands[state.currentPlayer].riichi){
