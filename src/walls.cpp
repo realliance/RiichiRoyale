@@ -87,6 +87,7 @@ Piece Walls::TakeReplacementTile() {
   Piece p = deadWall.front();
   deadWall.erase(deadWall.begin());
   deadWall.push_back(livingWalls.back());
+  doraCount++;
 
   livingWalls.pop_back();
   return p;
