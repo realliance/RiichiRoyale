@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="riichiroyale",
-    version="1.0.0",
+    version="1.0.1",
     author="Christopher Miller",
     author_email="cmiller548@gmail.com",
     description="Singleplayer Riichi Mahjong Game",
@@ -14,7 +14,9 @@ setuptools.setup(
     install_requires=[
         'pygame==2.0.0.dev14',
         'pygame-gui==0.5.7',
-        'pybind11~=2.5'
+        'pybind11~=2.5',
+        'numpy',
+        'toml'
     ],
     url="https://github.com/HartleyAHartley/RiichiRoyale",
     packages=['libmahjong', 'riichiroyale', 'riichiroyale.resources', 'riichiroyale.resources.fonts', 'riichiroyale.resources.images', 'riichiroyale.audio', 'riichiroyale.sprites', 'riichiroyale.sprites.elements', 'riichiroyale.utils', 'riichiroyale.test', 'riichiroyale.game', 'riichiroyale.tutorial', 'riichiroyale.views'],
