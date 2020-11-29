@@ -25,10 +25,10 @@ namespace Mahjong {
       ExhaustiveDraw, //not used should be tho
       End
     };
-    Type type;
-    int player;
-    int16_t piece;
-    bool decision;
+    Type type = {};
+    int player = {};
+    int16_t piece = {};
+    bool decision = {};
   };
 
   const Event END_EVENT = {Event::End,-1,0,false};

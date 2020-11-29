@@ -283,9 +283,11 @@ namespace Mahjong {
         if(root->IsComplete()){
           waits.push_back(p);
           if(!allWaits){
+            delete root;
             return waits;
           }
         }
+        delete root;
         hand.pop_back();
       }
       hand.push_back(removed);
@@ -318,6 +320,7 @@ namespace Mahjong {
         if(root->IsComplete()){
           removeMe.push_back(removed);
         }
+        delete root;
         hand.pop_back();
       }
       hand.push_back(removed);
