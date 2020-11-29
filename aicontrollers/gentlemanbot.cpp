@@ -16,6 +16,7 @@ auto GentlemanBot::GameStart(int) -> void {}
 auto GentlemanBot::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Wind, Mahjong::Wind) -> void {
   hand = _hand;
   lastEvent.type = Mahjong::Event::Discard;
+  riichi=false;
 
 }
 
