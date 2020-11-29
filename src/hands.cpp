@@ -255,13 +255,34 @@ namespace Mahjong {
   //the frequency it needs to be ran
   //will revisit if necessary 
   //assumption is 14 piece hand
-  auto isInTenpai(std::vector<Piece> hand, bool allWaits) -> std::vector<Piece> {
+  auto isInTenpai13Pieces(std::vector<Piece> hand, bool allWaits) -> std::vector<Piece> {
     int8_t counts[256] = {};
-    bool removedbefore[256] = {};
     std::vector<Piece> waits;
     for(const auto & p : hand){
       counts[p.toUint8_t()]++;
     }
+    for(const auto & p : PIECE_SET){
+      if(counts[p.toUint8_t()] == 4){
+        continue;
+      }
+      hand.push_back(p);
+      Node* root = breakdownHand(hand);
+      if(root->IsComplete()){
+        waits.push_back(p);
+        if(!allWaits){
+          delete root;
+          return waits;
+        }
+      }
+      delete root;
+      hand.pop_back();
+    }
+    return waits;
+  }
+
+  auto isInTenpai(std::vector<Piece> hand, bool allWaits) -> std::vector<Piece> {
+    bool removedbefore[256] = {};
+    std::vector<Piece> waits;
     for(int i = 0; i < 14; i++){
       Piece removed = hand.front();
       hand.erase(hand.begin());
@@ -270,21 +291,12 @@ namespace Mahjong {
         continue;
       }
       removedbefore[removed.toUint8_t()] = true;
-      for(const auto & p : PIECE_SET){
-        if(counts[p.toUint8_t()] == 4 || p == removed){
-          continue;
+      std::vector<Piece> tempwaits = isInTenpai13Pieces(hand,allWaits);
+      if(!tempwaits.empty()){
+        if(!allWaits){
+          return tempwaits;
         }
-        hand.push_back(p);
-        Node* root = breakdownHand(hand);
-        if(root->IsComplete()){
-          waits.push_back(p);
-          if(!allWaits){
-            delete root;
-            return waits;
-          }
-        }
-        delete root;
-        hand.pop_back();
+        waits.insert(waits.begin(),tempwaits.begin(),tempwaits.end());
       }
       hand.push_back(removed);
     }

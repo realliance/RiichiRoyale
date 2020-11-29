@@ -29,7 +29,6 @@ auto Mahjong::RoundEnd(GameState& state) -> GameState& {
   }
   state.scores = {};
 
-  std::cout << "ROUND NUM: " << state.roundNum << std::endl;
   if(state.roundNum > 3){ // east only lmao
     state.nextState = GameEnd;
   }else{

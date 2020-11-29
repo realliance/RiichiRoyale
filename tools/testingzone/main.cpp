@@ -12,11 +12,11 @@ using namespace Mahjong;
 
 
 int main(){
-  for(int i = 0; i < 1000; i++){
+  for(int i = 0; i < 1; i++){
     StartGame({
       { "Fast Tanyao","AngryDiscardoBot","GentlemanBot","ThriceBot"},
       {},
-      1580952521
+      2310380705
     }, false);
   }
   return 0;
