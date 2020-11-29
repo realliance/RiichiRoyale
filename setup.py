@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="riichiroyale",
-    version="1.0.2",
+    version="1.0.3",
     author="Christopher Miller",
     author_email="cmiller548@gmail.com",
     description="Singleplayer Riichi Mahjong Game",
