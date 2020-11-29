@@ -114,33 +114,33 @@ auto GentlemanBot::getDiscard() -> Mahjong::Piece{
 
   for(const auto &p : preferedDiscards){
     if(p.isHonor()){
-      for(int i=0; i<hand.size(); i++){
+      for(size_t i=0; i<hand.size(); i++){
         if(hand[i].toUint8_t() == p.toUint8_t())
-        hand.erase(hand.begin()+i);
+          hand.erase(hand.begin()+i);
       }
       return p;
     }
   }
-  for(const auto &p : preferedDiscards){for(int i=0; i<hand.size(); i++){
-        if(hand[i].toUint8_t() == p.toUint8_t())
+  for(const auto &p : preferedDiscards){
+    for(size_t i=0; i<hand.size(); i++){
+      if(hand[i].toUint8_t() == p.toUint8_t())
         hand.erase(hand.begin()+i);
-      }
-      return p;
+    }
+    return p;
   }
   for(const auto &p : secondTierDiscards){
-    for(int i=0; i<hand.size(); i++){
+    for(size_t i=0; i<hand.size(); i++){
         if(hand[i].toUint8_t() == p.toUint8_t())
-        hand.erase(hand.begin()+i);
-      }
-      return p;
+          hand.erase(hand.begin()+i);
+    }
+    return p;
   }
   for(const auto &p : thirdTierDiscards){
-    for(int i=0; i<hand.size(); i++){
+    for(size_t i=0; i<hand.size(); i++){
         if(hand[i].toUint8_t() == p.toUint8_t())
-        hand.erase(hand.begin()+i);
-      }
-      return p;
+          hand.erase(hand.begin()+i);
+    }
+    return p;
   }
-
-
+  return Mahjong::Piece::ERROR;
 }

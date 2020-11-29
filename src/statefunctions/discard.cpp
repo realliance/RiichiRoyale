@@ -70,11 +70,13 @@ auto Mahjong::Discard(GameState& state) -> GameState&{
     }
   }
 
-  state.lastCaller = decision.player;
-
   if(decision.type == Event::Decline && state.walls.GetRemainingPieces() == 0){
     state.nextState = Exhaust;
     return state;
+  }
+
+  if(decision.type != Event::Decline){
+    state.lastCaller = decision.player;
   }
 
   switch (decision.type){

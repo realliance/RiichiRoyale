@@ -46,12 +46,14 @@ auto Mahjong::PlayerHand(GameState& state) -> GameState&{
     }
   }
 
-  if(!decisionAsked){
-    state.nextState = Discard;
-  }
-
   Event decision;
-  if(decisionAsked){
+  if(!decisionAsked){
+    decision.type = Event::Discard;
+    decision.piece = static_cast<uint16_t>(state.pendingPiece.toUint8_t());
+    decision.player = state.currentPlayer;
+    decision.decision = true;
+    state.nextState = Discard;
+  }else {
     decision = GetValidDecisionOrThrow(state,state.currentPlayer, true);
   }
 

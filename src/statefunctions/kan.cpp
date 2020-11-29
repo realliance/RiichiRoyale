@@ -39,8 +39,6 @@ auto Mahjong::Kan(GameState& state) -> GameState&{
   }
   state.hands[state.lastCaller].melds.push_back({ Meld::Kan, state.pendingPiece });
 
-  state.pendingPiece = AskForDiscard(state);
-
   state.nextState = KanDiscard;
   return state;
 }

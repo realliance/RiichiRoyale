@@ -22,7 +22,7 @@ namespace Mahjong {
       // other game events
       Dora,
       PointDiff,
-      ExhaustiveDraw,
+      ExhaustiveDraw, //not used should be tho
       End
     };
     Type type;
