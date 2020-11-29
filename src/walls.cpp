@@ -80,6 +80,9 @@ std::vector<Piece> Walls::TakeHand(){
 }
 
 Piece Walls::TakeReplacementTile() {
+  if(livingWalls.empty()){
+    return Piece::ERROR;
+  }
   if(replacements < 1){
     return Piece::ERROR;
   }
@@ -88,7 +91,6 @@ Piece Walls::TakeReplacementTile() {
   deadWall.erase(deadWall.begin());
   deadWall.push_back(livingWalls.back());
   doraCount++;
-
   livingWalls.pop_back();
   return p;
 }

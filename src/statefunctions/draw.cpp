@@ -15,7 +15,6 @@ auto Mahjong::Draw(GameState& state) -> GameState&{
   state.pendingPiece = state.walls.TakePiece();
   state.hands[state.currentPlayer].live.push_back(state.pendingPiece);
   state.hands[state.currentPlayer].sort();
-
   state.nextState = PlayerHand;
   return state;
 }

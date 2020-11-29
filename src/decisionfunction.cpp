@@ -43,6 +43,9 @@ auto Mahjong::CanRon(const GameState& state, int player) -> bool{ //TODO: I real
 }
 
 auto Mahjong::CanKan(const GameState& state, int player) -> bool{
+  if(state.walls.GetRemainingPieces() == 0){
+    return false;
+  }
   if(state.hands[player].riichi){
     return false;
   }
@@ -89,6 +92,9 @@ auto Mahjong::CanTsumo(const GameState& state) -> bool{
 }
 
 auto Mahjong::CanConvertedKan(const GameState& state) -> bool{
+  if(state.walls.GetRemainingPieces() == 0){
+    return false;
+  }
   for(const auto & meld: state.hands[state.currentPlayer].melds){
     if(meld.type == Meld::Pon && CountPieces(state,state.currentPlayer,meld.start)==1){
       return true;
@@ -98,6 +104,9 @@ auto Mahjong::CanConvertedKan(const GameState& state) -> bool{
 }
 
 auto Mahjong::CanConcealedKan(const GameState& state) -> bool{
+  if(state.walls.GetRemainingPieces() == 0){
+    return false;
+  }
   if(state.hands[state.currentPlayer].riichi){
     return false; //arguably this should be allowed sometimes
   }

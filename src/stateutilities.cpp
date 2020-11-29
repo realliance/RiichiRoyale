@@ -79,9 +79,9 @@ auto GetValidDecisionOrThrow(const GameState& state, int player, bool inHand) ->
       std::cerr << "Decision.type: " << decision.type << " Decision.piece " << decision.piece << " player: " << player << " inHand: " << (inHand ? "true" : "false") << std::endl;
       decision.type = inHand ? Event::Discard : Event::Decline;
       if(inHand){
-        decision.piece = static_cast<int16_t>(state.pendingPiece.toUint8_t());
+        decision.piece = static_cast<int16_t>(state.hands[player].live.back().toUint8_t());
       }
-      if(ValidateDecision(state,player, decision, inHand)){
+      if(ValidateDecision(state, player, decision, inHand)){
         return decision;
       }else{
         std::cerr << "ERROR: was not able to recover from invalid event." << std::endl;

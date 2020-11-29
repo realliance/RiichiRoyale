@@ -190,3 +190,5 @@ cmake-build-debug
 *.tgf
 
 release
+
+vgcore.*

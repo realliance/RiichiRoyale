@@ -52,9 +52,11 @@ auto Mahjong::StateController(GameSettings settings) -> void{
     std::swap(state.overrideWall, settings.overrideWall);
     state.seed = 0xBEEFBABE;
   }
+  state.prevState = 0;
   state.nextState = GameStart;
   while(state.nextState != GameEnd && !shouldHalt[id]){
     try{
+      state.prevState = state.nextState;
       state = state.nextState(state);
     } catch(const unsigned int e){
       switch (e)

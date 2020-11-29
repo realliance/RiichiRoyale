@@ -23,6 +23,7 @@ namespace Mahjong {
     int seed = 0;
     std::mt19937 g;
     Piece pendingPiece = Piece::ERROR;
+    auto (*prevState)(struct GameState&) -> struct GameState&;
     auto (*nextState)(struct GameState&) -> struct GameState&;
     Walls walls;
     std::array<int,4> scores = {};
