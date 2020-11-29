@@ -66,6 +66,8 @@ class Match(Thread):
     def run(self):
         settings = GameSettings()
         settings.seat_controllers = self.ai_list
+        settings.seed = numpy.random.randint(0, 2147483647)
+        print('SEED:', settings.seed)
         if self.current_board is not None:
             wall = list(map(Piece, self.current_board.wall+self.current_board.deadwall))
             settings.override_wall = wall

@@ -1,5 +1,5 @@
 from threading import Lock
-from libmahjong import MahjongAI, EventType, EngineEvent, PieceType
+from libmahjong import MahjongAI, EventType, EngineEvent, PieceType, Piece
 from .player import Player
 from .gameevent import Event
 
@@ -61,15 +61,13 @@ class PlayerManager(MahjongAI, Player):
       return self.decision_made
 
   def MakeDecision(self, event):
-    if isinstance(event, Event):
-      print('INFO: Casted Event to Engine Event')
-      engine_event = EngineEvent()
-      engine_event.type = event.type
-      engine_event.player = event.player
-      print(event.piece.get_raw_value())
-      engine_event.piece = event.piece.get_raw_value()
-      engine_event.decision = event.decision
-      event = engine_event
+    # Enforce Shape and data ownership
+    engine_event = EngineEvent()
+    engine_event.type = event.type
+    engine_event.player = event.player
+    engine_event.piece = event.piece.get_raw_value() if isinstance(event.piece, Piece) else event.piece
+    engine_event.decision = event.decision
+    event = engine_event
 
     with self.lock:
       self.calls_avaliable = []

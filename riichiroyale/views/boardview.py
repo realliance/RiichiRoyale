@@ -4,6 +4,7 @@ import random
 import atexit
 import pygame_gui
 import pygame
+import numpy
 from copy import deepcopy
 from pygame import Rect
 from pygame import surface
