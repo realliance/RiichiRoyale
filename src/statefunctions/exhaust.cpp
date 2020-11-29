@@ -22,7 +22,7 @@ auto Mahjong::Exhaust(GameState& state) -> GameState& {
   if(!winningPlayers[state.roundNum%4]){
     state.roundNum++;
   }
-  if(totalWinners < 4){
+  if(totalWinners < 4 && totalWinners > 0){
     for(int i = 0; i < 4; i++){
       if(winningPlayers[i]){
         state.scores[i] = 3000/totalWinners;

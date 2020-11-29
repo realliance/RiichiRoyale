@@ -14,10 +14,6 @@ add_subdirectory(${RiichiRoyale_SOURCE_DIR}/libs)
 
 find_package(Python3 COMPONENTS Interpreter Development)
 
-if(PACKAGE_TOOLS)
-  add_subdirectory(${RiichiRoyale_SOURCE_DIR}/tools)
-endif()
-
 if(PACKAGE_TESTS)
   enable_testing()
   include(GoogleTest)
@@ -43,6 +39,10 @@ if(PACKAGE_TESTS)
   target_compile_definitions(TestRiichiRoyale PUBLIC -DNO_PYBIND)
   target_include_directories(TestRiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/include")
   target_include_directories(TestRiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/aicontrollers")
+endif()
+
+if(PACKAGE_TOOLS)
+  add_subdirectory(${RiichiRoyale_SOURCE_DIR}/tools)
 endif()
 
 if(PY_BIND)

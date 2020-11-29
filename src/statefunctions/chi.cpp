@@ -25,11 +25,19 @@ auto GetChiStart(const GameState& state, int player) -> Piece{
   return Piece::ERROR;
 }
 
-auto Mahjong::Chi(GameState& state) -> GameState& {  
+auto Mahjong::Chi(GameState& state) -> GameState& {
+  // only gives a single one of the chis
+  // ui oof
   Piece chiStart = GetChiStart(state, state.lastCaller);
   if(chiStart == Piece::ERROR ){
     state.nextState = Error;
     return state;
+  }
+
+  if(state.hands[state.currentPlayer].riichi &&
+     state.hands[state.currentPlayer].discards.size() == state.hands[state.currentPlayer].riichiPieceDiscard)
+  {
+    state.hands[state.currentPlayer].riichiPieceDiscard++;
   }
 
   state.hands[state.lastCaller].open = true;

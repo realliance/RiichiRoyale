@@ -19,7 +19,7 @@ namespace Mahjong {
     std::vector<Piece> discards;
     bool open = false;
     bool riichi = false;
-    int riichiPieceDiscard = -1;
+    size_t riichiPieceDiscard = -1;
     int riichiRound = -1;
   };
 

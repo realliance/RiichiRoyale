@@ -11,6 +11,12 @@ using namespace Mahjong;
 
 auto Mahjong::Ron(GameState& state) -> GameState& { 
   int basicPoints[4] = {};
+  if(state.hands[state.currentPlayer].riichi &&
+     state.hands[state.currentPlayer].discards.size() == state.hands[state.currentPlayer].riichiPieceDiscard)
+  {
+    state.riichiSticks--;
+    state.hands[state.currentPlayer].riichi = false;
+  }
   for(int player = 0; player < 4; player++){
     if(state.hasRonned[player]){
       AlertPlayers(state,Event{

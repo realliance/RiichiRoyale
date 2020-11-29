@@ -43,6 +43,9 @@ auto Mahjong::CanRon(const GameState& state, int player) -> bool{ //TODO: I real
 }
 
 auto Mahjong::CanKan(const GameState& state, int player) -> bool{
+  if(state.hands[player].riichi){
+    return false;
+  }
   if(CountPieces(state,player,state.pendingPiece) == 3){
     return true;
   }
@@ -50,6 +53,9 @@ auto Mahjong::CanKan(const GameState& state, int player) -> bool{
 }
 
 auto Mahjong::CanPon(const GameState& state, int player) -> bool{
+  if(state.hands[player].riichi){
+    return false;
+  }
   if(CountPieces(state,player,state.pendingPiece) == 2){
     return true;
   }
@@ -57,6 +63,9 @@ auto Mahjong::CanPon(const GameState& state, int player) -> bool{
 }
 
 auto Mahjong::CanChi(const GameState& state, int player) -> bool{
+  if(state.hands[player].riichi){
+    return false;
+  }
   if(state.pendingPiece.isHonor()){
     return false;
   }
@@ -89,6 +98,9 @@ auto Mahjong::CanConvertedKan(const GameState& state) -> bool{
 }
 
 auto Mahjong::CanConcealedKan(const GameState& state) -> bool{
+  if(state.hands[state.currentPlayer].riichi){
+    return false; //arguably this should be allowed sometimes
+  }
   return CountPieces(state,state.currentPlayer,state.pendingPiece) == 4;
 }
 
@@ -99,9 +111,7 @@ auto Mahjong::CanRiichi(const GameState& state) -> bool{
   if(state.hands[state.currentPlayer].open){
     return false;
   }
-  const Node* root = breakdownHand(state.hands[state.currentPlayer].live);
   if(!isInTenpai(state.hands[state.currentPlayer].live).empty()){
-    delete root;
     return true;
   }
   return false;

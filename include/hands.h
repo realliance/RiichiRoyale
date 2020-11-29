@@ -23,6 +23,8 @@ namespace Mahjong {
 
   auto isInTenpai(std::vector<Piece> hand, bool allWaits = false) -> std::vector<Piece>;
 
+  auto getRiichiDiscard(std::vector<Piece> hand) -> std::vector<Piece>;
+
   using yakuFunc = int(*)(const GameState&, int, const  std::vector<const Node*>);
 
   auto isRiichi(const GameState& state, int player, const  std::vector<const Node*> = {}) -> int;

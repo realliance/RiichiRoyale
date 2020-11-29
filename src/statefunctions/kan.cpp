@@ -18,6 +18,12 @@ auto Mahjong::Kan(GameState& state) -> GameState&{
     false, // decision
   });
   
+  if(state.hands[state.currentPlayer].riichi &&
+     state.hands[state.currentPlayer].discards.size() == state.hands[state.currentPlayer].riichiPieceDiscard)
+  {
+    state.hands[state.currentPlayer].riichiPieceDiscard++;
+  }
+
   state.hands[state.lastCaller].open = true;
   state.currentPlayer = state.lastCaller;
   state.hands[state.lastCaller].live.push_back(state.pendingPiece);

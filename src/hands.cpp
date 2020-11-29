@@ -293,6 +293,38 @@ namespace Mahjong {
     return waits;
   }
 
+  //see above comment
+  auto getRiichiDiscard(std::vector<Piece> hand) -> std::vector<Piece> {
+    int8_t counts[256] = {};
+    bool removedbefore[256] = {};
+    std::vector<Piece> removeMe;
+    for(const auto & p : hand){
+      counts[p.toUint8_t()]++;
+    }
+    for(int i = 0; i < 14; i++){
+      Piece removed = hand.front();
+      hand.erase(hand.begin());
+      if(removedbefore[removed.toUint8_t()]){
+        hand.push_back(removed);
+        continue;
+      }
+      removedbefore[removed.toUint8_t()] = true;
+      for(const auto & p : PIECE_SET){
+        if(counts[p.toUint8_t()] == 4 || p == removed){
+          continue;
+        }
+        hand.push_back(p);
+        Node* root = breakdownHand(hand);
+        if(root->IsComplete()){
+          removeMe.push_back(removed);
+        }
+        hand.pop_back();
+      }
+      hand.push_back(removed);
+    }
+    return removeMe;
+  }
+
   auto isRiichi(const GameState& state, int player, const std::vector<const Node*>) -> int{
     if(state.hands[player].riichi){
       int han = 1;

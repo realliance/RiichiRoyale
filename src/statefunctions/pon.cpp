@@ -19,6 +19,12 @@ auto Mahjong::Pon(GameState& state) -> GameState&{
     static_cast<int16_t>(state.pendingPiece.toUint8_t()), // piece
     false, // decision
   });
+
+  if(state.hands[state.currentPlayer].riichi &&
+     state.hands[state.currentPlayer].discards.size() == state.hands[state.currentPlayer].riichiPieceDiscard)
+  {
+    state.hands[state.currentPlayer].riichiPieceDiscard++;
+  }
   
   state.currentPlayer = state.lastCaller;
   state.hands[state.lastCaller].live.push_back(state.pendingPiece);

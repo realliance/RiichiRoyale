@@ -55,6 +55,8 @@ auto Mahjong::PlayerHand(GameState& state) -> GameState&{
     decision = GetValidDecisionOrThrow(state,state.currentPlayer, true);
   }
 
+  //note riichi handling is a lil borked on the player agency side
+  //checkout riichi.cpp for more info
   state.pendingPiece = decision.piece;
 
   switch (decision.type){
