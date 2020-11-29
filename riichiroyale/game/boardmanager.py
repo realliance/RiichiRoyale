@@ -66,7 +66,7 @@ def on_chi_event(
     event,
     match,
     event_player,
-    _pov_player,
+    pov_player,
     _extra_player,
 ):
     if not is_decision:
@@ -99,6 +99,9 @@ def on_chi_event(
 
         game_manager.board_manager.last_decision_event = None
         game_manager.board_manager.waiting_on_decision = False
+    else:
+        pov_player.calls_avaliable += [Call.Chi]
+        game_manager.board_manager.waiting_on_decision = True
 
 
 def on_pon_event(
@@ -259,13 +262,13 @@ def on_riichi_event(
     event,
     _match,
     event_player,
-    _pov_player,
+    pov_player,
     _extra_player,
 ):
     if is_decision:
         game_manager.board_manager.waiting_on_decision = True
         game_manager.board_manager.last_decision_event = event
-        event_player.calls_avaliable += [Call.Riichi]
+        pov_player.calls_avaliable += [Call.Riichi]
     else:
         game_manager.board_manager.waiting_on_decision = False
         game_manager.board_manager.last_decision_event = None
