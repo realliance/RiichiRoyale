@@ -16,9 +16,10 @@ class DialogManager:
         self.events[name] += text
 
     def start_event(self, name):
-        self.logger.debug("Started event %s", name)
-        self.current_event = name
-        self.current_page = 0
+        if name in self.events:
+            self.logger.debug("Started event %s", name)
+            self.current_event = name
+            self.current_page = 0
 
     def get_current_page(self):
         return self.events[self.current_event][self.current_page]

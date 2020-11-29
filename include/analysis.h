@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>  // for vector
+#include <vector>
 
 #include "handnode.h"
 #include "piecetype.h"

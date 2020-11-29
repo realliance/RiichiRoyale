@@ -1,10 +1,10 @@
 #include "walls.h"
-#include <stddef.h>   // for size_t
-#include <algorithm>  // for copy_n, move, shuffle
-#include <iostream>   // for operator<<, basic_ostream, endl, basic_ostream:...
-#include <iterator>   // for back_insert_iterator, back_inserter
-#include <random>     // for random_device, mt19937
-#include <string>     // for operator<<, char_traits
+#include <stddef.h>
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <random>
+#include <string>
 
 #include "mahjongns.h"
 using namespace Mahjong;

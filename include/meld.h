@@ -1,7 +1,7 @@
 #pragma once
-#include <iosfwd>       // for ostream
-#include <string>       // for allocator, string
-#include "piecetype.h"  // for Piece
+#include <iosfwd>
+#include <string>
+#include "piecetype.h"
 
 namespace Mahjong{
 

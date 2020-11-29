@@ -1,9 +1,9 @@
 #pragma once
-#include <algorithm>    // for sort
-#include <iosfwd>       // for ostream, ptrdiff_t
-#include <vector>       // for vector<>::iterator, vector, vector<>::const_i...
-#include "meld.h"       // for Meld
-#include "piecetype.h"  // for Piece
+#include <algorithm>
+#include <iosfwd>
+#include <vector>
+#include "meld.h"
+#include "piecetype.h"
 
 namespace Mahjong {
 

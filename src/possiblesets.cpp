@@ -1,14 +1,14 @@
 #include "analysis.h"
 
-#include <stdint.h>            // for uint8_t
-#include <algorithm>           // for shuffle,Piece::move
-#include <iterator>            // for back_insert_iterator,Piece::back_inserter
-#include <memory>              // for allocator_traits<>::value_type
-#include <random>              // for mt19937,Piece::uniform_int_distribution,Piece::ran...
-#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
-#include <vector>              // for vector
+#include <stdint.h>
+#include <algorithm>
+#include <iterator>
+#include <memory>
+#include <random>
+#include <ext/alloc_traits.h>
+#include <vector>
 
-#include "piecetype.h"         // for Piece,Piece::FIVE_BAMBOO,Piece::FIVE_CHARACTER
+#include "piecetype.h"
 
 #include "mahjongns.h"
 using namespace Mahjong;

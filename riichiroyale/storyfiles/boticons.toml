@@ -1,4 +1,4 @@
-version = 4
+version = 6
 
 [[bot]]
 name="Rookie Johnson"
@@ -33,6 +33,7 @@ icon="dudB.png"
 [[bot]]
 name="Mrs. Toto"
 ai="TotoBot"
+icon="dudC.png"
 
 [[bot]]
 name="You"

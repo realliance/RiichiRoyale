@@ -1,8 +1,8 @@
 #pragma once
-#include <iosfwd>       // for ostream
-#include <vector>       // for vector
+#include <iosfwd>
+#include <vector>
 #include <random>
-#include "piecetype.h"  // for Piece
+#include "piecetype.h"
 
 namespace Mahjong { 
   class Walls{

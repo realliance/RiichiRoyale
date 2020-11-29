@@ -120,28 +120,8 @@ class GameView(BoardView):
         self.lock_user_input = False
 
     def _end_round_dialog(self):
-        self.ai_game_active = False
-        self.game_manager.board_manager.round_should_end = False
-        self.dialogue_manager.register_dialog_event("round_end")
-        self.dialogue_manager.append_dialog_event(
-            "round_end", ["Round Complete! Now for the Results..."]
-        )
-        i = 0
-        for score in self.match.scores:
-            self.dialogue_manager.append_dialog_event(
-                "round_end", ["Player {0} was awarded {1} points!".format(i + 1, score)]
-            )
-            i += 1
-        self.dialogue_manager.append_dialog_event(
-            "round_end",
-            [
-                "Thank you for playing a demo match of Riichi Royale! Press Next to return to the main menu."
-            ],
-        )
-        self.dialogue_manager.start_event("round_end")
-        self.player.calls_avaliable = []
-        for button in self.buttons:
-            self.buttons[button].hide()
+        # Skip for Own Round Handling
+        pass
 
     def update(self, time_delta):
         if self.game_manager.board_manager.round_should_end:

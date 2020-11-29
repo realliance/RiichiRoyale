@@ -27,6 +27,9 @@ def render_score_screen(board_render):
     delta_scores = match.delta_scores
     total_scores = list(map(lambda s: s[0] + s[1], zip(scores, delta_scores)))
 
+    winner_indices = numpy.argwhere(numpy.array(delta_scores) > 0).flatten()
+    winner_names = []
+
     array = numpy.array(total_scores)
     temp = array.argsort()
     ranks = numpy.empty_like(temp)
@@ -61,9 +64,12 @@ def render_score_screen(board_render):
         if name is None:
             raise "BOT WAS NOT DEFINED."
 
+        if seat in winner_indices:
+            winner_names += [name]
+
         icon_surface = Surface(icon_size, pygame.SRCALPHA)
         load_image_resource(icon, icon_surface, size=icon_size)
-        
+
         screen_surface.blit(
             icon_surface,
             (x, y)
@@ -127,6 +133,36 @@ def render_score_screen(board_render):
         round_complete_surface,
         ((screen_surface.get_width() // 2) - (font_width // 2), 10),
     )
+
+    result_pos = (screen_surface.get_width() * 0.6, screen_surface.get_height() // 3)
+
+    if board_render.board_manager.did_exhaustive_draw:
+        EXHAUSTIVE = "Exhaustive Draw"
+        exhaustive_surface = font.render(EXHAUSTIVE, True, (255, 255, 255))
+
+        screen_surface.blit(
+            exhaustive_surface,
+            result_pos
+        )
+    else:
+        WINNERS = "Winners:"
+        winners = ", ".join(winner_names)
+
+        winner_text = font_small.render(WINNERS, True, (255, 255, 255))
+        winner_name_text = font_small.render(winners, True, (255, 255, 255))
+
+        screen_surface.blit(
+            winner_text,
+            result_pos
+        )
+
+        screen_surface.blit(
+            winner_name_text,
+            (result_pos[0], result_pos[1] + winner_text.get_rect().height + 5)
+        )
+
+
+
 
     background_sprite = Sprite()
     background_sprite.rect = screen_surface.get_rect()
