@@ -77,12 +77,13 @@ auto GetValidDecisionOrThrow(const GameState& state, int player, bool inHand) ->
     if(i > 100){
       std::cerr << "WARNING: Player Controller sent invalid event too many times." << std::endl;
       std::cerr << "Decision.type: " << decision.type << " Decision.piece " << decision.piece << " player: " << player << " inHand: " << (inHand ? "true" : "false") << std::endl;
-      decision.type = inHand ? Event::Discard : Event::Decline;
+      Event replacementDecision = decision;
+      replacementDecision.type = inHand ? Event::Discard : Event::Decline;
       if(inHand){
-        decision.piece = static_cast<int16_t>(state.hands[player].live.back().toUint8_t());
+        replacementDecision.piece = static_cast<int16_t>(state.hands[player].live.back().toUint8_t());
       }
-      if(ValidateDecision(state, player, decision, inHand)){
-        return decision;
+      if(ValidateDecision(state, player, replacementDecision, inHand)){
+        return replacementDecision;
       }else{
         std::cerr << "ERROR: was not able to recover from invalid event." << std::endl;
         throw 0xBAD22222;
@@ -106,6 +107,16 @@ auto ValidateDecision(const GameState& state, int player, Event decision, bool i
     return false;
   }
   if(decision.type < Event::Tsumo && inHand){
+    return false;
+  }
+  if(decision.piece != state.pendingPiece &&
+     decision.type != Event::Tsumo &&
+     decision.type != Event::Riichi &&
+     decision.type != Event::Discard && 
+     decision.type != Event::Decline)
+  {
+    std::cerr << "WARNING: Player Controller sent invalid event with mismatched piece." << std::endl;
+    std::cerr << "Decision.type: " << decision.type << " Decision.piece " << decision.piece << " player: " << player << " inHand: " << (inHand ? "true" : "false") << std::endl;
     return false;
   }
   switch (decision.type){
