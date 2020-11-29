@@ -76,7 +76,7 @@ auto Mahjong::PlayerHand(GameState& state) -> GameState&{
       state.nextState = Discard;
       break;
     default:
-      std::cerr << "Invalid Decision Type in playerhand" << std::endl;
+      std::cerr << "Invalid Decision Type in playerhand: " << decision.type << std::endl;
       state.nextState = Error;
       break;
   }
