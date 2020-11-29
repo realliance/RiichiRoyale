@@ -14,6 +14,11 @@
 using namespace Mahjong;
 
 auto Mahjong::CanRon(const GameState& state, int player) -> bool{ //TODO: I really hate this
+  for(const auto& piece : state.hands[player].discards){
+    if(state.pendingPiece == piece){
+      return false;
+    }
+  }
   GameState& tmpState = const_cast<GameState&>(state);
   tmpState.hands[player].live.push_back(state.pendingPiece);
   tmpState.hands[player].sort();
@@ -95,11 +100,9 @@ auto Mahjong::CanRiichi(const GameState& state) -> bool{
     return false;
   }
   const Node* root = breakdownHand(state.hands[state.currentPlayer].live);
-  for(const auto& branch : root->AsBranchVectors()){
-    if(!isInTenpai(state.hands[state.currentPlayer].live).empty()){
-      delete root;
-      return true;
-    }
+  if(!isInTenpai(state.hands[state.currentPlayer].live).empty()){
+    delete root;
+    return true;
   }
   return false;
 }

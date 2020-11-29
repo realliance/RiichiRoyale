@@ -18,7 +18,7 @@ using namespace Mahjong;
 
 auto Mahjong::RoundStart(GameState& state) -> GameState& {
   if(state.overrideWall.empty()){
-    state.walls = Walls(state.seed);
+    state.walls = Walls(state.g());
   }else{
     state.walls = Walls(state.overrideWall);
   }

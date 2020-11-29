@@ -19,4 +19,5 @@ target_sources(RiichiRoyale
     "${DIR}/walls.h"
     "${DIR}/winds.h"
     "${DIR}/mahjongns.h"
+    "${DIR}/score.h"
 )

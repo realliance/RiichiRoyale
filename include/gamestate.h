@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <array>
+#include <random>
 #include <iostream>
 #include "hand.h"
 #include "piecetype.h"
@@ -20,12 +21,14 @@ namespace Mahjong {
     int lastCaller = -1;
     bool concealedKan = false;
     int seed = 0;
-    Piece pendingPiece;
+    std::mt19937 g;
+    Piece pendingPiece = Piece::ERROR;
     auto (*nextState)(struct GameState&) -> struct GameState&;
     Walls walls;
-    std::array<bool,4> hasRonned;
-    std::array<Hand,4> hands;
-    std::array<Player,4> players;
+    std::array<int,4> scores = {};
+    std::array<bool,4> hasRonned = {};
+    std::array<Hand,4> hands = {};
+    std::array<Player,4> players = {};
     std::vector<Piece> overrideWall;
   };
 

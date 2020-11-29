@@ -11,7 +11,6 @@
 using namespace Mahjong;
 
 auto Mahjong::KanDiscard(GameState& state) -> GameState&{
-  //Doesn't account for concealed kan safety yet oof
   std::array<bool,4> needDecision = {false,false,false,false};
   for(int player = 0; player < 4; player++){
     if(player == state.currentPlayer){
