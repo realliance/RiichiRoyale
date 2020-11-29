@@ -182,5 +182,7 @@ PYBIND11_MODULE(libmahjong, m) {
 
   m.def("avaliable_ais", &Mahjong::GetAvailableControllers);
   m.def("register_ai", &Mahjong::RegisterPythonController);
+  m.def("unregister_ai", &Mahjong::UnregisterController);
   m.def("start_game", &Mahjong::StartGame);
+  m.def("halt_game", &Mahjong::ExitGame);
 }

@@ -59,4 +59,8 @@ auto Mahjong::RegisterPythonController(pybind11::object pythonController, std::s
   };
   return Mahjong::RegisterController(genFunction, Name);
 }
+
+auto Mahjong::UnregisterController(std::string Name) -> void {
+  availableControllers.erase(Name);
+}
 #endif

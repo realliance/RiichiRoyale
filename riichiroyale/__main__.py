@@ -5,7 +5,7 @@ import logging
 import pygame
 from pygame import surface, Rect
 from pygame.font import Font
-from libmahjong import register_ai, avaliable_ais, PieceType
+from libmahjong import register_ai, avaliable_ais, unregister_ai, PieceType
 from riichiroyale import (
     GameManager,
     MainMenu,
@@ -221,13 +221,15 @@ def main():
     # Clock for pygame-gui
     clock = pygame.time.Clock()
 
+    running = True
+
     # Event loop
-    while True:
+    while running:
         time_delta = clock.tick(60) / 1000.0
         pygame.event.pump()
         for event in pygame.event.get():
-            if event.type == pygame.constants.QUIT:
-                return
+            if event.type == pygame.QUIT:
+                running = False
             game_manager.on_pygame_event(event)
 
         game_manager.update(time_delta)
@@ -236,6 +238,17 @@ def main():
         pygame.display.flip()
         pygame.display.update()
 
+    for view in game_manager.views:
+        if hasattr(game_manager.views[view], 'match'):
+            if game_manager.views[view].match is not None:
+                game_manager.views[view].match.match_alive = False
+                with game_manager.views[view].match.process_lock:
+                    game_manager.views[view].match.process_lock.notify()
+
+    unregister_ai("Player")
+    unregister_ai("StubbornBot")
+
+    pygame.quit()
 
 if __name__ == "__main__":
     sys.exit(main())

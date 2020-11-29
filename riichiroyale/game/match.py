@@ -1,6 +1,6 @@
 from threading import Thread, Condition, Lock
 from time import sleep
-from libmahjong import Wind, start_game, Piece, PieceType, GameSettings, Wind
+from libmahjong import Wind, start_game, Piece, PieceType, GameSettings, Wind, halt_game
 from .board import Board
 from .player import Player
 from .boardmanager import process_event_queue
@@ -27,6 +27,7 @@ class Match(Thread):
         self.match_alive = True
         self.process_lock = Condition()
         self.match_lock = Lock()
+        self.game_id = -1
         self.current_board = None
         if wall is not None and deadwall is not None:
             self.current_board = Board(
@@ -64,9 +65,11 @@ class Match(Thread):
         if self.current_board is not None:
             wall = list(map(Piece, self.current_board.wall+self.current_board.deadwall))
             settings.override_wall = wall
-        start_game(settings, True)
+        self.game_id = start_game(settings, True)
         while self.match_alive:
             self.on_update()
+        print('Match Halting...')
+        halt_game(self.game_id)
 
     def start_next_round(self):
         self.scores = list(map(lambda x: x[0] + x[1], zip(self.scores, self.delta_scores)))

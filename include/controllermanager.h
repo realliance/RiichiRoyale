@@ -17,5 +17,6 @@ namespace Mahjong{
   auto RegisterController(newControllerInst newFunc, std::string Name) -> bool;
 #ifndef NO_PYBIND
   auto RegisterPythonController(pybind11::object pythonController, std::string Name) -> bool;
+  auto UnregisterController(std::string Name) -> void;
 #endif
 };
