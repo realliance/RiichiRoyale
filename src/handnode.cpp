@@ -1,5 +1,7 @@
 #include "handnode.h"
 
+#include "mahjongns.h"
+using namespace Mahjong;
 
 auto Node::begin() const -> const_iterator{
   return const_iterator(this, false);
@@ -18,14 +20,14 @@ auto Node::end() -> iterator{
 }
 
 Node::~Node(){
-  std::vector<Node*> toDelete;
-  for(Node& node : *this){
-    if(parent){
-      toDelete.push_back(&node);
+  if(parent){
+    parent->leaves.erase(parent->leaves.begin()+leafPosInParent);
+    for(size_t i = 0; i < parent->leaves.size(); i++){
+      parent->leaves[i]->leafPosInParent = i;
     }
   }
-  for(Node* n : toDelete){
-    delete n;
+  for(Node* leaf : leaves){
+    delete leaf;
   }
 }
 
@@ -41,8 +43,8 @@ auto Node::iterator::operator++() -> iterator&{
   const Node* traveler = root;
   size_t leafPosNext = traveler->leafPosInParent+1;
   while(traveler->parent && traveler->parent->leaves.size() <= leafPosNext ){
-    leafPosNext = traveler->leafPosInParent+1;
     traveler = traveler->parent;
+    leafPosNext = traveler->leafPosInParent+1;
   }
   if(!traveler->parent){
     end = true;
@@ -104,7 +106,7 @@ auto Node::TypeToStr(uint8_t nodetype) -> std::string{
   }
 }
 
-auto Node::DumpAsTGF(std::ostream& os) -> std::ostream&{
+auto Node::DumpAsTGF(std::ostream& os) const -> std::ostream&{
   std::vector<std::string> nodes;
   std::vector<std::string> connections;
   for(const auto & node : *this){
@@ -125,15 +127,15 @@ auto Node::DumpAsTGF(std::ostream& os) -> std::ostream&{
 
 auto NodeTypeToColorStr(uint8_t nodetype) -> std::string{
   switch(nodetype){
-    case ChiSet:
+    case Node::ChiSet:
       return "purple";
-    case PonSet:
+    case Node::PonSet:
       return "yellow";
-    case Pair:
+    case Node::Pair:
       return "green";
-    case Single:
+    case Node::Single:
       return "blue";
-    case Root:
+    case Node::Root:
       return "black";
     default:
       return "red";
@@ -142,22 +144,22 @@ auto NodeTypeToColorStr(uint8_t nodetype) -> std::string{
 
 auto NodeTypeToShapeStr(uint8_t nodetype) -> std::string{
   switch(nodetype){
-    case ChiSet:
+    case Node::ChiSet:
       return "house";
-    case PonSet:
+    case Node::PonSet:
       return "septagon";
-    case Pair:
+    case Node::Pair:
       return "oval";
-    case Single:
+    case Node::Single:
       return "box";
-    case Root:
+    case Node::Root:
       return "underline";
     default:
       return "Mdiamond";
   }
 }
 
-auto Node::DumpAsDot(std::ostream& os) -> std::ostream&{
+auto Node::DumpAsDot(std::ostream& os) const -> std::ostream&{
   std::vector<std::string> nodes;
   std::vector<std::string> connections;
   for(const auto & node : *this){
@@ -181,6 +183,53 @@ auto Node::DumpAsDot(std::ostream& os) -> std::ostream&{
   }
   os << "}" << std::endl;
   return os;
+}
+
+auto Node::AsBranchVectors() const -> std::vector<std::vector<const Node*>>{
+  std::vector<std::vector<const Node*>> branches;
+  std::vector<const Node*> nodeloc;
+  nodeloc.push_back(this);
+  while(!nodeloc.empty()){
+    if(!nodeloc.back()->leaves.empty()){
+
+      nodeloc.push_back(nodeloc.back()->leaves[0]);
+    }else{
+      for(const auto& node : nodeloc){
+        if(node->id > 100){
+          std::cout << "oof" << std::endl;
+        }
+      }
+      branches.push_back(nodeloc);
+      size_t next = nodeloc.back()->leafPosInParent+1;
+      while(nodeloc.back()->parent && nodeloc.back()->parent->leaves.size() <= next ){
+        nodeloc.pop_back();
+        next = nodeloc.back()->leafPosInParent+1;
+      }
+      if(!nodeloc.back()->parent){
+        nodeloc.pop_back();
+      }else{
+        nodeloc.pop_back();
+        nodeloc.push_back(nodeloc.back()->leaves[next]);
+      }
+    }
+  }
+  return branches;
+}
+
+auto Node::IsComplete() const -> bool {
+  for(const auto & branch : this->AsBranchVectors()){
+    bool stdform = true;
+    for(const auto & node : branch){
+      if(node->type == Node::Single){
+        stdform = false;
+        break;
+      }
+    }
+    if(stdform){
+      return true;
+    }
+  }
+  return false;
 }
 
 auto operator<<(std::ostream& os, const Node& node) -> std::ostream&{

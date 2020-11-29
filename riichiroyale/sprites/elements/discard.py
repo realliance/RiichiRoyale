@@ -5,8 +5,8 @@ from riichiroyale.sprites import TILE_SIZE, SMALL_TILE_SIZE, TileRender
 
 def render_discard_pile(board_render, player_id, seat):
     group = Group()
-    board = board_render.board
-    player = board.players[player_id]
+    match = board_render.match
+    player = match.players[player_id]
 
     if player.discard_pile is None:
         return group
@@ -54,8 +54,8 @@ def render_discard_pile(board_render, player_id, seat):
 
 def render_vertical_discard_pile(board_render, player_id, seat):
     group = Group()
-    board = board_render.board
-    player = board.players[player_id]
+    match = board_render.match
+    player = match.players[player_id]
 
     if player.discard_pile is None:
         return group
@@ -65,12 +65,12 @@ def render_vertical_discard_pile(board_render, player_id, seat):
 
     side_calculation = (SMALL_TILE_SIZE[1] + 10) * 4
     if seat == 1:
-        rect.right = side_calculation + 150
+        rect.right = side_calculation + 180
     if seat == 3:
         rect.left = -side_calculation - 150
 
     tile_offset = 10
-    tiles_per_row = 12
+    tiles_per_row = 8
     i = 0
     row = 0
     row_offset = SMALL_TILE_SIZE[1] + tile_offset

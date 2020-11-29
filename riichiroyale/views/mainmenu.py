@@ -4,6 +4,7 @@ import pygame
 import pygame_gui
 from pygame import surface
 from pygame.sprite import LayeredUpdates, Sprite
+from libmahjong import Piece
 from riichiroyale.sprites import TileRender
 from riichiroyale.game import generate_start_board
 from riichiroyale.utils import load_image_resource
@@ -21,7 +22,7 @@ class MainMenu(MenuView):
         wall, _ = generate_start_board()
         tile_hand = wall[:14]
         self.hand = list(
-            map(lambda tile: TileRender(dictionary, tile, (0, 0)), tile_hand)
+            map(lambda tile: TileRender(dictionary, Piece(tile), (0, 0)), tile_hand)
         )
         self.hand_group = LayeredUpdates(self.hand)
 
@@ -90,13 +91,29 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
         anchors={"left": "left", "right": "right", "top": "top", "bottom": "bottom"},
     )
 
-    # New Game
+    # Story Mode
     menu_button_size = (350, 60)
+    storymode_rect = pygame.Rect(0, 0, menu_button_size[0], menu_button_size[1])
+    storymode_rect.topleft = (global_topleft[0], global_topleft[1] + logo_size[1] + 50)
+    storymode_button = pygame_gui.elements.UIButton(
+        relative_rect=storymode_rect,
+        text="Story Mode",
+        manager=ui_manager,
+        object_id="menuButton",
+        anchors={
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "left",
+        },
+    )
+
+    # New Game
     newgame_button_rect = pygame.Rect(0, 0, menu_button_size[0], menu_button_size[1])
-    newgame_button_rect.topleft = (global_topleft[0], global_topleft[1] + logo_size[1] + 50)
+    newgame_button_rect.topleft = (global_topleft[0], global_topleft[1] + logo_size[1] + 1 * (menu_button_size[1] + 30) + 50)
     newgame_button = pygame_gui.elements.UIButton(
         relative_rect=newgame_button_rect,
-        text="Start Demo",
+        text="Freeplay",
         manager=ui_manager,
         object_id="menuButton",
         anchors={
@@ -109,7 +126,7 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
 
     # Play Tutorial
     tutorial_button_rect = pygame.Rect(0, 0, menu_button_size[0], menu_button_size[1])
-    tutorial_button_rect.topleft = (global_topleft[0], global_topleft[1] + logo_size[1] + menu_button_size[1] + 80)
+    tutorial_button_rect.topleft = (global_topleft[0], global_topleft[1] + logo_size[1] + 2 * (menu_button_size[1] + 30) + 50)
     tutorial_button = pygame_gui.elements.UIButton(
         relative_rect=tutorial_button_rect,
         text="Start Tutorial",
@@ -125,7 +142,7 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
 
     # Settings
     settings_button_rect = pygame.Rect(0, 0, menu_button_size[0], menu_button_size[1])
-    settings_button_rect.topleft = (global_topleft[0], global_topleft[1] + logo_size[1] + 2 * (menu_button_size[1] + 30) + 50)
+    settings_button_rect.topleft = (global_topleft[0], global_topleft[1] + logo_size[1] + 3 * (menu_button_size[1] + 30) + 50)
     settings_button = pygame_gui.elements.UIButton(
         relative_rect=settings_button_rect,
         text="Settings",
@@ -142,9 +159,10 @@ def create_main_menu_elements(game_manager, screen_width, screen_height):
     # processuievent() is called when a UI event is caught while this menu is active
     def process_ui_event(event):
         if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+            if event.ui_element == storymode_button:
+                game_manager.set_active_view("storymodeselect")
             if event.ui_element == newgame_button:
-                game_manager.set_active_view("game")
-                game_manager.get_active_view().on_match_start()
+                game_manager.set_active_view("freeplayselect")
             if event.ui_element == tutorial_button:
                 game_manager.set_active_view("tutorial")
                 game_manager.get_active_view().on_match_start()

@@ -1,35 +1,62 @@
 #include "walls.h"
-#include <stddef.h>   // for size_t
-#include <algorithm>  // for copy_n, move, shuffle
-#include <iostream>   // for operator<<, basic_ostream, endl, basic_ostream:...
-#include <iterator>   // for back_insert_iterator, back_inserter
-#include <random>     // for random_device, mt19937
-#include <string>     // for operator<<, char_traits
+#include <stddef.h>
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <random>
+#include <string>
+
+#include "mahjongns.h"
+using namespace Mahjong;
 
 const std::vector<Piece> PIECE_SET = {
-  ONE_BAMBOO, TWO_BAMBOO, THREE_BAMBOO, FOUR_BAMBOO,
-  FIVE_BAMBOO, SIX_BAMBOO, SEVEN_BAMBOO, EIGHT_BAMBOO,
-  NINE_BAMBOO, ONE_PIN, TWO_PIN, THREE_PIN, FOUR_PIN,
-  FIVE_PIN, SIX_PIN, SEVEN_PIN, EIGHT_PIN, NINE_PIN,
-  ONE_CHARACTER, NINE_CHARACTER, TWO_CHARACTER, 
-  THREE_CHARACTER, FOUR_CHARACTER, FIVE_CHARACTER,
-  SIX_CHARACTER, SEVEN_CHARACTER, EIGHT_CHARACTER, 
-  WHITE_DRAGON, GREEN_DRAGON, RED_DRAGON, EAST_WIND,
-  SOUTH_WIND, NORTH_WIND, WEST_WIND
+  Piece::ONE_BAMBOO, Piece::TWO_BAMBOO, Piece::THREE_BAMBOO, Piece::FOUR_BAMBOO,
+  Piece::FIVE_BAMBOO, Piece::SIX_BAMBOO, Piece::SEVEN_BAMBOO, Piece::EIGHT_BAMBOO,
+  Piece::NINE_BAMBOO, Piece::ONE_PIN, Piece::TWO_PIN, Piece::THREE_PIN, Piece::FOUR_PIN,
+  Piece::FIVE_PIN, Piece::SIX_PIN, Piece::SEVEN_PIN, Piece::EIGHT_PIN, Piece::NINE_PIN,
+  Piece::ONE_CHARACTER, Piece::NINE_CHARACTER, Piece::TWO_CHARACTER, 
+  Piece::THREE_CHARACTER, Piece::FOUR_CHARACTER, Piece::FIVE_CHARACTER,
+  Piece::SIX_CHARACTER, Piece::SEVEN_CHARACTER, Piece::EIGHT_CHARACTER, 
+  Piece::WHITE_DRAGON, Piece::GREEN_DRAGON, Piece::RED_DRAGON, Piece::EAST_WIND,
+  Piece::SOUTH_WIND, Piece::NORTH_WIND, Piece::WEST_WIND
 };
 
 Walls::Walls(){
+  std::random_device rd;
+  std::mt19937 g(rd());
+
   for(int i = 0; i < 4; i++){
     livingWalls.insert(livingWalls.end(),PIECE_SET.begin(),PIECE_SET.end());
   }
-  std::random_device rd;
-  std::mt19937 g(rd());
   std::shuffle(livingWalls.begin(), livingWalls.end(), g);
+  
   std::move(livingWalls.begin(), livingWalls.begin()+14, std::back_inserter(deadWall));
   for(size_t i = 0; i < 14; i++){
     livingWalls.erase(livingWalls.begin());
   }
 }
+
+Walls::Walls(std::mt19937& g){
+  std::vector<Piece> wall;
+  for(int i = 0; i < 4; i++){
+    livingWalls.insert(livingWalls.end(),PIECE_SET.begin(),PIECE_SET.end());
+  }
+  std::shuffle(livingWalls.begin(), livingWalls.end(), g);
+
+  std::move(livingWalls.begin(), livingWalls.begin()+14, std::back_inserter(deadWall));
+  for(size_t i = 0; i < 14; i++){
+    livingWalls.erase(livingWalls.begin());
+  }
+}
+
+Walls::Walls(std::vector<Piece> wall){
+  std::swap(livingWalls,wall);
+  std::move(livingWalls.rbegin(), livingWalls.rbegin()+14, std::back_inserter(deadWall));
+  for(size_t i = 0; i < 14; i++){
+    livingWalls.pop_back();
+  }
+}
+
 
 Piece Walls::TakePiece(){
   if(livingWalls.size() > 0){
@@ -37,7 +64,7 @@ Piece Walls::TakePiece(){
     livingWalls.erase(livingWalls.begin());
     return p;
   }
-  return PieceType::ERROR_PIECE;
+  return Piece::ERROR;
 }
 
 std::vector<Piece> Walls::TakeHand(){
@@ -53,14 +80,17 @@ std::vector<Piece> Walls::TakeHand(){
 }
 
 Piece Walls::TakeReplacementTile() {
+  if(livingWalls.empty()){
+    return Piece::ERROR;
+  }
   if(replacements < 1){
-    return PieceType::ERROR_PIECE;
+    return Piece::ERROR;
   }
   replacements--;
   Piece p = deadWall.front();
   deadWall.erase(deadWall.begin());
   deadWall.push_back(livingWalls.back());
-
+  doraCount++;
   livingWalls.pop_back();
   return p;
 }
@@ -81,7 +111,7 @@ int Walls::GetRemainingPieces() const{
   return livingWalls.size();
 }
 
-auto operator<<(std::ostream& os, const Walls& walls) -> std::ostream&{
+auto operator<<(std::ostream& os, const Mahjong::Walls& walls) -> std::ostream&{
   os << "{ doraCount: " << walls.doraCount;
   os << " replacements: " << walls.replacements;
   os << " livingWalls: [" << std::endl;

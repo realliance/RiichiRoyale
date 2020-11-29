@@ -1,7 +1,8 @@
 from functools import reduce
 from pygame.sprite import Group
 from pygame import Rect
-from riichiroyale.game import Tile, CallDirection
+from libmahjong import PieceType
+from riichiroyale.game import CallDirection
 from riichiroyale.sprites import SMALL_TILE_SIZE, TileRender
 
 
@@ -32,10 +33,10 @@ def render_meld_hand(board_render, meld_hand, seat=0):
     rect = Rect(board_render.surface.get_rect())
     offset = 0
     SEAT_POS = [
-        (rect.width - max_row_width - 65, rect.height - 25 - (max_meld_height * 2)),
+        (rect.width - max_row_width - 85, rect.height - 10 - (max_meld_height * 2)),
         (rect.width - 100 - (max_meld_height * 2), max_row_width),
-        (400 - max_row_width, 25),
-        (25 + (max_meld_height * 2), max_row_width),
+        (300 - max_row_width, 25),
+        (25 + (max_meld_height * 2), max_row_width + 40),
     ]
 
     xpos, ypos = SEAT_POS[seat]
@@ -44,13 +45,16 @@ def render_meld_hand(board_render, meld_hand, seat=0):
     for meld in meld_hand:
         if not VERTICAL:
             group.add(
-                render_meld(board_render, meld, xpos + offset, ypos, meld_rotation=seat)
+                render_meld(board_render, meld, xpos + offset, ypos, seat, meld_rotation=seat)
             )
         else:
             group.add(
-                render_meld(board_render, meld, xpos, ypos + offset, meld_rotation=seat)
+                render_meld(board_render, meld, xpos, ypos + offset, seat, meld_rotation=seat)
             )
-        meld_width, meld_height = calculated_meld_dimensions[i]
+        try:
+            meld_width, meld_height = calculated_meld_dimensions[i]
+        except IndexError:
+            return render_meld_hand(board_render, meld_hand, seat=seat)
         max_meld_height = max(max_meld_height, meld_height)
         offset += meld_width + 20
         i += 1
@@ -69,7 +73,7 @@ def _get_tile_offset(offset, is_vertical, is_inverted):
     return VERT_INVERT_LUT[is_vertical][is_inverted]
 
 
-def render_meld(board_render, meld, xpos, ypos, meld_rotation=0):
+def render_meld(board_render, meld, xpos, ypos, seat, meld_rotation=0):
     VERTICAL = meld_rotation % 2 != 0
     INVERT_CALL_OFFSET = meld_rotation > 1
     NONROTATED_MELD_PIECE = meld_rotation
@@ -77,14 +81,16 @@ def render_meld(board_render, meld, xpos, ypos, meld_rotation=0):
     group = Group()
     direction = meld.call_direction
 
+    tile_list = meld.tiles[::-1] if VERTICAL else meld.tiles
+
     i = 0
-    tile_length = len(meld.tiles)
-    while i < tile_length:
-        tile = meld.tiles[i]
+    tile_length = len(tile_list)
+    while i < tile_length:        
+        tile = tile_list[i]
         rotation_i = 2 - i if meld_rotation in (1, 2) else i
         rotation = (
             ROTATED_MELD_PIECE
-            if CallDirection.should_rotate_tile(rotation_i, meld)
+            if CallDirection.should_rotate_tile(rotation_i, meld, seat)
             else NONROTATED_MELD_PIECE
         )
 
@@ -98,10 +104,11 @@ def render_meld(board_render, meld, xpos, ypos, meld_rotation=0):
         tile_pos = (tile_posx, tile_posy)
 
         rendered_tile = (
-            Tile.ERROR_PIECE
+            PieceType.ERROR
             if direction == CallDirection.Concealed and i in (0, 3)
             else tile
         )
+
         sprite = TileRender(
             board_render.small_dictionary,
             rendered_tile,
@@ -110,10 +117,10 @@ def render_meld(board_render, meld, xpos, ypos, meld_rotation=0):
             rotation=rotation,
         )
         group.add(sprite)
-        if rotation == 1 and meld.converted_kan:
+        if rotation == ROTATED_MELD_PIECE and meld.converted_kan:
             offset -= 5 + SMALL_TILE_SIZE[0]
-            tile_posx = xpos + (offset if VERTICAL else 0)
-            tile_posy = ypos + (offset if not VERTICAL else 0)
+            tile_posx = xpos + ((offset if VERTICAL else 0) * (-1.5 if INVERT_CALL_OFFSET else 1))
+            tile_posy = ypos + ((offset if not VERTICAL else 0) * (-1.5 if INVERT_CALL_OFFSET else 1))
             tile_pos = (tile_posx, tile_posy)
             sprite = TileRender(
                 board_render.small_dictionary,

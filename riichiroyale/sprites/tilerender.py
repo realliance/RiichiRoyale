@@ -1,5 +1,6 @@
 from pygame.sprite import DirtySprite
 from pygame import mouse, Rect, transform
+from libmahjong import Piece
 from .tileload import TILE_SIZE, SMALL_TILE_SIZE
 
 
@@ -15,8 +16,12 @@ class TileRender(DirtySprite):
         interact=False,
         rotation=0,
     ):
+        if not hasattr(tile, 'get_raw_value'):
+            print('WARNING: Just attempted to pass a PieceType to TileRender!')
+            tile = Piece(int(tile))
+
         DirtySprite.__init__(self)
-        tile_surface = dictionary[tile].copy()
+        tile_surface = dictionary[tile.get_raw_value()].copy()
         tile_surface = transform.rotate(tile_surface, 90 * rotation)
         tile_surface = tile_surface.convert_alpha()
         self.image = tile_surface

@@ -1,13 +1,15 @@
 #pragma once
-#include <iostream>  // for ostream
-#include "winds.h"   // for Wind
-class MahjongAI;  // lines 5-5
+#include <iostream>
 
-struct Player {
-  int points;
-  int position;
-  Wind seat;
-  MahjongAI* controller = nullptr;
+
+namespace Mahjong {
+  class PlayerController;  
+
+  struct Player {
+    int points;
+    PlayerController* controller = nullptr;
+  };
+
 };
 
-auto operator<<(std::ostream& os, const Player& player) -> std::ostream&;
+auto operator<<(std::ostream& os, const Mahjong::Player& player) -> std::ostream&;

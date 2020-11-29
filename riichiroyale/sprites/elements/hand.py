@@ -1,11 +1,11 @@
 from pygame.sprite import Group
 from pygame import Rect
-from riichiroyale.game import Tile
+from libmahjong import PieceType, Piece
 from riichiroyale.sprites import SMALL_TILE_SIZE, TILE_SIZE, TileRender
 
 
 def render_hand(board_render, player_pov):
-    player = board_render.board.players[player_pov]
+    player = board_render.match.players[player_pov]
 
     rect = Rect(board_render.surface.get_rect())
     rect.y = rect.height - (TILE_SIZE[1] + 15)
@@ -25,7 +25,7 @@ def render_hand(board_render, player_pov):
 
 
 def render_hidden_hand(board_render, pov, seat):
-    player = board_render.board.players[pov]
+    player = board_render.match.players[pov]
     rect = Rect(board_render.surface.get_rect())
     tile_offset = 5
     full_hand_width = (
@@ -49,7 +49,7 @@ def render_hidden_hand(board_render, pov, seat):
     elif seat == 3:
         rect.x = xpos
 
-    hand = [Tile.ERROR_PIECE] * len(player.hand)
+    hand = [Piece(PieceType.ERROR)] * len(player.hand)
 
     if seat % 2 == 0:
         return _render_hand(

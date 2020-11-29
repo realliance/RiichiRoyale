@@ -1,121 +1,126 @@
-#include "possiblesets.h"
+#include "analysis.h"
 
-#include <stdint.h>            // for uint8_t
-#include <algorithm>           // for shuffle, move
-#include <iterator>            // for back_insert_iterator, back_inserter
-#include <memory>              // for allocator_traits<>::value_type
-#include <random>              // for mt19937, uniform_int_distribution, ran...
+#include <stdint.h>
+#include <algorithm>
+#include <iterator>
+#include <memory>
+#include <random>
+#include <ext/alloc_traits.h>
+#include <vector>
 
-#include "piecetype.h"         // for Piece, FIVE_BAMBOO, FIVE_CHARACTER
+#include "piecetype.h"
+
+#include "mahjongns.h"
+using namespace Mahjong;
 
 const std::vector<std::vector<Piece>> TRIPLETS = {
-  {ONE_BAMBOO,TWO_BAMBOO,THREE_BAMBOO},
-  {TWO_BAMBOO,THREE_BAMBOO,FOUR_BAMBOO},
-  {THREE_BAMBOO,FOUR_BAMBOO,FIVE_BAMBOO},
-  {FOUR_BAMBOO,FIVE_BAMBOO,SIX_BAMBOO},
-  {FIVE_BAMBOO,SIX_BAMBOO,SEVEN_BAMBOO},
-  {SIX_BAMBOO,SEVEN_BAMBOO,EIGHT_BAMBOO},
-  {SEVEN_BAMBOO,EIGHT_BAMBOO,NINE_BAMBOO},
-  {ONE_CHARACTER,TWO_CHARACTER,THREE_CHARACTER},
-  {TWO_CHARACTER,THREE_CHARACTER,FOUR_CHARACTER},
-  {THREE_CHARACTER,FOUR_CHARACTER,FIVE_CHARACTER},
-  {FOUR_CHARACTER,FIVE_CHARACTER,SIX_CHARACTER},
-  {FIVE_CHARACTER,SIX_CHARACTER,SEVEN_CHARACTER},
-  {SIX_CHARACTER,SEVEN_CHARACTER,EIGHT_CHARACTER},
-  {SEVEN_CHARACTER,EIGHT_CHARACTER,NINE_CHARACTER},
-  {ONE_PIN,TWO_PIN,THREE_PIN},
-  {TWO_PIN,THREE_PIN,FOUR_PIN},
-  {THREE_PIN,FOUR_PIN,FIVE_PIN},
-  {FOUR_PIN,FIVE_PIN,SIX_PIN},
-  {FIVE_PIN,SIX_PIN,SEVEN_PIN},
-  {SIX_PIN,SEVEN_PIN,EIGHT_PIN},
-  {SEVEN_PIN,EIGHT_PIN,NINE_PIN},
-  {ONE_BAMBOO,ONE_BAMBOO,ONE_BAMBOO},
-  {TWO_BAMBOO,TWO_BAMBOO,TWO_BAMBOO},
-  {THREE_BAMBOO,THREE_BAMBOO,THREE_BAMBOO},
-  {FOUR_BAMBOO,FOUR_BAMBOO,FOUR_BAMBOO},
-  {FIVE_BAMBOO,FIVE_BAMBOO,FIVE_BAMBOO},
-  {SIX_BAMBOO,SIX_BAMBOO,SIX_BAMBOO},
-  {SEVEN_BAMBOO,SEVEN_BAMBOO,SEVEN_BAMBOO},
-  {EIGHT_BAMBOO,EIGHT_BAMBOO,EIGHT_BAMBOO},
-  {NINE_BAMBOO,NINE_BAMBOO,NINE_BAMBOO},
-  {ONE_CHARACTER,ONE_CHARACTER,ONE_CHARACTER},
-  {TWO_CHARACTER,TWO_CHARACTER,TWO_CHARACTER},
-  {THREE_CHARACTER,THREE_CHARACTER,THREE_CHARACTER},
-  {FOUR_CHARACTER,FOUR_CHARACTER,FOUR_CHARACTER},
-  {FIVE_CHARACTER,FIVE_CHARACTER,FIVE_CHARACTER},
-  {SIX_CHARACTER,SIX_CHARACTER,SIX_CHARACTER},
-  {SEVEN_CHARACTER,SEVEN_CHARACTER,SEVEN_CHARACTER},
-  {EIGHT_CHARACTER,EIGHT_CHARACTER,EIGHT_CHARACTER},
-  {NINE_CHARACTER,NINE_CHARACTER,NINE_CHARACTER},
-  {ONE_PIN,ONE_PIN,ONE_PIN},
-  {TWO_PIN,TWO_PIN,TWO_PIN},
-  {THREE_PIN,THREE_PIN,THREE_PIN},
-  {FOUR_PIN,FOUR_PIN,FOUR_PIN},
-  {FIVE_PIN,FIVE_PIN,FIVE_PIN},
-  {SIX_PIN,SIX_PIN,SIX_PIN},
-  {SEVEN_PIN,SEVEN_PIN,SEVEN_PIN},
-  {EIGHT_PIN,EIGHT_PIN,EIGHT_PIN},
-  {NINE_PIN,NINE_PIN,NINE_PIN},
-  {WEST_WIND,WEST_WIND,WEST_WIND},
-  {EAST_WIND,EAST_WIND,EAST_WIND},
-  {SOUTH_WIND,SOUTH_WIND,SOUTH_WIND},
-  {NORTH_WIND,NORTH_WIND,NORTH_WIND},
-  {RED_DRAGON,RED_DRAGON,RED_DRAGON},
-  {WHITE_DRAGON,WHITE_DRAGON,WHITE_DRAGON},
-  {GREEN_DRAGON,GREEN_DRAGON,GREEN_DRAGON}
+  {Piece::ONE_BAMBOO,Piece::TWO_BAMBOO,Piece::THREE_BAMBOO},
+  {Piece::TWO_BAMBOO,Piece::THREE_BAMBOO,Piece::FOUR_BAMBOO},
+  {Piece::THREE_BAMBOO,Piece::FOUR_BAMBOO,Piece::FIVE_BAMBOO},
+  {Piece::FOUR_BAMBOO,Piece::FIVE_BAMBOO,Piece::SIX_BAMBOO},
+  {Piece::FIVE_BAMBOO,Piece::SIX_BAMBOO,Piece::SEVEN_BAMBOO},
+  {Piece::SIX_BAMBOO,Piece::SEVEN_BAMBOO,Piece::EIGHT_BAMBOO},
+  {Piece::SEVEN_BAMBOO,Piece::EIGHT_BAMBOO,Piece::NINE_BAMBOO},
+  {Piece::ONE_CHARACTER,Piece::TWO_CHARACTER,Piece::THREE_CHARACTER},
+  {Piece::TWO_CHARACTER,Piece::THREE_CHARACTER,Piece::FOUR_CHARACTER},
+  {Piece::THREE_CHARACTER,Piece::FOUR_CHARACTER,Piece::FIVE_CHARACTER},
+  {Piece::FOUR_CHARACTER,Piece::FIVE_CHARACTER,Piece::SIX_CHARACTER},
+  {Piece::FIVE_CHARACTER,Piece::SIX_CHARACTER,Piece::SEVEN_CHARACTER},
+  {Piece::SIX_CHARACTER,Piece::SEVEN_CHARACTER,Piece::EIGHT_CHARACTER},
+  {Piece::SEVEN_CHARACTER,Piece::EIGHT_CHARACTER,Piece::NINE_CHARACTER},
+  {Piece::ONE_PIN,Piece::TWO_PIN,Piece::THREE_PIN},
+  {Piece::TWO_PIN,Piece::THREE_PIN,Piece::FOUR_PIN},
+  {Piece::THREE_PIN,Piece::FOUR_PIN,Piece::FIVE_PIN},
+  {Piece::FOUR_PIN,Piece::FIVE_PIN,Piece::SIX_PIN},
+  {Piece::FIVE_PIN,Piece::SIX_PIN,Piece::SEVEN_PIN},
+  {Piece::SIX_PIN,Piece::SEVEN_PIN,Piece::EIGHT_PIN},
+  {Piece::SEVEN_PIN,Piece::EIGHT_PIN,Piece::NINE_PIN},
+  {Piece::ONE_BAMBOO,Piece::ONE_BAMBOO,Piece::ONE_BAMBOO},
+  {Piece::TWO_BAMBOO,Piece::TWO_BAMBOO,Piece::TWO_BAMBOO},
+  {Piece::THREE_BAMBOO,Piece::THREE_BAMBOO,Piece::THREE_BAMBOO},
+  {Piece::FOUR_BAMBOO,Piece::FOUR_BAMBOO,Piece::FOUR_BAMBOO},
+  {Piece::FIVE_BAMBOO,Piece::FIVE_BAMBOO,Piece::FIVE_BAMBOO},
+  {Piece::SIX_BAMBOO,Piece::SIX_BAMBOO,Piece::SIX_BAMBOO},
+  {Piece::SEVEN_BAMBOO,Piece::SEVEN_BAMBOO,Piece::SEVEN_BAMBOO},
+  {Piece::EIGHT_BAMBOO,Piece::EIGHT_BAMBOO,Piece::EIGHT_BAMBOO},
+  {Piece::NINE_BAMBOO,Piece::NINE_BAMBOO,Piece::NINE_BAMBOO},
+  {Piece::ONE_CHARACTER,Piece::ONE_CHARACTER,Piece::ONE_CHARACTER},
+  {Piece::TWO_CHARACTER,Piece::TWO_CHARACTER,Piece::TWO_CHARACTER},
+  {Piece::THREE_CHARACTER,Piece::THREE_CHARACTER,Piece::THREE_CHARACTER},
+  {Piece::FOUR_CHARACTER,Piece::FOUR_CHARACTER,Piece::FOUR_CHARACTER},
+  {Piece::FIVE_CHARACTER,Piece::FIVE_CHARACTER,Piece::FIVE_CHARACTER},
+  {Piece::SIX_CHARACTER,Piece::SIX_CHARACTER,Piece::SIX_CHARACTER},
+  {Piece::SEVEN_CHARACTER,Piece::SEVEN_CHARACTER,Piece::SEVEN_CHARACTER},
+  {Piece::EIGHT_CHARACTER,Piece::EIGHT_CHARACTER,Piece::EIGHT_CHARACTER},
+  {Piece::NINE_CHARACTER,Piece::NINE_CHARACTER,Piece::NINE_CHARACTER},
+  {Piece::ONE_PIN,Piece::ONE_PIN,Piece::ONE_PIN},
+  {Piece::TWO_PIN,Piece::TWO_PIN,Piece::TWO_PIN},
+  {Piece::THREE_PIN,Piece::THREE_PIN,Piece::THREE_PIN},
+  {Piece::FOUR_PIN,Piece::FOUR_PIN,Piece::FOUR_PIN},
+  {Piece::FIVE_PIN,Piece::FIVE_PIN,Piece::FIVE_PIN},
+  {Piece::SIX_PIN,Piece::SIX_PIN,Piece::SIX_PIN},
+  {Piece::SEVEN_PIN,Piece::SEVEN_PIN,Piece::SEVEN_PIN},
+  {Piece::EIGHT_PIN,Piece::EIGHT_PIN,Piece::EIGHT_PIN},
+  {Piece::NINE_PIN,Piece::NINE_PIN,Piece::NINE_PIN},
+  {Piece::WEST_WIND,Piece::WEST_WIND,Piece::WEST_WIND},
+  {Piece::EAST_WIND,Piece::EAST_WIND,Piece::EAST_WIND},
+  {Piece::SOUTH_WIND,Piece::SOUTH_WIND,Piece::SOUTH_WIND},
+  {Piece::NORTH_WIND,Piece::NORTH_WIND,Piece::NORTH_WIND},
+  {Piece::RED_DRAGON,Piece::RED_DRAGON,Piece::RED_DRAGON},
+  {Piece::WHITE_DRAGON,Piece::WHITE_DRAGON,Piece::WHITE_DRAGON},
+  {Piece::GREEN_DRAGON,Piece::GREEN_DRAGON,Piece::GREEN_DRAGON}
 };
 
 const std::vector<std::vector<Piece>> PAIRS = {
-  {ONE_BAMBOO,ONE_BAMBOO},
-  {TWO_BAMBOO,TWO_BAMBOO},
-  {THREE_BAMBOO,THREE_BAMBOO},
-  {FOUR_BAMBOO,FOUR_BAMBOO},
-  {FIVE_BAMBOO,FIVE_BAMBOO},
-  {SIX_BAMBOO,SIX_BAMBOO},
-  {SEVEN_BAMBOO,SEVEN_BAMBOO},
-  {EIGHT_BAMBOO,EIGHT_BAMBOO},
-  {NINE_BAMBOO,NINE_BAMBOO},
-  {ONE_PIN,ONE_PIN},
-  {TWO_PIN,TWO_PIN},
-  {THREE_PIN,THREE_PIN},
-  {FOUR_PIN,FOUR_PIN},
-  {FIVE_PIN,FIVE_PIN},
-  {SIX_PIN,SIX_PIN},
-  {SEVEN_PIN,SEVEN_PIN},
-  {EIGHT_PIN,EIGHT_PIN},
-  {NINE_PIN,NINE_PIN},
-  {ONE_CHARACTER,ONE_CHARACTER},
-  {TWO_CHARACTER,TWO_CHARACTER},
-  {THREE_CHARACTER,THREE_CHARACTER},
-  {FOUR_CHARACTER,FOUR_CHARACTER},
-  {FIVE_CHARACTER,FIVE_CHARACTER},
-  {SIX_CHARACTER,SIX_CHARACTER},
-  {SEVEN_CHARACTER,SEVEN_CHARACTER},
-  {EIGHT_CHARACTER,EIGHT_CHARACTER},
-  {NINE_CHARACTER,NINE_CHARACTER},
-  {EAST_WIND,EAST_WIND},
-  {SOUTH_WIND,SOUTH_WIND},
-  {WEST_WIND,WEST_WIND},
-  {NORTH_WIND,NORTH_WIND},
-  {RED_DRAGON,RED_DRAGON},
-  {WHITE_DRAGON,WHITE_DRAGON},
-  {GREEN_DRAGON,GREEN_DRAGON}
+  {Piece::ONE_BAMBOO,Piece::ONE_BAMBOO},
+  {Piece::TWO_BAMBOO,Piece::TWO_BAMBOO},
+  {Piece::THREE_BAMBOO,Piece::THREE_BAMBOO},
+  {Piece::FOUR_BAMBOO,Piece::FOUR_BAMBOO},
+  {Piece::FIVE_BAMBOO,Piece::FIVE_BAMBOO},
+  {Piece::SIX_BAMBOO,Piece::SIX_BAMBOO},
+  {Piece::SEVEN_BAMBOO,Piece::SEVEN_BAMBOO},
+  {Piece::EIGHT_BAMBOO,Piece::EIGHT_BAMBOO},
+  {Piece::NINE_BAMBOO,Piece::NINE_BAMBOO},
+  {Piece::ONE_PIN,Piece::ONE_PIN},
+  {Piece::TWO_PIN,Piece::TWO_PIN},
+  {Piece::THREE_PIN,Piece::THREE_PIN},
+  {Piece::FOUR_PIN,Piece::FOUR_PIN},
+  {Piece::FIVE_PIN,Piece::FIVE_PIN},
+  {Piece::SIX_PIN,Piece::SIX_PIN},
+  {Piece::SEVEN_PIN,Piece::SEVEN_PIN},
+  {Piece::EIGHT_PIN,Piece::EIGHT_PIN},
+  {Piece::NINE_PIN,Piece::NINE_PIN},
+  {Piece::ONE_CHARACTER,Piece::ONE_CHARACTER},
+  {Piece::TWO_CHARACTER,Piece::TWO_CHARACTER},
+  {Piece::THREE_CHARACTER,Piece::THREE_CHARACTER},
+  {Piece::FOUR_CHARACTER,Piece::FOUR_CHARACTER},
+  {Piece::FIVE_CHARACTER,Piece::FIVE_CHARACTER},
+  {Piece::SIX_CHARACTER,Piece::SIX_CHARACTER},
+  {Piece::SEVEN_CHARACTER,Piece::SEVEN_CHARACTER},
+  {Piece::EIGHT_CHARACTER,Piece::EIGHT_CHARACTER},
+  {Piece::NINE_CHARACTER,Piece::NINE_CHARACTER},
+  {Piece::EAST_WIND,Piece::EAST_WIND},
+  {Piece::SOUTH_WIND,Piece::SOUTH_WIND},
+  {Piece::WEST_WIND,Piece::WEST_WIND},
+  {Piece::NORTH_WIND,Piece::NORTH_WIND},
+  {Piece::RED_DRAGON,Piece::RED_DRAGON},
+  {Piece::WHITE_DRAGON,Piece::WHITE_DRAGON},
+  {Piece::GREEN_DRAGON,Piece::GREEN_DRAGON}
 };
 
 const std::vector<Piece> PIECE_SET = {
-    ONE_BAMBOO, TWO_BAMBOO, THREE_BAMBOO, FOUR_BAMBOO,
-    FIVE_BAMBOO, SIX_BAMBOO, SEVEN_BAMBOO, EIGHT_BAMBOO,
-    NINE_BAMBOO, ONE_PIN, TWO_PIN, THREE_PIN, FOUR_PIN,
-    FIVE_PIN, SIX_PIN, SEVEN_PIN, EIGHT_PIN, NINE_PIN,
-    ONE_CHARACTER, NINE_CHARACTER, TWO_CHARACTER, 
-    THREE_CHARACTER, FOUR_CHARACTER, FIVE_CHARACTER,
-    SIX_CHARACTER, SEVEN_CHARACTER, EIGHT_CHARACTER, 
-    WHITE_DRAGON, GREEN_DRAGON, RED_DRAGON, EAST_WIND,
-    SOUTH_WIND, NORTH_WIND, WEST_WIND
+    Piece::ONE_BAMBOO,Piece::TWO_BAMBOO,Piece::THREE_BAMBOO,Piece::FOUR_BAMBOO,
+    Piece::FIVE_BAMBOO,Piece::SIX_BAMBOO,Piece::SEVEN_BAMBOO,Piece::EIGHT_BAMBOO,
+    Piece::NINE_BAMBOO,Piece::ONE_PIN,Piece::TWO_PIN,Piece::THREE_PIN,Piece::FOUR_PIN,
+    Piece::FIVE_PIN,Piece::SIX_PIN,Piece::SEVEN_PIN,Piece::EIGHT_PIN,Piece::NINE_PIN,
+    Piece::ONE_CHARACTER,Piece::NINE_CHARACTER,Piece::TWO_CHARACTER,Piece::
+    Piece::THREE_CHARACTER,Piece::FOUR_CHARACTER,Piece::FIVE_CHARACTER,
+    Piece::SIX_CHARACTER,Piece::SEVEN_CHARACTER,Piece::EIGHT_CHARACTER,Piece::
+    Piece::WHITE_DRAGON,Piece::GREEN_DRAGON,Piece::RED_DRAGON,Piece::EAST_WIND,
+    Piece::SOUTH_WIND,Piece::NORTH_WIND,Piece::WEST_WIND
 };
 
-auto GetPossibleStdFormHand() -> std::vector<Piece>{
+auto Mahjong::GetPossibleStdFormHand() -> std::vector<Piece>{
   std::vector<Piece> livingWalls;
   std::vector<Piece> deadWall;
   for(int i = 0; i < 4; i++){
@@ -124,8 +129,8 @@ auto GetPossibleStdFormHand() -> std::vector<Piece>{
 
   std::random_device rd;
   std::mt19937 g(rd());
-  std::shuffle(livingWalls.begin(), livingWalls.end(), g);
-  std::move(livingWalls.begin(), livingWalls.begin()+14, std::back_inserter(deadWall));
+  std::shuffle(livingWalls.begin(),livingWalls.end(),g);
+  std::move(livingWalls.begin(),livingWalls.begin()+14,std::back_inserter(deadWall));
 
   uint8_t pieceCount[256] = {};
   for(const auto & piece : livingWalls){
@@ -133,7 +138,7 @@ auto GetPossibleStdFormHand() -> std::vector<Piece>{
   }
 
   std::vector<bool> choosePair = {false,false,false,false,true};
-  std::shuffle(choosePair.begin(), choosePair.end(), g);
+  std::shuffle(choosePair.begin(),choosePair.end(),g);
   std::uniform_int_distribution<> pairChance(0,3);
   std::uniform_int_distribution<> tripletSelection(0,54);
   std::uniform_int_distribution<> pairSelection(0,33);
@@ -170,4 +175,55 @@ auto GetPossibleStdFormHand() -> std::vector<Piece>{
     }
   }
   return hand;
+}
+
+auto Mahjong::TestStdForm(std::vector<Piece> hand) -> bool {
+  Node* root = breakdownHand(hand);
+  auto branches = root->AsBranchVectors();
+  for(const auto& branch: branches){
+    bool complete = true;
+    std::vector<const Node*> singles;
+    for(const auto& node: branch){
+      if(node->type == Node::Single){
+        complete = false;
+        break;
+      }
+    }
+    if(complete){
+      delete root;
+      return true;
+    }
+  }
+  delete root;
+  return false;
+}
+
+auto TestValid(std::vector<Piece> hand) -> bool {
+  std::map<Piece,bool> pieces;
+  for(const auto& piece : hand){
+    if(pieces.contains(piece)){
+      return false;
+    }
+    pieces[piece] = true;
+  }
+  return true;
+}
+
+auto Mahjong::GetPossibleTenpaiHand(bool replacement) -> std::vector<Piece>{
+  std::vector<Piece> tenpaihand = GetPossibleStdFormHand();
+  std::random_device rd;
+  std::mt19937 g(rd());
+  std::shuffle(tenpaihand.begin(),tenpaihand.end(),g);
+  std::uniform_int_distribution<> pieceIndex(0,13);
+  std::uniform_int_distribution<> pieceSelect(0,33);
+  int ind = pieceIndex(g);
+  if(!replacement){
+    tenpaihand.erase(tenpaihand.begin()+ind);
+    return tenpaihand;
+  }
+  tenpaihand[ind] = PIECE_SET[pieceSelect(g)];
+  while(TestStdForm(tenpaihand) && !TestValid(tenpaihand)){
+    tenpaihand[ind] = PIECE_SET[pieceSelect(g)];
+  }
+  return tenpaihand;
 }

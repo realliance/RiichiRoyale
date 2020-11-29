@@ -3,6 +3,14 @@ target_sources(RiichiRoyale
   PRIVATE
     "${DIR}/angrydiscardobot.cpp"
     "${DIR}/angrydiscardobot.h"
-    "${DIR}/pythonaiinterface.cpp"
-    "${DIR}/pythonaiinterface.h"
+    "${DIR}/thricebot.h"
+    "${DIR}/thricebot.cpp"
+    "${DIR}/fasttanyao.cpp"
+    "${DIR}/fasttanyao.h"
+    "${DIR}/alphabeticalbot.cpp"
+    "${DIR}/alphabeticalbot.h"
+    "${DIR}/totobot.cpp"
+    "${DIR}/totobot.h"
+    "${DIR}/gentlemanbot.cpp"
+    "${DIR}/gentlemanbot.h"
 )

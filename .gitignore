@@ -179,5 +179,16 @@ cython_debug/
 .vscode
 .idea
 
-# Persisten settings file
+# Persistent settings file
 settings.json
+
+# CMake
+cmake-build-debug
+
+# Graph Formats
+*.gv
+*.tgf
+
+release
+
+vgcore.*

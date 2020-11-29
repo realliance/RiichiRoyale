@@ -1,0 +1,43 @@
+digraph Mahjong {
+  GameStart [rank=source]
+  GameEnd [rank=sink]
+  rankdir=LR
+
+  Kan -> KanDiscard
+  ConcealedKan -> KanDiscard
+  ConvertedKan -> KanDiscard
+  
+  KanDiscard -> Replacement
+  KanDiscard -> Ron
+
+  Draw -> PlayerHand
+  Replacement -> PlayerHand
+    
+  Pon -> Discard
+  Chi -> Discard
+  PlayerHand -> Discard
+  Riichi -> Discard
+  
+  Exhaust -> RoundEnd
+  Ron -> RoundEnd
+  Tsumo -> RoundEnd
+  
+  RoundEnd -> RoundStart
+  RoundEnd -> GameEnd
+
+  PlayerHand -> Tsumo
+  PlayerHand -> ConcealedKan
+  PlayerHand -> ConvertedKan
+  PlayerHand -> Riichi
+
+  Discard -> Ron
+  Discard -> Exhaust
+  Discard -> Kan
+  Discard -> Pon
+  Discard -> Chi
+
+  GameStart -> RoundStart
+  
+  RoundStart -> Draw
+  Discard -> Draw
+}

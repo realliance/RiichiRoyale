@@ -1,5 +1,5 @@
-from libmahjong import MahjongGameManager, PythonAIInterface, EventType, EngineEvent
-from riichiroyale.game import Player, Match, process_event_queue, DialogManager, Tile
+from libmahjong import start_game, EventType, EngineEvent, PieceType
+from riichiroyale.game import Player, Match, process_event_queue, DialogManager, loadStory
 from .boardview import BoardView
 
 
@@ -14,9 +14,12 @@ class GameView(BoardView):
         screen_height,
         width_ratio,
         height_ratio,
+        player_manager=None,
+        name="game",
+        textbox_hook=None
     ):
         super().__init__(
-            "game",
+            name,
             game_manager,
             DialogManager(),
             screen,
@@ -26,36 +29,19 @@ class GameView(BoardView):
             screen_height,
             width_ratio,
             height_ratio,
+            textbox_hook=textbox_hook
         )
-        self.player_ai_inst = None
+        self.player_manager = player_manager
+        self.ai_list = ["Player"] + ["AngryDiscardoBot"] * 3
 
     def on_match_init(self):
-        if self.match is not None:
-            if self.match.player_ai_inst is not None:
-                self.match.player_ai_inst.ReceiveEvent()
         self.match = None
-        self.match = Match(None, sound_manager=self.sound_manager, ai_managed=True)
+        self.match = Match(self.ai_list, self.game_manager, self.player_manager, self.sound_manager)
+        self.match.start()
 
     def on_pov_init(self):
-        self.player = Player("Player")
-        self.match.register_player(self.player)
-        self.match.player_id = 0
-
-        # Init Mahjong Game Engine
-        MahjongGameManager.start_game(
-            ["PythonAIInterface"] + ["AngryDiscardoBot"] * 3, True
-        )
-        self.match.player_ai_inst = PythonAIInterface.Inst()
-        self.match.player_id = self.match.player_ai_inst.GameStart()
-        self.match.players[0].ai_managed = True
-        self.match.register_player(Player("Bot 1", ai_managed=True))
-        self.match.register_player(Player("Bot 2", ai_managed=True))
-        self.match.register_player(Player("Bot 3", ai_managed=True))
-        wall = [Tile.ERROR_PIECE] * 70
-        deadwall = [Tile.ERROR_PIECE] * 14
-        self.ai_game_active = True
-
-        self.match.new_board(wall=wall, deadwall=deadwall)
+        if self.player_manager is None:
+            self.match_pov = 0
 
     def on_tile_pressed(self, owner, tile_hand_index):
         if owner.my_turn:
@@ -64,24 +50,32 @@ class GameView(BoardView):
                 self.game_manager.board_manager.waiting_on_decision
                 and len(owner.calls_avaliable) == 0
             ):
-                self.match.current_board.play_clack()
+                self.match.play_clack()
                 event = EngineEvent()
                 event.type = EventType.Discard
-                event.piece = int(tile)
+                event.piece = int(tile.get_raw_value())
                 event.player = owner.player_id
                 event.decision = True
-                PythonAIInterface.Inst().RetrieveDecision(event)
+                self.player_manager.MakeDecision(event)
 
     def on_pon_button_pressed(self):
-        self.match.player_ai_inst.RetrieveDecision(
-            self.game_manager.board_manager.last_decision_event.raw_event_b
-        )
+        event = EngineEvent()
+        event.type = EventType.Pon
+        event.piece = -1
+        event.player = -1
+        event.decision = True
+
+        self.match.player_manager.MakeDecision(event)  
         return True
 
     def on_chi_button_pressed(self):
-        self.match.player_ai_inst.RetrieveDecision(
-            self.game_manager.board_manager.last_decision_event.raw_event_b
-        )
+        event = EngineEvent()
+        event.type = EventType.Chi
+        event.piece = -1
+        event.player = -1
+        event.decision = True
+
+        self.match.player_manager.MakeDecision(event)  
         return True
 
     def on_kan_button_pressed(self):
@@ -89,31 +83,54 @@ class GameView(BoardView):
             self.game_manager.board_manager.last_decision_event.type
             == EventType.ConvertedKan
         ):
-            self.match.player_ai_inst.RetrieveDecision(
-                self.game_manager.board_manager.last_decision_event
-            )
+            event = EngineEvent()
+            event.type = EventType.ConvertedKan
+            event.piece = -1
+            event.player = -1
+            event.decision = True
+
+            self.match.player_manager.MakeDecision(event)  
         else:
-            self.match.player_ai_inst.RetrieveDecision(
-                self.game_manager.board_manager.last_decision_event.raw_event_b
-            )
+            event = EngineEvent()
+            event.type = EventType.Kan
+            event.piece = -1
+            event.player = -1
+            event.decision = True
+
+            self.match.player_manager.MakeDecision(event)  
         return True
 
     def on_tsumo_button_pressed(self):
-        self.match.player_ai_inst.RetrieveDecision(
-            self.game_manager.board_manager.last_decision_event.raw_event_b
-        )
+        event = EngineEvent()
+        event.type = EventType.Tsumo
+        event.piece = -1
+        event.player = -1
+        event.decision = True
+
+        self.match.player_manager.MakeDecision(event)  
+
         return True
 
     def on_riichi_button_pressed(self):
-        self.match.player_ai_inst.RetrieveDecision(
-            self.game_manager.board_manager.last_decision_event
-        )
+        event = EngineEvent()
+        event.type = EventType.Riichi
+        event.piece = -1
+        event.player = -1
+        event.decision = True
+
+        self.match.player_manager.MakeDecision(event)  
+
         return True
 
     def on_ron_button_pressed(self):
-        self.match.player_ai_inst.RetrieveDecision(
-            self.game_manager.board_manager.last_decision_event.raw_event_b
-        )
+        event = EngineEvent()
+        event.type = EventType.Ron
+        event.piece = -1
+        event.player = -1
+        event.decision = True
+
+        self.match.player_manager.MakeDecision(event)     
+
         return True
 
     def on_skip_button_pressed(self):
@@ -122,42 +139,22 @@ class GameView(BoardView):
         event.piece = -1
         event.player = -1
         event.decision = True
-        PythonAIInterface.Inst().RetrieveDecision(event)
+
+        self.match.player_manager.MakeDecision(event)            
+
         return True
 
     def on_dialogue_event_ending(self, event_name):
         if event_name == "round_end":
             self.game_manager.set_active_view("main_menu")
             self.game_manager.sound_manager.play_music("lobby")
+        self.lock_user_input = False
 
     def _end_round_dialog(self):
-        self.ai_game_active = False
-        self.game_manager.board_manager.round_should_end = False
-        self.dialogue_manager.register_dialog_event("round_end")
-        self.dialogue_manager.append_dialog_event(
-            "round_end", ["Round Complete! Now for the Results..."]
-        )
-        i = 0
-        for score in self.match.scores:
-            self.dialogue_manager.append_dialog_event(
-                "round_end", ["Player {0} was awarded {1} points!".format(i + 1, score)]
-            )
-            i += 1
-        self.dialogue_manager.append_dialog_event(
-            "round_end",
-            [
-                "Thank you for playing a demo match of Riichi Royale! Press Next to return to the main menu."
-            ],
-        )
-        self.dialogue_manager.start_event("round_end")
-        self.player.calls_avaliable = []
-        for button in self.buttons:
-            self.buttons[button].hide()
+        # Skip for Own Round Handling
+        pass
 
     def update(self, time_delta):
-        queued_events = self.match.player_ai_inst.ReceiveEvent()
-        if len(queued_events) != 0:
-            process_event_queue(self.game_manager, self.match, queued_events)
         if self.game_manager.board_manager.round_should_end:
             self._end_round_dialog()
 

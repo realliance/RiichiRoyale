@@ -1,6 +1,7 @@
 import random
 import pygame
 from pygame.mixer import Sound
+from riichiroyale.utils import settingsmanager
 
 
 class SoundManager:
@@ -13,6 +14,18 @@ class SoundManager:
         self.master_volume = 1  # acceptable values 0 to 1
         self.music_volume = 1  # percernatage of master volume(acceptable values 0 to 1)
         self.sfx_volume = 1  # percernatage of master volume(acceptable values 0 to 1)
+
+        settings = settingsmanager.SettingsManager()  # Load settings from file (or create new one)
+        self.set_master_volume(
+            settings.get_setting("Master Volume") / 100.0
+        )
+        self.set_music_volume(
+            settings.get_setting("Music Volume") / 100.0
+        )
+        self.set_sfx_volume(
+            settings.get_setting("SFX Volume") / 100.0
+        )
+
 
     # define new sound set
     def register_sfx_set(self, name):

@@ -8,14 +8,11 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 set(BUILD_SHARED_LIBS TRUE)
 option(PACKAGE_TESTS "Build the tests" OFF)
 option(PACKAGE_TOOLS "Build the tools" OFF)
+option(PY_BIND "Build with pybind" ON)
 
 add_subdirectory(${RiichiRoyale_SOURCE_DIR}/libs)
 
 find_package(Python3 COMPONENTS Interpreter Development)
-
-if(PACKAGE_TOOLS)
-  add_subdirectory(${RiichiRoyale_SOURCE_DIR}/tools)
-endif()
 
 if(PACKAGE_TESTS)
   enable_testing()
@@ -25,9 +22,9 @@ endif()
 
 pybind11_add_module(RiichiRoyale)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wmost -Wextra)
+  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wmost -Wextra -fstack-protector -fsanitize=address)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wextra)
+  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wextra -fstack-protector -fsanitize=address)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   target_compile_options(RiichiRoyale PRIVATE "/MT")
 endif()
@@ -39,17 +36,23 @@ add_subdirectory(${RiichiRoyale_SOURCE_DIR}/src)
 if(PACKAGE_TESTS)
   get_target_property(_sources RiichiRoyale SOURCES)
   add_library(TestRiichiRoyale ${_sources})
+  target_compile_definitions(TestRiichiRoyale PUBLIC -DNO_PYBIND)
   target_include_directories(TestRiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/include")
   target_include_directories(TestRiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/aicontrollers")
 endif()
 
-target_sources(RiichiRoyale PRIVATE "src/python.cpp")
+if(PACKAGE_TOOLS)
+  add_subdirectory(${RiichiRoyale_SOURCE_DIR}/tools)
+endif()
+
+if(PY_BIND)
+  target_sources(RiichiRoyale PRIVATE "src/python.cpp")
+else()
+  target_compile_definitions(RiichiRoyale PUBLIC -DNO_PYBIND)
+endif()
 
 target_include_directories(RiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/include")
 target_include_directories(RiichiRoyale PUBLIC "${RiichiRoyale_SOURCE_DIR}/aicontrollers")
-
-
-
 
 add_custom_target(
   check

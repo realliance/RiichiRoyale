@@ -1,14 +1,19 @@
 import os
 import math
 import random
+import atexit
 import pygame_gui
 import pygame
+from copy import deepcopy
 from pygame import Rect
 from pygame import surface
 from riichiroyale import BoardRender
-from riichiroyale.game import Call
+from riichiroyale.game import Call, get_object
 from .menuview import MenuView
 
+def clean_up_board_view(board_view):
+    if board_view.match is not None:
+        board_view.match.match_alive = False
 
 class BoardView(MenuView):
     def __init__(
@@ -23,6 +28,7 @@ class BoardView(MenuView):
         screen_height,
         width_ratio,
         height_ratio,
+        textbox_hook=None
     ):
         ui_manager, process_ui_event = self.create_game_elements(
             screen_width, screen_height
@@ -34,11 +40,18 @@ class BoardView(MenuView):
         self.screen_width_ratio = width_ratio
         self.screen_height_ratio = height_ratio
         self.game_manager = game_manager
+        self.match_pov = None
+        self.bot_icon_cache = get_object('boticons')['bot']
+        self.lock_user_input = False
 
         # Fill background
         background = surface.Surface(screen.get_size())
         self.background = background.convert_alpha()
         self.background.fill((7, 99, 36))
+
+        loading_background = surface.Surface(screen.get_size())
+        self.loading_background = loading_background.convert_alpha()
+        self.loading_background.fill((0, 0, 0))
 
         self.sound_manager = self.game_manager.sound_manager
         self.dialogue_manager = dialogue_manager
@@ -57,8 +70,16 @@ class BoardView(MenuView):
 
         self.match = None
         self.board_render = None
-        self.player = None
         self.previous_player_calls_avaliable = []
+
+        atexit.register(clean_up_board_view, self)
+
+        if textbox_hook is not None:
+            self.new_textbox = textbox_hook
+        else:
+            self.new_textbox = new_text_box
+
+        self.dialogue_elements = []
 
     def on_match_init(self):
         """Called to initialize a new, default match. Should define self.match"""
@@ -95,45 +116,62 @@ class BoardView(MenuView):
             self.small_tile_dict,
             self.tile_dict,
             self.play_area,
-            self.match.current_board,
-            self.match.player_id,
+            self.match,
+            self.match_pov,
+            self.game_manager.board_manager
         )
         self.board_render.update()
         self.board_render.force_redraw()
 
     def on_match_start(self):
         """Called upon the start of a match, which comprises a series of rounds"""
+        background = surface.Surface(self.screen.get_size())
+        self.background = background.convert_alpha()
+        self.background.fill((7, 99, 36))
+
         self.on_match_init()
         self.on_pov_init()
-        self.on_round_start()
 
         random.shuffle(self.sound_manager.music_playlist)
         self.sound_manager.start_playlist()
 
+    @property
+    def player(self):
+        if self.match_pov is None:
+            raise "Unable to determine pov player, is match_pov set?"
+        return self.match.players[self.match_pov]
+
     def update(self, time_delta):
-        if self.player.calls_avaliable:
-            if self.player.calls_avaliable != self.previous_player_calls_avaliable:
-                self.previous_player_calls_avaliable = self.player.calls_avaliable
+        if self.match.match_ready and self.match_pov is None:
+            self.match_pov = self.match.player_manager.player_id
+            self.on_round_start()
+
+        if self.match_pov is None:
+            return
+
+        if self.player.calls_avaliable != self.previous_player_calls_avaliable and not self.lock_user_input:
+            self.previous_player_calls_avaliable = deepcopy(self.player.calls_avaliable)
+            if len(self.player.calls_avaliable) > 0:
                 self.buttons["skip"].show()
-                for decision in self.player.calls_avaliable:
-                    if decision == Call.Chi:
-                        self.on_chi_call_avaliable()
-                        self.buttons["chi"].show()
-                    elif decision == Call.Pon:
-                        self.on_pon_call_avaliable()
-                        self.buttons["pon"].show()
-                    elif decision in (Call.Kan, Call.Concealed_Kan):
-                        self.on_kan_call_avaliable()
-                        self.buttons["kan"].show()
-                    elif decision == Call.Riichi:
-                        self.on_riichi_call_avaliable()
-                        self.buttons["riichi"].show()
-                    elif decision == Call.Ron:
-                        self.on_ron_call_avaliable()
-                        self.buttons["ron"].show()
-                    elif decision == Call.Tsumo:
-                        self.on_tsumo_call_avaliable()
-                        self.buttons["tsumo"].show()
+            for decision in self.player.calls_avaliable:
+                if decision == Call.Chi:
+                    self.on_chi_call_avaliable()
+                    self.buttons["chi"].show()
+                elif decision == Call.Pon:
+                    self.on_pon_call_avaliable()
+                    self.buttons["pon"].show()
+                elif decision in (Call.Kan, Call.Concealed_Kan):
+                    self.on_kan_call_avaliable()
+                    self.buttons["kan"].show()
+                elif decision == Call.Riichi:
+                    self.on_riichi_call_avaliable()
+                    self.buttons["riichi"].show()
+                elif decision == Call.Ron:
+                    self.on_ron_call_avaliable()
+                    self.buttons["ron"].show()
+                elif decision == Call.Tsumo:
+                    self.on_tsumo_call_avaliable()
+                    self.buttons["tsumo"].show()
 
         if (
             self.dialogue_manager is not None
@@ -143,8 +181,10 @@ class BoardView(MenuView):
                 self.dialogue_manager.get_current_page()
                 != self.buttons["text"].html_text
             ):
+                self.buttons["advance_text"].kill()
                 self.buttons["text"].kill()
-                self.new_text_box(self.dialogue_manager.get_current_page())
+                for element in self.dialogue_elements: element.kill()
+                self.new_textbox(self.manager, self.buttons, self.dialogue_elements, self.dialogue_manager.get_current_page())
             self.buttons["text"].show()
             if (
                 len(self.player.calls_avaliable) != 0
@@ -157,10 +197,17 @@ class BoardView(MenuView):
         self.board_render.update(callback_handler=self.on_tile_pressed)
         super().update(time_delta)
 
+    def draw_loading_screen(self, screen):
+        """While the match is bootstrapping on the backend, draw a loading screen instead."""
+        screen.blit(self.loading_background, (0, 0))
+
     def draw(self, screen):
-        self.board_render.draw(self.background)
-        screen.blit(self.background, (0, 0))
-        screen.blit(self.play_area, (self.player_area_rect.x, self.player_area_rect.y))
+        if not self.match.match_ready:
+            self.draw_loading_screen(screen)
+        else:
+            self.board_render.draw(self.background)
+            screen.blit(self.background, (0, 0))
+            screen.blit(self.play_area, (self.player_area_rect.x, self.player_area_rect.y))
         super().draw(screen)
 
     def on_pon_button_pressed(self):
@@ -230,8 +277,9 @@ class BoardView(MenuView):
         if self.dialogue_manager.is_last_page():
             self.on_dialogue_event_ending(self.dialogue_manager.current_event)
             self.dialogue_manager.current_event = None
-            self.buttons["advance_text"].hide()
+            self.buttons["advance_text"].kill()
             self.buttons["text"].kill()
+            for element in self.dialogue_elements: element.kill()
         else:
             self.dialogue_manager.next_page()
 
@@ -405,7 +453,7 @@ class BoardView(MenuView):
             "tsumo": tsumo_button,
             "skip": skip_button,
             "text": text_box,
-            "advance_text": text_next,
+            "advance_text": text_next
         }
 
         def process_ui_event(event):
@@ -428,24 +476,40 @@ class BoardView(MenuView):
                             self.buttons[button].hide()
                         return
                 # Dialogue UI
-                if event.ui_element == text_next:
+                if event.ui_element == self.buttons["advance_text"]:
                     self.on_dialogue_next_button_pressed()
 
         return ui_manager, process_ui_event
 
-    def new_text_box(self, text):
-        text_box_rect = pygame.Rect(0, 0, 600, 200)
-        text_box_rect.bottomleft = (400, -290)
-        text_box = pygame_gui.elements.UITextBox(
-            relative_rect=text_box_rect,
-            visible=False,
-            html_text=text,
-            manager=self.manager,
-            anchors={
-                "top": "bottom",
-                "bottom": "bottom",
-                "left": "left",
-                "right": "left",
-            },
-        )
-        self.buttons["text"] = text_box
+def new_text_box(gui_manager, button_map, _elements, text):
+    text_box_rect = pygame.Rect(0, 0, 600, 200)
+    text_box_rect.bottomleft = (400, -290)
+    text_box = pygame_gui.elements.UITextBox(
+        relative_rect=text_box_rect,
+        visible=False,
+        html_text=text,
+        manager=gui_manager,
+        anchors={
+            "top": "bottom",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "left",
+        },
+    )
+    text_next_button_rect = pygame.Rect(0, 0, 100, 50)
+    text_next_button_rect.bottomleft = (900, -230)
+    text_next = pygame_gui.elements.UIButton(
+        relative_rect=text_next_button_rect,
+        visible=False,
+        text="Next",
+        manager=gui_manager,
+        anchors={
+            "top": "bottom",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "left",
+        },
+    )
+
+    button_map["text"] = text_box
+    button_map["advance_text"] = text_next

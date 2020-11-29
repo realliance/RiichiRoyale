@@ -1,11 +1,10 @@
 import unittest
-from libmahjong import EventType
+from libmahjong import EventType, PieceType
 from riichiroyale.game import (
     Player,
     BoardManager,
     Match,
     Event,
-    Tile,
     process_event_queue,
     Call,
     CallDirection,
@@ -23,17 +22,17 @@ class TestBoardManager(unittest.TestCase):
         self.match.register_player(Player("Bot 3"))
 
         self.match.players[0].hand = [
-            Tile.GREEN_DRAGON,
-            Tile.GREEN_DRAGON,
-            Tile.TWO_BAMBOO,
-            Tile.THREE_BAMBOO,
+            PieceType.GREEN_DRAGON,
+            PieceType.GREEN_DRAGON,
+            PieceType.TWO_BAMBOO,
+            PieceType.THREE_BAMBOO,
         ]
-        self.match.players[1].hand = [Tile.ERROR_PIECE] * 13
-        self.match.players[2].hand = [Tile.ERROR_PIECE] * 13
-        self.match.players[3].hand = [Tile.ERROR_PIECE] * 13
+        self.match.players[1].hand = [PieceType.ERROR] * 13
+        self.match.players[2].hand = [PieceType.ERROR] * 13
+        self.match.players[3].hand = [PieceType.ERROR] * 13
 
         self.match.new_board(
-            wall=[Tile.ERROR_PIECE] * 70, deadwall=[Tile.ERROR_PIECE] * 14
+            wall=[PieceType.ERROR] * 70, deadwall=[PieceType.ERROR] * 14
         )
 
     def tearDown(self):
@@ -41,23 +40,23 @@ class TestBoardManager(unittest.TestCase):
         self.game_manager = None
 
     def test_init_round(self):
-        dora = Event(EventType.Dora, None, Tile.WHITE_DRAGON, False)
-        draw = Event(EventType.Discard, 0, Tile.WHITE_DRAGON, True)
+        dora = Event(EventType.Dora, None, PieceType.WHITE_DRAGON, False)
+        draw = Event(EventType.Discard, 0, PieceType.WHITE_DRAGON, True)
 
         process_event_queue(self.game_manager, self.match, [dora, draw])
 
         self.assertEqual(self.match.current_board.dora_revealed, 1)
-        self.assertEqual(self.match.current_board.deadwall[0], Tile.WHITE_DRAGON)
+        self.assertEqual(self.match.current_board.deadwall[0], PieceType.WHITE_DRAGON)
         self.assertEqual(
-            self.match.current_board.players[0].hand[-1], Tile.WHITE_DRAGON
+            self.match.current_board.players[0].hand[-1], PieceType.WHITE_DRAGON
         )
         self.assertTrue(self.game_manager.board_manager.waiting_on_decision)
 
     def test_pon_decision(self):
         self.match.current_board.current_turn = 3
 
-        three_discards = Event(EventType.Discard, 3, Tile.GREEN_DRAGON, False)
-        pon_decision = Event(EventType.Pon, 0, Tile.GREEN_DRAGON, True)
+        three_discards = Event(EventType.Discard, 3, PieceType.GREEN_DRAGON, False)
+        pon_decision = Event(EventType.Pon, 0, PieceType.GREEN_DRAGON, True)
 
         process_event_queue(
             self.game_manager, self.match, [three_discards, pon_decision]
@@ -66,13 +65,13 @@ class TestBoardManager(unittest.TestCase):
         self.assertEqual(self.match.current_board.current_turn, 0)
         self.assertTrue(self.game_manager.board_manager.waiting_on_decision)
         self.assertEqual(
-            self.match.current_board.players[3].discard_pile[-1], Tile.GREEN_DRAGON
+            self.match.current_board.players[3].discard_pile[-1], PieceType.GREEN_DRAGON
         )
         self.assertEqual(
             self.match.current_board.players[0].calls_avaliable, [Call.Pon]
         )
 
-        chose_to_take_pon = Event(EventType.Pon, 0, Tile.GREEN_DRAGON, False)
+        chose_to_take_pon = Event(EventType.Pon, 0, PieceType.GREEN_DRAGON, False)
 
         process_event_queue(self.game_manager, self.match, [chose_to_take_pon])
 
@@ -81,7 +80,7 @@ class TestBoardManager(unittest.TestCase):
         self.assertEqual(self.match.current_board.players[0].calls_avaliable, [])
         self.assertEqual(
             self.match.current_board.players[0].melded_hand[0].tiles,
-            [Tile.GREEN_DRAGON, Tile.GREEN_DRAGON, Tile.GREEN_DRAGON],
+            [PieceType.GREEN_DRAGON, PieceType.GREEN_DRAGON, PieceType.GREEN_DRAGON],
         )
         self.assertEqual(
             self.match.current_board.players[0].melded_hand[0].call_direction,
@@ -89,16 +88,16 @@ class TestBoardManager(unittest.TestCase):
         )
         self.assertEqual(
             self.match.current_board.players[0].hand,
-            [Tile.TWO_BAMBOO, Tile.THREE_BAMBOO],
+            [PieceType.TWO_BAMBOO, PieceType.THREE_BAMBOO],
         )
 
     def test_pon_decision_ai(self):
         self.match.current_board.current_turn = 2
 
-        self.match.players[3].hand += [Tile.GREEN_DRAGON] * 2
+        self.match.players[3].hand += [PieceType.GREEN_DRAGON] * 2
 
-        three_discards = Event(EventType.Discard, 2, Tile.GREEN_DRAGON, False)
-        pon_decision = Event(EventType.Pon, 3, Tile.GREEN_DRAGON, False)
+        three_discards = Event(EventType.Discard, 2, PieceType.GREEN_DRAGON, False)
+        pon_decision = Event(EventType.Pon, 3, PieceType.GREEN_DRAGON, False)
 
         process_event_queue(
             self.game_manager, self.match, [three_discards, pon_decision]
@@ -110,7 +109,7 @@ class TestBoardManager(unittest.TestCase):
         self.assertEqual(self.match.current_board.players[3].calls_avaliable, [])
         self.assertEqual(
             self.match.current_board.players[3].melded_hand[0].tiles,
-            [Tile.GREEN_DRAGON, Tile.GREEN_DRAGON, Tile.GREEN_DRAGON],
+            [PieceType.GREEN_DRAGON, PieceType.GREEN_DRAGON, PieceType.GREEN_DRAGON],
         )
         self.assertEqual(
             self.match.current_board.players[3].melded_hand[0].call_direction,
@@ -121,8 +120,8 @@ class TestBoardManager(unittest.TestCase):
     def test_chi_decision(self):
         self.match.current_board.current_turn = 3
 
-        three_discards = Event(EventType.Discard, 3, Tile.FOUR_BAMBOO, False)
-        chi_decision = Event(EventType.Chi, 0, Tile.FOUR_BAMBOO, True)
+        three_discards = Event(EventType.Discard, 3, PieceType.FOUR_BAMBOO, False)
+        chi_decision = Event(EventType.Chi, 0, PieceType.FOUR_BAMBOO, True)
 
         process_event_queue(
             self.game_manager, self.match, [three_discards, chi_decision]
@@ -131,13 +130,13 @@ class TestBoardManager(unittest.TestCase):
         self.assertEqual(self.match.current_board.current_turn, 0)
         self.assertTrue(self.game_manager.board_manager.waiting_on_decision)
         self.assertEqual(
-            self.match.current_board.players[3].discard_pile[-1], Tile.FOUR_BAMBOO
+            self.match.current_board.players[3].discard_pile[-1], PieceType.FOUR_BAMBOO
         )
         self.assertEqual(
             self.match.current_board.players[0].calls_avaliable, [Call.Chi]
         )
 
-        chose_to_take_chi = Event(EventType.Chi, 0, Tile.TWO_BAMBOO, False)
+        chose_to_take_chi = Event(EventType.Chi, 0, PieceType.TWO_BAMBOO, False)
 
         process_event_queue(self.game_manager, self.match, [chose_to_take_chi])
 
@@ -146,7 +145,7 @@ class TestBoardManager(unittest.TestCase):
         self.assertEqual(self.match.current_board.players[0].calls_avaliable, [])
         self.assertEqual(
             self.match.current_board.players[0].melded_hand[0].tiles,
-            [Tile.TWO_BAMBOO, Tile.THREE_BAMBOO, Tile.FOUR_BAMBOO],
+            [PieceType.TWO_BAMBOO, PieceType.THREE_BAMBOO, PieceType.FOUR_BAMBOO],
         )
         self.assertEqual(
             self.match.current_board.players[0].melded_hand[0].call_direction,
@@ -154,16 +153,16 @@ class TestBoardManager(unittest.TestCase):
         )
         self.assertEqual(
             self.match.current_board.players[0].hand,
-            [Tile.GREEN_DRAGON, Tile.GREEN_DRAGON],
+            [PieceType.GREEN_DRAGON, PieceType.GREEN_DRAGON],
         )
 
     def test_chi_decision_ai(self):
         self.match.current_board.current_turn = 0
 
-        self.match.players[1].hand += [Tile.TWO_BAMBOO, Tile.THREE_BAMBOO]
+        self.match.players[1].hand += [PieceType.TWO_BAMBOO, PieceType.THREE_BAMBOO]
 
-        three_discards = Event(EventType.Discard, 0, Tile.FOUR_BAMBOO, False)
-        chi_decision = Event(EventType.Chi, 1, Tile.TWO_BAMBOO, False)
+        three_discards = Event(EventType.Discard, 0, PieceType.FOUR_BAMBOO, False)
+        chi_decision = Event(EventType.Chi, 1, PieceType.TWO_BAMBOO, False)
 
         process_event_queue(
             self.game_manager, self.match, [three_discards, chi_decision]
@@ -175,7 +174,7 @@ class TestBoardManager(unittest.TestCase):
         self.assertEqual(self.match.current_board.players[1].calls_avaliable, [])
         self.assertEqual(
             self.match.current_board.players[1].melded_hand[0].tiles,
-            [Tile.TWO_BAMBOO, Tile.THREE_BAMBOO, Tile.FOUR_BAMBOO],
+            [PieceType.TWO_BAMBOO, PieceType.THREE_BAMBOO, PieceType.FOUR_BAMBOO],
         )
         self.assertEqual(
             self.match.current_board.players[1].melded_hand[0].call_direction,
@@ -186,10 +185,10 @@ class TestBoardManager(unittest.TestCase):
     def test_kan_decision(self):
         self.match.current_board.current_turn = 2
 
-        self.match.players[0].hand += [Tile.GREEN_DRAGON]
+        self.match.players[0].hand += [PieceType.GREEN_DRAGON]
 
-        three_discards = Event(EventType.Discard, 2, Tile.GREEN_DRAGON, False)
-        kan_decision = Event(EventType.Kan, 0, Tile.GREEN_DRAGON, True)
+        three_discards = Event(EventType.Discard, 2, PieceType.GREEN_DRAGON, False)
+        kan_decision = Event(EventType.Kan, 0, PieceType.GREEN_DRAGON, True)
 
         process_event_queue(
             self.game_manager, self.match, [three_discards, kan_decision]
@@ -198,13 +197,13 @@ class TestBoardManager(unittest.TestCase):
         self.assertEqual(self.match.current_board.current_turn, 3)
         self.assertTrue(self.game_manager.board_manager.waiting_on_decision)
         self.assertEqual(
-            self.match.current_board.players[2].discard_pile, [Tile.GREEN_DRAGON]
+            self.match.current_board.players[2].discard_pile, [PieceType.GREEN_DRAGON]
         )
         self.assertEqual(
             self.match.current_board.players[0].calls_avaliable, [Call.Kan]
         )
 
-        chose_to_take_kan = Event(EventType.Kan, 0, Tile.GREEN_DRAGON, False)
+        chose_to_take_kan = Event(EventType.Kan, 0, PieceType.GREEN_DRAGON, False)
 
         process_event_queue(self.game_manager, self.match, [chose_to_take_kan])
 
@@ -214,10 +213,10 @@ class TestBoardManager(unittest.TestCase):
         self.assertEqual(
             self.match.current_board.players[0].melded_hand[0].tiles,
             [
-                Tile.GREEN_DRAGON,
-                Tile.GREEN_DRAGON,
-                Tile.GREEN_DRAGON,
-                Tile.GREEN_DRAGON,
+                PieceType.GREEN_DRAGON,
+                PieceType.GREEN_DRAGON,
+                PieceType.GREEN_DRAGON,
+                PieceType.GREEN_DRAGON,
             ],
         )
         self.assertEqual(
@@ -226,16 +225,16 @@ class TestBoardManager(unittest.TestCase):
         )
         self.assertEqual(
             self.match.current_board.players[0].hand,
-            [Tile.TWO_BAMBOO, Tile.THREE_BAMBOO],
+            [PieceType.TWO_BAMBOO, PieceType.THREE_BAMBOO],
         )
 
     def test_kan_decision_ai(self):
         self.match.current_board.current_turn = 1
 
-        self.match.players[3].hand += [Tile.GREEN_DRAGON] * 3
+        self.match.players[3].hand += [PieceType.GREEN_DRAGON] * 3
 
-        three_discards = Event(EventType.Discard, 1, Tile.GREEN_DRAGON, False)
-        kan_decision = Event(EventType.Kan, 3, Tile.GREEN_DRAGON, False)
+        three_discards = Event(EventType.Discard, 1, PieceType.GREEN_DRAGON, False)
+        kan_decision = Event(EventType.Kan, 3, PieceType.GREEN_DRAGON, False)
 
         process_event_queue(
             self.game_manager, self.match, [three_discards, kan_decision]
@@ -247,7 +246,7 @@ class TestBoardManager(unittest.TestCase):
         self.assertEqual(self.match.current_board.players[3].calls_avaliable, [])
         self.assertEqual(
             self.match.current_board.players[3].melded_hand[0].tiles,
-            [Tile.GREEN_DRAGON] * 4,
+            [PieceType.GREEN_DRAGON] * 4,
         )
         self.assertEqual(
             self.match.current_board.players[3].melded_hand[0].call_direction,
@@ -256,7 +255,7 @@ class TestBoardManager(unittest.TestCase):
         self.assertEqual(len(self.match.current_board.players[3].hand), 13)
 
     def test_riichi(self):
-        decision = Event(EventType.Riichi, 0, Tile.GREEN_DRAGON, True)
+        decision = Event(EventType.Riichi, 0, PieceType.GREEN_DRAGON, True)
 
         process_event_queue(self.game_manager, self.match, [decision])
 
@@ -266,34 +265,34 @@ class TestBoardManager(unittest.TestCase):
         )
         self.assertTrue(self.game_manager.board_manager.waiting_on_decision)
 
-        riichi_discard = Event(EventType.Riichi, 0, Tile.GREEN_DRAGON, False)
+        riichi_discard = Event(EventType.Riichi, 0, PieceType.GREEN_DRAGON, False)
         process_event_queue(self.game_manager, self.match, [riichi_discard])
 
         self.assertFalse(self.game_manager.board_manager.waiting_on_decision)
         self.assertEqual(self.match.current_board.current_turn, 1)
         self.assertEqual(
-            self.match.current_board.players[0].discard_pile, [Tile.GREEN_DRAGON]
+            self.match.current_board.players[0].discard_pile, [PieceType.GREEN_DRAGON]
         )
         self.assertTrue(self.match.current_board.players[0].riichi_declared)
 
     def test_riichi_ai(self):
         self.match.current_board.current_turn = 2
-        riichi_discard = Event(EventType.Riichi, 2, Tile.GREEN_DRAGON, False)
+        riichi_discard = Event(EventType.Riichi, 2, PieceType.GREEN_DRAGON, False)
         process_event_queue(self.game_manager, self.match, [riichi_discard])
 
         self.assertFalse(self.game_manager.board_manager.waiting_on_decision)
         self.assertEqual(self.match.current_board.current_turn, 3)
         self.assertEqual(
-            self.match.current_board.players[2].discard_pile, [Tile.GREEN_DRAGON]
+            self.match.current_board.players[2].discard_pile, [PieceType.GREEN_DRAGON]
         )
         self.assertTrue(self.match.current_board.players[2].riichi_declared)
 
     def test_ckan_decision(self):
         self.match.current_board.current_turn = 0
 
-        self.match.players[0].hand += [Tile.GREEN_DRAGON] * 2
+        self.match.players[0].hand += [PieceType.GREEN_DRAGON] * 2
 
-        ckan_decision = Event(EventType.ConcealedKan, 0, Tile.GREEN_DRAGON, True)
+        ckan_decision = Event(EventType.ConcealedKan, 0, PieceType.GREEN_DRAGON, True)
 
         process_event_queue(self.game_manager, self.match, [ckan_decision])
 
@@ -303,7 +302,7 @@ class TestBoardManager(unittest.TestCase):
             self.match.current_board.players[0].calls_avaliable, [Call.Concealed_Kan]
         )
 
-        chose_ckan = Event(EventType.ConcealedKan, 0, Tile.GREEN_DRAGON, False)
+        chose_ckan = Event(EventType.ConcealedKan, 0, PieceType.GREEN_DRAGON, False)
 
         process_event_queue(self.game_manager, self.match, [chose_ckan])
 
@@ -312,10 +311,10 @@ class TestBoardManager(unittest.TestCase):
         self.assertEqual(
             self.match.current_board.players[0].melded_hand[0].tiles,
             [
-                Tile.GREEN_DRAGON,
-                Tile.GREEN_DRAGON,
-                Tile.GREEN_DRAGON,
-                Tile.GREEN_DRAGON,
+                PieceType.GREEN_DRAGON,
+                PieceType.GREEN_DRAGON,
+                PieceType.GREEN_DRAGON,
+                PieceType.GREEN_DRAGON,
             ],
         )
         self.assertEqual(
@@ -324,16 +323,16 @@ class TestBoardManager(unittest.TestCase):
         )
         self.assertEqual(
             self.match.current_board.players[0].hand,
-            [Tile.TWO_BAMBOO, Tile.THREE_BAMBOO],
+            [PieceType.TWO_BAMBOO, PieceType.THREE_BAMBOO],
         )
         self.assertEqual(self.match.current_board.current_turn, 0)
 
     def test_ckan_decision_ai(self):
         self.match.current_board.current_turn = 2
 
-        self.match.players[2].hand += [Tile.GREEN_DRAGON] * 4
+        self.match.players[2].hand += [PieceType.GREEN_DRAGON] * 4
 
-        ckan_decision = Event(EventType.ConcealedKan, 2, Tile.GREEN_DRAGON, False)
+        ckan_decision = Event(EventType.ConcealedKan, 2, PieceType.GREEN_DRAGON, False)
 
         process_event_queue(self.game_manager, self.match, [ckan_decision])
 
@@ -342,10 +341,10 @@ class TestBoardManager(unittest.TestCase):
         self.assertEqual(
             self.match.current_board.players[2].melded_hand[0].tiles,
             [
-                Tile.GREEN_DRAGON,
-                Tile.GREEN_DRAGON,
-                Tile.GREEN_DRAGON,
-                Tile.GREEN_DRAGON,
+                PieceType.GREEN_DRAGON,
+                PieceType.GREEN_DRAGON,
+                PieceType.GREEN_DRAGON,
+                PieceType.GREEN_DRAGON,
             ],
         )
         self.assertEqual(
@@ -358,8 +357,8 @@ class TestBoardManager(unittest.TestCase):
     def test_ron_decision(self):
         self.match.current_board.current_turn = 2
 
-        three_discards = Event(EventType.Discard, 2, Tile.GREEN_DRAGON, False)
-        ron_decisions = Event(EventType.Ron, 0, Tile.GREEN_DRAGON, True)
+        three_discards = Event(EventType.Discard, 2, PieceType.GREEN_DRAGON, False)
+        ron_decisions = Event(EventType.Ron, 0, PieceType.GREEN_DRAGON, True)
 
         process_event_queue(
             self.game_manager, self.match, [three_discards, ron_decisions]
@@ -368,13 +367,13 @@ class TestBoardManager(unittest.TestCase):
         self.assertEqual(self.match.current_board.current_turn, 2)
         self.assertFalse(self.game_manager.board_manager.waiting_on_decision)
         self.assertEqual(
-            self.match.current_board.players[2].discard_pile[-1], Tile.GREEN_DRAGON
+            self.match.current_board.players[2].discard_pile[-1], PieceType.GREEN_DRAGON
         )
         self.assertEqual(
             self.match.current_board.players[0].calls_avaliable, [Call.Ron]
         )
 
-        ron = Event(EventType.Ron, 0, Tile.GREEN_DRAGON, False)
+        ron = Event(EventType.Ron, 0, PieceType.GREEN_DRAGON, False)
 
         process_event_queue(self.game_manager, self.match, [ron])
 
@@ -382,15 +381,15 @@ class TestBoardManager(unittest.TestCase):
         self.assertEqual(self.match.current_board.players[0].calls_avaliable, [])
         self.assertEqual(
             self.match.current_board.players[0].hand,
-            [Tile.GREEN_DRAGON] * 2
-            + [Tile.TWO_BAMBOO, Tile.THREE_BAMBOO]
-            + [Tile.GREEN_DRAGON],
+            [PieceType.GREEN_DRAGON] * 2
+            + [PieceType.TWO_BAMBOO, PieceType.THREE_BAMBOO]
+            + [PieceType.GREEN_DRAGON],
         )
         self.assertTrue(self.game_manager.board_manager.round_should_end)
 
     def test_ron_decision_ai(self):
-        three_discards = Event(EventType.Discard, 2, Tile.GREEN_DRAGON, False)
-        ron_decisions = Event(EventType.Ron, 1, Tile.GREEN_DRAGON, False)
+        three_discards = Event(EventType.Discard, 2, PieceType.GREEN_DRAGON, False)
+        ron_decisions = Event(EventType.Ron, 1, PieceType.GREEN_DRAGON, False)
 
         process_event_queue(
             self.game_manager, self.match, [three_discards, ron_decisions]
@@ -400,14 +399,14 @@ class TestBoardManager(unittest.TestCase):
         self.assertEqual(self.match.current_board.players[1].calls_avaliable, [])
         self.assertEqual(
             self.match.current_board.players[1].hand,
-            [Tile.ERROR_PIECE] * 13 + [Tile.GREEN_DRAGON],
+            [PieceType.ERROR] * 13 + [PieceType.GREEN_DRAGON],
         )
         self.assertTrue(self.game_manager.board_manager.round_should_end)
 
     def test_tsumo(self):
         self.match.current_board.current_turn = 0
 
-        tsumo = Event(EventType.Tsumo, 0, Tile.GREEN_DRAGON, True)
+        tsumo = Event(EventType.Tsumo, 0, PieceType.GREEN_DRAGON, True)
 
         process_event_queue(self.game_manager, self.match, [tsumo])
 
@@ -417,7 +416,7 @@ class TestBoardManager(unittest.TestCase):
         )
         self.assertTrue(self.game_manager.board_manager.waiting_on_decision)
 
-        do_tsumo = Event(EventType.Tsumo, 0, Tile.GREEN_DRAGON, False)
+        do_tsumo = Event(EventType.Tsumo, 0, PieceType.GREEN_DRAGON, False)
 
         process_event_queue(self.game_manager, self.match, [do_tsumo])
 
@@ -428,7 +427,7 @@ class TestBoardManager(unittest.TestCase):
     def test_tsumo_ai(self):
         self.match.current_board.current_turn = 2
 
-        tsumo = Event(EventType.Tsumo, 2, Tile.GREEN_DRAGON, False)
+        tsumo = Event(EventType.Tsumo, 2, PieceType.GREEN_DRAGON, False)
 
         process_event_queue(self.game_manager, self.match, [tsumo])
 
