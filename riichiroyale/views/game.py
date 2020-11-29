@@ -59,15 +59,23 @@ class GameView(BoardView):
                 self.player_manager.MakeDecision(event)
 
     def on_pon_button_pressed(self):
-        self.match.player_manager.MakeDecision(
-            self.game_manager.board_manager.last_decision_event.raw_event_b
-        )
+        event = EngineEvent()
+        event.type = EventType.Pon
+        event.piece = -1
+        event.player = -1
+        event.decision = True
+
+        self.match.player_manager.MakeDecision(event)  
         return True
 
     def on_chi_button_pressed(self):
-        self.match.player_manager.MakeDecision(
-            self.game_manager.board_manager.last_decision_event.raw_event_b
-        )
+        event = EngineEvent()
+        event.type = EventType.Chi
+        event.piece = -1
+        event.player = -1
+        event.decision = True
+
+        self.match.player_manager.MakeDecision(event)  
         return True
 
     def on_kan_button_pressed(self):
@@ -75,31 +83,54 @@ class GameView(BoardView):
             self.game_manager.board_manager.last_decision_event.type
             == EventType.ConvertedKan
         ):
-            self.match.player_manager.MakeDecision(
-                self.game_manager.board_manager.last_decision_event
-            )
+            event = EngineEvent()
+            event.type = EventType.ConvertedKan
+            event.piece = -1
+            event.player = -1
+            event.decision = True
+
+            self.match.player_manager.MakeDecision(event)  
         else:
-            self.match.player_manager.MakeDecision(
-                self.game_manager.board_manager.last_decision_event.raw_event_b
-            )
+            event = EngineEvent()
+            event.type = EventType.Kan
+            event.piece = -1
+            event.player = -1
+            event.decision = True
+
+            self.match.player_manager.MakeDecision(event)  
         return True
 
     def on_tsumo_button_pressed(self):
-        self.match.player_manager.MakeDecision(
-            self.game_manager.board_manager.last_decision_event.raw_event_b
-        )
+        event = EngineEvent()
+        event.type = EventType.Tsumo
+        event.piece = -1
+        event.player = -1
+        event.decision = True
+
+        self.match.player_manager.MakeDecision(event)  
+
         return True
 
     def on_riichi_button_pressed(self):
-        self.match.player_manager.MakeDecision(
-            self.game_manager.board_manager.last_decision_event
-        )
+        event = EngineEvent()
+        event.type = EventType.Riichi
+        event.piece = -1
+        event.player = -1
+        event.decision = True
+
+        self.match.player_manager.MakeDecision(event)  
+
         return True
 
     def on_ron_button_pressed(self):
-        self.match.player_manager.MakeDecision(
-            self.game_manager.board_manager.last_decision_event.raw_event_b
-        )
+        event = EngineEvent()
+        event.type = EventType.Ron
+        event.piece = -1
+        event.player = -1
+        event.decision = True
+
+        self.match.player_manager.MakeDecision(event)     
+
         return True
 
     def on_skip_button_pressed(self):
