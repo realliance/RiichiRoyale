@@ -22,6 +22,7 @@ def convert_event(event):
 
     event_piece = event.piece.get_raw_value() if isinstance(event.piece, Piece) else event.piece
     event_piece_value = int(event_piece)
+    print(event_piece_value)
     if event_piece_value >= 0:
         return Event(event.type, event.player, Piece(event_piece_value), event.decision)
 
@@ -90,7 +91,6 @@ def on_chi_event(
             event_player.hand.remove(event.piece + 2)
 
         piece_list = list(filter(lambda piece: piece != last_event.piece, [event.piece, event.piece + 1, event.piece + 2]))
-        print(piece_list)
         
         event_player.melded_hand += [
             Meld([last_event.piece] + piece_list, CallDirection.Left)
@@ -108,7 +108,7 @@ def on_pon_event(
     event,
     match,
     event_player,
-    _pov_player,
+    pov_player,
     _extra_player,
 ):
     if not is_decision:
@@ -137,6 +137,9 @@ def on_pon_event(
 
         game_manager.board_manager.last_decision_event = None
         game_manager.board_manager.waiting_on_decision = False
+    else:
+        pov_player.calls_avaliable += [Call.Pon]
+        game_manager.board_manager.waiting_on_decision = True
 
 
 def on_ron_event(
@@ -154,6 +157,7 @@ def on_ron_event(
         event_player.calls_avaliable = []
         game_manager.board_manager.waiting_on_decision = False
         game_manager.board_manager.did_exhaustive_draw = False
+
     else:
         game_manager.board_manager.waiting_on_decision = True
         event_player.calls_avaliable += [Call.Ron]
@@ -250,7 +254,7 @@ def on_tsumo_event(
 
 def on_riichi_event(
     game_manager,
-    _is_ai,
+    is_ai,
     is_decision,
     event,
     _match,
@@ -267,6 +271,9 @@ def on_riichi_event(
         game_manager.board_manager.last_decision_event = None
         event_player.calls_avaliable = []
         event_player.riichi_declared = True
+        if not is_ai:
+            event_player.hand.remove(event.piece)
+            event_player.hand.sort()
 
 def on_discard_event(
     game_manager,
@@ -501,7 +508,7 @@ def on_game_event(game_manager, event, match):
     print('== NEW EVENT ==')
     print('Player:', event.player)
     print('Type:', event.type)
-    print('Piece:', PieceType(event.piece.get_raw_value()))
+    print('Piece:', PieceType(event.piece.get_raw_value()) if isinstance(event.piece, Piece) else event.piece)
     print('Decision?', event.decision)
 
     EVENTS = {
