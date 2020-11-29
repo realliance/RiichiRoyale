@@ -11,13 +11,22 @@ using namespace Mahjong;
 
 
 int main(){
-  std::vector<Piece> Hand = {Piece::ONE_CHARACTER,Piece::TWO_CHARACTER,Piece::THREE_CHARACTER,Piece::FOUR_CHARACTER,Piece::SIX_CHARACTER,Piece::EIGHT_CHARACTER,Piece::NINE_CHARACTER,
-  Piece::ONE_PIN,Piece::FIVE_PIN,Piece::SIX_PIN,Piece::SEVEN_PIN,Piece::FOUR_CHARACTER,Piece::FIVE_CHARACTER,Piece::SIX_CHARACTER, Piece::SIX_CHARACTER};
+  std::vector<Piece> Hand = {
+    Piece::ONE_CHARACTER,Piece::ONE_CHARACTER,Piece::TWO_PIN,Piece::THREE_PIN,
+    Piece::THREE_PIN,Piece::FOUR_PIN,Piece::FOUR_PIN,Piece::FIVE_PIN
+  };
   GameState state;
+  state.roundNum = 0;
   state.currentPlayer = 0;
   state.hands[0].live = Hand;
-  state.hands[0].riichi = false;
-  state.hands[0].open = false;
-  std::cout << (CanRiichi(state) ? "yes tenpai" : "no tenpai") << std::endl;
+  state.hands[0].melds = {
+    {Meld::Chi,Piece::FIVE_CHARACTER},
+    {Meld::Pon,Piece::RED_DRAGON}
+  };
+  Node* root = breakdownHand(Hand);
+  std::cout << (root->IsComplete() ? "Complete" : "InComplete") << std::endl;
+  for(const auto& branch : root->AsBranchVectors()){
+    std::cout << (isWindOrDragonPon(state,0,branch) ? "yes yaku" : "no yaku") << std::endl;
+  }
   return 0;
 }
