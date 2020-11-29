@@ -146,11 +146,11 @@ class StoryModeGame(GameView):
 
     def update(self, time_delta):
         self.process_possible_dialogue_events()
-        super().update(time_delta)
-
         if self.game_manager.board_manager.game_should_end:
             self.game_manager.board_manager.game_should_end = False
             self._determine_winner()
+
+        super().update(time_delta)
 
 
 def new_dialogue(match_dict, gui_manager, button_map, element_list, text):

@@ -30,6 +30,8 @@ def convert_event(event):
 
 def process_event_queue(game_manager, match):
     event = match.player_manager.Pop()
+    if event.type == EventType.End:
+        match.player_manager.encountered_end_game = True
     if event is None:
         return
     
@@ -514,8 +516,11 @@ def on_game_event(game_manager, event, match):
     is_decision = event.decision
     event_type = event.type
 
-    if (is_ai and event.player != -1) or (not is_ai and event.type == EventType.Discard and is_decision):
+    if (is_ai and event.player != -1 and event.type != EventType.PointDiff) or (not is_ai and event.type == EventType.Discard and is_decision):
         sleep(0.5)
+
+    if (event.type == EventType.PointDiff):
+        sleep(0.1)
 
     print('== NEW EVENT ==')
     print('Player:', event.player)

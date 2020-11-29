@@ -20,7 +20,7 @@ namespace Mahjong {
     int lastCall = -1;
     int lastCaller = -1;
     bool concealedKan = false;
-    int seed = 0;
+    uint64_t seed = 0;
     std::mt19937 g;
     Piece pendingPiece = Piece::ERROR;
     auto (*prevState)(struct GameState&) -> struct GameState&;
