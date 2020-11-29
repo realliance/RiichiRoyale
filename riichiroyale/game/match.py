@@ -4,6 +4,8 @@ from libmahjong import Wind, start_game, Piece, PieceType, GameSettings, Wind, h
 from .board import Board
 from .player import Player
 from .boardmanager import process_event_queue
+from .meld import Meld
+from .call import CallDirection
 
 
 class Match(Thread):
@@ -57,6 +59,7 @@ class Match(Thread):
                 self.players += [Player("Bot {}".format(i), starting_hand=[Piece(PieceType.ERROR)] * 13, player_id=i)]
         self.new_board()
         self.round_number = 1
+
         self.match_ready = True
     
     def run(self):

@@ -52,6 +52,7 @@ class PlayerManager(MahjongAI, Player):
         self.current_match.process_lock.notify()
 
   def RetrieveDecision(self):
+    print('[PlayerManager] Decision Retrieve Started')
     while not self.decision_complete:
       continue
     with self.lock:

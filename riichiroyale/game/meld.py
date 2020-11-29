@@ -6,10 +6,10 @@ class Meld:
 
     def calculate_meld_sprite_dimensions(self, width, height, tile_offset=2):
         w = (
-            (len(self.tiles) - 1 if self.converted_kan else len(self.tiles))
-            * (width + tile_offset)
+            ((len(self.tiles) - 1 if self.converted_kan else len(self.tiles))
+            * (width + tile_offset))
             - tile_offset
-            + (height - width)
+            #+ (height - width)
         )
         h = max(height, ((2 * width) + 5) if self.converted_kan else 0)
         return w, h

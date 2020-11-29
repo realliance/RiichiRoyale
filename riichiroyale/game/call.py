@@ -26,18 +26,56 @@ class CallDirection(IntEnum):
         return CallDirection(abs(opponent - you))
 
     @staticmethod
-    def should_rotate_tile(i, meld):
+    def should_rotate_tile(i, meld, seat):
         number_of_tiles = len(meld.tiles)
         direction = meld.call_direction
         converted_pon_to_kan = meld.converted_kan
-        if direction == CallDirection.Left:
-            return i in ([0, 1] if converted_pon_to_kan else [0])
-        if direction == CallDirection.Forward:
-            return i in ([1, 2] if converted_pon_to_kan else [1])
-        if direction == CallDirection.Right:
-            return i in (
-                [number_of_tiles - 1, number_of_tiles - 2]
-                if converted_pon_to_kan
-                else [number_of_tiles - 1]
-            )
-        return False
+
+        SEAT_TABLE = [
+            # Seat 0
+           {
+                CallDirection.Left: i in ([0, 1] if converted_pon_to_kan else [0]),
+                CallDirection.Forward: i in ([1, 2] if converted_pon_to_kan else [1]),
+                CallDirection.Right: i in (
+                    [number_of_tiles - 1, number_of_tiles - 2]
+                    if converted_pon_to_kan
+                    else [number_of_tiles - 1]
+                )
+            },
+
+            # Seat 1
+            {
+                CallDirection.Left: i in ([-1, 0] if converted_pon_to_kan else [0]),
+                CallDirection.Forward: i in ([0, 1] if converted_pon_to_kan else [1]),
+                CallDirection.Right: i in (
+                    [number_of_tiles - 1, number_of_tiles - 2]
+                    if converted_pon_to_kan
+                    else [number_of_tiles - 1]
+                )
+            },
+
+            # Seat 2
+            {
+                CallDirection.Left: i in ([-1, 0] if converted_pon_to_kan else [0]),
+                CallDirection.Forward: i in ([0, 1] if converted_pon_to_kan else [1]),
+                CallDirection.Right: i in (
+                    [number_of_tiles - 1, number_of_tiles - 2]
+                    if converted_pon_to_kan
+                    else [number_of_tiles - 1]
+                )
+            },
+
+
+            # Seat 3
+            {
+                CallDirection.Left: i in ([-1, 0] if converted_pon_to_kan else [0]),
+                CallDirection.Forward: i in ([1, 2] if converted_pon_to_kan else [1]),
+                CallDirection.Right: i in (
+                    [number_of_tiles - 1, number_of_tiles - 2]
+                    if converted_pon_to_kan
+                    else [number_of_tiles - 1]
+                )
+            },
+        ]
+
+        return SEAT_TABLE[seat][direction]
