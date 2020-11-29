@@ -219,7 +219,7 @@ namespace Mahjong {
   }
 
   auto isComplete(const GameState& state, int player) -> bool{
-    const Node* root = breakdownHand(state.hands[state.currentPlayer].live);
+    const Node* root = breakdownHand(state.hands[player].live);
     for(const auto& branch : root->AsBranchVectors()){
       if(!root->IsComplete() && 
          !isThirteenOrphans(state,player,branch) &&
@@ -539,7 +539,7 @@ namespace Mahjong {
         han++;
       }
     }
-    return 0;
+    return han;
   }
 
   auto isOutsideHand(const GameState& state, int player, const std::vector<const Node*> branch) -> int{

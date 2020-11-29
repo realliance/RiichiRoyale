@@ -14,6 +14,9 @@
 using namespace Mahjong;
 
 auto Mahjong::CanRon(const GameState& state, int player) -> bool{ //TODO: I really hate this
+  if(state.pendingPiece == Piece::THREE_PIN){
+    std::cout << "\n\nBIG STATE:\n\n" << state << "\n\n\n\n" << std::endl;
+  }
   for(const auto& piece : state.hands[player].discards){
     if(state.pendingPiece == piece){
       return false;
