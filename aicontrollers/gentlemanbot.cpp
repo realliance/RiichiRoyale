@@ -26,13 +26,12 @@ auto GentlemanBot::ReceiveEvent(Mahjong::Event e) -> void{
     lastEvent = e;
 
     if(e.type == Mahjong::Event::Discard){
-      std::cout << "Added Piece\n";
-      hand.push_back(e.piece);
-      lastEvent.piece = getDiscard().toUint8_t();
-      std::cout << lastEvent.piece <<"\n";
+      if(!riichi){
+        hand.push_back(e.piece);
+        lastEvent.piece = getDiscard().toUint8_t();
+      }
     }
     else{
-      std::cout << "choice to make";
     }
   }
   
@@ -47,14 +46,13 @@ auto GentlemanBot::RetrieveDecision() -> Mahjong::Event{
     lastEvent.type = Mahjong::Event::Tsumo;
   }
   else if (lastEvent.type == Mahjong::Event::Riichi){
-    std::cout << "RIICHI ALERT";
     lastEvent.type = Mahjong::Event::Riichi;
+    riichi=true;
   }
   else if (lastEvent.type == Mahjong::Event::ConcealedKan){
     lastEvent.type = Mahjong::Event::ConcealedKan;
   }
   else if(lastEvent.type != Mahjong::Event::Discard){
-    std::cout << "DECLINED";
     lastEvent.type = Mahjong::Event::Decline;
   }
 

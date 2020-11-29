@@ -18,7 +18,7 @@ public:
   auto RetrieveDecision() -> Mahjong::Event;
 private:
   std::vector<Mahjong::Piece> hand;
-  int n = 0;
+  bool riichi = false;
 
 
   Mahjong::Event lastEvent;
