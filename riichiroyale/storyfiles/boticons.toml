@@ -1,36 +1,36 @@
-version = 3
+version = 4
 
 [[bot]]
 name="Rookie Johnson"
 ai="AlphabeticalBot"
-icon="koala.png"
+icon="rookie.png"
 
 [[bot]]
 name="BtA Joe"
 ai="StubbornBot"
-icon="polar-bear.png"
+icon="dad.png"
 
 [[bot]]
 name="The Gentleman"
 ai="GentlemanBot"
-icon="spy.png"
+icon="gentleman.png"
 
 [[bot]]
 name="Speeding Sam"
 ai="Fast Tanyao"
-icon="turtle.png"
+icon="sam.png"
 
 [[bot]]
 name="Champion Junie"
 ai="ThriceBot"
-icon="fox-head.png"
+icon="junie.png"
 
 [[bot]]
 name="Bystander"
 ai="AngryDiscardoBot"
-icon="person.png"
+icon="dudB.png"
 
 [[bot]]
 name="You"
 ai="Player"
-icon="person.png"
+icon="dudA.png"

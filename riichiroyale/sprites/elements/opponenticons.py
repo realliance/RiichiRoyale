@@ -19,7 +19,7 @@ def render_bot_icons(board_render):
     ais = game_view.ai_list
     ai_icons = []
     dud_ai_icon = pygame.Surface(ICON_SIZE, pygame.SRCALPHA)
-    load_image_resource("person.png", dud_ai_icon, size=ICON_SIZE)
+    load_image_resource("dudB.png", dud_ai_icon, size=ICON_SIZE)
     for i in range(4):
         for icon in icon_cache:
             if icon['ai'] == ais[i]:
