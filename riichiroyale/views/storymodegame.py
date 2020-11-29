@@ -129,7 +129,7 @@ class StoryModeGame(GameView):
 
     def on_tsumo_button_pressed(self):
         self.match.player_manager.MakeDecision(
-            self.game_manager.board_manager.last_decision_event.raw_event_b
+            self.game_manager.board_manager.last_decision_event
         )
         return True
 

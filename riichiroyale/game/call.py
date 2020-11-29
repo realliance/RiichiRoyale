@@ -31,6 +31,9 @@ class CallDirection(IntEnum):
         direction = meld.call_direction
         converted_pon_to_kan = meld.converted_kan
 
+        if direction == CallDirection.Concealed:
+            return False
+
         SEAT_TABLE = [
             # Seat 0
            {
