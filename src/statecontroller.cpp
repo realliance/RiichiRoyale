@@ -30,6 +30,7 @@ auto Mahjong::StartGame(GameSettings settings, bool async) -> int {
 
 auto Mahjong::ExitGame(int game) -> void{
   if(shouldHalt.contains(game)){
+    std::cout << "Halting Game..." << std::endl;
     shouldHalt[game] = true;
   }
 }
