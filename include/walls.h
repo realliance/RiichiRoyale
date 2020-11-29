@@ -1,13 +1,14 @@
 #pragma once
 #include <iosfwd>       // for ostream
 #include <vector>       // for vector
+#include <random>
 #include "piecetype.h"  // for Piece
 
 namespace Mahjong { 
   class Walls{
   public:
     explicit Walls();
-    explicit Walls(int seed);
+    explicit Walls(std::mt19937& g);
     explicit Walls(std::vector<Piece> wall);
     std::vector<Piece> livingWalls;
     std::vector<Piece> deadWall;
