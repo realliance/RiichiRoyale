@@ -481,7 +481,7 @@ class BoardView(MenuView):
 
         return ui_manager, process_ui_event
 
-def new_text_box(gui_manager, button_map, text):
+def new_text_box(gui_manager, button_map, _elements, text):
     text_box_rect = pygame.Rect(0, 0, 600, 200)
     text_box_rect.bottomleft = (400, -290)
     text_box = pygame_gui.elements.UITextBox(

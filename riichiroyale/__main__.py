@@ -227,7 +227,7 @@ def main():
     while running:
         time_delta = clock.tick(60) / 1000.0
         pygame.event.pump()
-        for event in pygame.event.get():
+        for event in pygame.event.get(pump=False):
             if event.type == pygame.QUIT:
                 running = False
             game_manager.on_pygame_event(event)

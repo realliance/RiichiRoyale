@@ -53,7 +53,7 @@ class PlayerManager(MahjongAI, Player):
 
   def RetrieveDecision(self):
     while not self.decision_complete:
-      pass
+      continue
     with self.lock:
       self.decision_complete = False
       print('[PlayerManager] Decision Retrieved')

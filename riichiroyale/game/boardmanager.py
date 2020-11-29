@@ -242,7 +242,7 @@ def on_tsumo_event(
 
 def on_riichi_event(
     game_manager,
-    is_ai,
+    _is_ai,
     is_decision,
     event,
     _match,
@@ -255,14 +255,9 @@ def on_riichi_event(
         game_manager.board_manager.last_decision_event = event
         event_player.calls_avaliable += [Call.Riichi]
     else:
-        if is_ai:
-            del event_player.hand[-1]
-        else:
-            event_player.hand.remove(event.piece)
         game_manager.board_manager.waiting_on_decision = False
         game_manager.board_manager.last_decision_event = None
         event_player.calls_avaliable = []
-        event_player.discard_pile += [event.piece]
         event_player.riichi_declared = True
 
 def on_discard_event(

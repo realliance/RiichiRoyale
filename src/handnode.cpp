@@ -190,9 +190,6 @@ auto Node::AsBranchVectors() const -> std::vector<std::vector<const Node*>>{
   std::vector<const Node*> nodeloc;
   nodeloc.push_back(this);
   while(!nodeloc.empty()){
-    if(!nodeloc.back()){
-      std::cout << "oof";
-    }
     if(!nodeloc.back()->leaves.empty()){
       nodeloc.push_back(nodeloc.back()->leaves[0]);
     }else{

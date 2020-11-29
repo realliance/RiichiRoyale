@@ -93,7 +93,7 @@ class Match(Thread):
             self.bootstrap_match()
 
         with self.process_lock:
-            self.process_lock.wait_for(lambda: self.player_manager.GetQueueLength() > 0)
+            self.process_lock.wait_for(lambda: self.player_manager.GetQueueLength() > 0, timeout=1000)
             with self.match_lock:
                 process_event_queue(self.game_manager, self)
         
