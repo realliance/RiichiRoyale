@@ -114,6 +114,14 @@ def render_score_screen(board_render):
 
         y += icon_size[1] + 70
 
+    LOADING_NEXT_ROUND = "Loading next Round..."
+    loading_surface = font.render(LOADING_NEXT_ROUND, True, (255, 255, 255))
+    loading_width, loading_height = font.size(LOADING_NEXT_ROUND)
+
+    screen_surface.blit(
+        loading_surface,
+        (screen_surface.get_width() - loading_width - 10, screen_surface.get_height() - loading_height - 10)
+    )
 
     screen_surface.blit(
         round_complete_surface,

@@ -20,6 +20,7 @@ class PlayerManager(MahjongAI, Player):
 
   def RoundStart(self, hand, seatWind, prevalentWind):
     print('====ROUND START CALLED====')
+    print('SEATWIND:', seatWind)
     print(list(map(lambda x: PieceType(x.get_raw_value()), hand)))
     with self.lock:
       if len(self.hand) == 0:

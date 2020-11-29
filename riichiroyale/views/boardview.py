@@ -8,7 +8,7 @@ from copy import deepcopy
 from pygame import Rect
 from pygame import surface
 from riichiroyale import BoardRender
-from riichiroyale.game import Call
+from riichiroyale.game import Call, get_object
 from .menuview import MenuView
 
 def clean_up_board_view(board_view):
@@ -41,6 +41,7 @@ class BoardView(MenuView):
         self.screen_height_ratio = height_ratio
         self.game_manager = game_manager
         self.match_pov = None
+        self.bot_icon_cache = get_object('boticons')['bot']
         self.lock_user_input = False
 
         # Fill background

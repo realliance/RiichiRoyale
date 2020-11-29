@@ -1,4 +1,4 @@
-version = 2
+version = 3
 
 [[bot]]
 name="Rookie Johnson"
@@ -26,7 +26,7 @@ ai="ThriceBot"
 icon="fox-head.png"
 
 [[bot]]
-name="The Opportunist"
+name="Bystander"
 ai="AngryDiscardoBot"
 icon="person.png"
 

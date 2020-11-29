@@ -1,6 +1,6 @@
 from threading import Thread, Condition, Lock
 from time import sleep
-from libmahjong import Wind, start_game, Piece, PieceType, GameSettings
+from libmahjong import Wind, start_game, Piece, PieceType, GameSettings, Wind
 from .board import Board
 from .player import Player
 from .boardmanager import process_event_queue
@@ -21,6 +21,7 @@ class Match(Thread):
         self.delta_scores = [0] * 4
         self.current_board = None
         self.east_prevalent = True
+        self.round_number = 0
         self.two_wind_game = two_wind_game
         self.match_ready = False
         self.match_alive = True
@@ -41,6 +42,7 @@ class Match(Thread):
             deadwall=deadwall,
             dora_revealed=0,
         )
+        #self.current_board.current_dealer = 
 
     def play_clack(self):
         if self.sound_manager is not None:
@@ -53,6 +55,7 @@ class Match(Thread):
             else:
                 self.players += [Player("Bot {}".format(i), starting_hand=[Piece(PieceType.ERROR)] * 13, player_id=i)]
         self.new_board()
+        self.round_number = 1
         self.match_ready = True
     
     def run(self):
@@ -70,6 +73,8 @@ class Match(Thread):
         self.delta_scores = [0] * 4
         self.player_manager.reset()
         self.player_manager.next_round()
+        self.round_number += 1
+        self.east_prevalent = not (self.east_prevalent and self.player_manager.prevalent_wind != Wind.East)
         self.new_board()
         for i in range(4):
             if i != self.player_manager.player_id:

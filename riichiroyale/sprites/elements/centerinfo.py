@@ -145,14 +145,27 @@ def render_center_info(board_render):
     font_path = os.path.join(
         current_path, "..", "..", "resources", "fonts", "SourceSans3-Semibold.ttf"
     )
-    font = Font(font_path, 60)
+    font = Font(font_path, 30)
+    large_font = Font(font_path, 42)
+
+    # Round Title
+    round_text = "{} {}".format("East" if match.east_prevalent else "South", match.round_number)
+    round_surface = font.render(round_text, True, (255, 255, 255))
+    round_sprite = Sprite()
+    round_sprite.image = round_surface
+    round_sprite.rect = round_surface.get_rect()
+    round_sprite.rect.center = info_rect.center
+    round_sprite.rect.y -= (round_surface.get_rect().height // 2)
+    round_sprite.layer = 1
+    group.add(round_sprite)
 
     # Tiles Left in Wall
-    tile_count_surface = font.render(str(len(match.current_board.wall)), True, (255, 255, 255))
+    tile_count_surface = large_font.render(str(len(match.current_board.wall)), True, (255, 255, 255))
     wall_remaining_sprite = Sprite()
     wall_remaining_sprite.image = tile_count_surface
     wall_remaining_sprite.rect = tile_count_surface.get_rect()
     wall_remaining_sprite.rect.center = info_rect.center
+    wall_remaining_sprite.rect.y += (tile_count_surface.get_rect().height // 3)
     wall_remaining_sprite.layer = 1
     group.add(wall_remaining_sprite)
 

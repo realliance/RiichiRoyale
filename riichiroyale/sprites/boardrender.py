@@ -8,7 +8,8 @@ from .elements import (
     render_vertical_discard_pile,
     render_dora_pile,
     render_hidden_hand,
-    render_score_screen
+    render_score_screen,
+    render_bot_icons
 )
 
 class StatefulBoardElement:
@@ -90,7 +91,7 @@ class BoardRender:
         self.elements.append(
             StatefulBoardElement(
                 [],
-                lambda: map(lambda m: map(lambda tile: tile.get_raw_value(), m.tiles), self.match.players[player_pov].melded_hand),
+                lambda: meld_state(self.match.players[player_pov].melded_hand),
                 lambda: render_meld_hand(
                     self, self.match.players[player_pov].melded_hand, seat=0
                 ),
@@ -101,7 +102,7 @@ class BoardRender:
         self.elements.append(
             StatefulBoardElement(
                 [],
-                lambda: self.match.players[player_to_right].melded_hand,
+                lambda: meld_state(self.match.players[player_to_right].melded_hand),
                 lambda: render_meld_hand(
                     self, self.match.players[player_to_right].melded_hand, seat=1
                 ),
@@ -110,7 +111,7 @@ class BoardRender:
         self.elements.append(
             StatefulBoardElement(
                 [],
-                lambda: self.match.players[player_across].melded_hand,
+                lambda: meld_state(self.match.players[player_across].melded_hand),
                 lambda: render_meld_hand(
                     self, self.match.players[player_across].melded_hand, seat=2
                 ),
@@ -119,7 +120,7 @@ class BoardRender:
         self.elements.append(
             StatefulBoardElement(
                 [],
-                lambda: self.match.players[player_to_left].melded_hand,
+                lambda: meld_state(self.match.players[player_to_left].melded_hand),
                 lambda: render_meld_hand(
                     self, self.match.players[player_to_left].melded_hand, seat=3
                 ),
@@ -165,6 +166,15 @@ class BoardRender:
             )
         )
 
+        # AI Portraits
+        self.elements.append(
+            StatefulBoardElement(
+                [],
+                lambda: self.match.ai_list,
+                lambda: render_bot_icons(self),
+            )
+        )
+
         # Doras
         self.elements.append(
             StatefulBoardElement(
@@ -193,6 +203,8 @@ class BoardRender:
                 element.notify(self.surface, background)
                 element.draw(self.surface, background)
 
+def meld_state(meld_list):
+    return list(map(lambda meld: list(map(lambda tile: tile.get_raw_value(), meld.tiles)), meld_list))
 
 def center_info_state(match):
     return [len(match.current_board.wall), match.current_board.current_dealer, match.current_board.current_turn]
