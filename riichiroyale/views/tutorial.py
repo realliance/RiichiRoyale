@@ -38,6 +38,7 @@ class TutorialView(BoardView):
         )
         self.player_manager = player_manager
         self.tutorial = None
+        self.ai_list = ["Player"] + ["TotoBot"] * 3
 
     def on_match_init(self):
         prefered_discards = [
