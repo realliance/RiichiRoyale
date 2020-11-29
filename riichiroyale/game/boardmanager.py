@@ -13,6 +13,7 @@ class BoardManager:
         self.waiting_on_decision = False
         self._point_diff_count = 0
         self.round_should_end = False
+        self.did_exhaustive_draw = True
         self.game_should_end = False
 
 def convert_event(event):
@@ -149,6 +150,7 @@ def on_ron_event(
         event_player.hand += [event.piece]
         event_player.calls_avaliable = []
         game_manager.board_manager.waiting_on_decision = False
+        game_manager.board_manager.did_exhaustive_draw = False
         game_manager.board_manager.round_should_end = True
 
 
@@ -237,6 +239,7 @@ def on_tsumo_event(
     else:
         event_player.calls_avaliable = []
         game_manager.board_manager.waiting_on_decision = False
+        game_manager.board_manager.did_exhaustive_draw = False
         game_manager.board_manager.round_should_end = True
 
 
@@ -284,8 +287,9 @@ def on_discard_event(
     else:
         game_manager.board_manager.waiting_on_decision = False
         if not is_ai:
-            event_player.hand.remove(event.piece)
-            event_player.hand.sort()
+            if event.piece in event_player.hand:
+                event_player.hand.remove(event.piece)
+                event_player.hand.sort()
         elif len(match.current_board.wall) > 0:
             del match.current_board.wall[-1]
         event_player.discard_pile += [event.piece]

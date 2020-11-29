@@ -66,6 +66,7 @@ class PlayerManager(MahjongAI, Player):
       engine_event = EngineEvent()
       engine_event.type = event.type
       engine_event.player = event.player
+      print(event.piece.get_raw_value())
       engine_event.piece = event.piece.get_raw_value()
       engine_event.decision = event.decision
       event = engine_event

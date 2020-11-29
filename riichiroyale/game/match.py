@@ -86,6 +86,7 @@ class Match(Thread):
             if i != self.player_manager.player_id:
                 self.players[i].reset()
                 self.players[i].hand = [Piece(PieceType.ERROR)] * 13
+        self.game_manager.board_manager.did_exhaustive_draw = True
         self.game_manager.board_manager.round_should_end = False
 
     def on_update(self):

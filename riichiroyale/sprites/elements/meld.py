@@ -36,7 +36,7 @@ def render_meld_hand(board_render, meld_hand, seat=0):
         (rect.width - max_row_width - 85, rect.height - 10 - (max_meld_height * 2)),
         (rect.width - 100 - (max_meld_height * 2), max_row_width),
         (300 - max_row_width, 25),
-        (25 + (max_meld_height * 2), max_row_width),
+        (25 + (max_meld_height * 2), max_row_width + 40),
     ]
 
     xpos, ypos = SEAT_POS[seat]
