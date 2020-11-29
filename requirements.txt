@@ -3,8 +3,6 @@ pygame == 2.0.0.dev14
 pygame-gui ~= 0.5.7
 numpy
 
-pdoc ~= 0.3
-
 toml
 
 setuptools
