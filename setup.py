@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="riichiroyale",
-    version="1.0.1",
+    version="1.0.2",
     author="Christopher Miller",
     author_email="cmiller548@gmail.com",
     description="Singleplayer Riichi Mahjong Game",
@@ -15,7 +15,7 @@ setuptools.setup(
         'pygame==2.0.0.dev14',
         'pygame-gui==0.5.7',
         'pybind11~=2.5',
-        'numpy',
+        'numpy==1.19.3',
         'toml'
     ],
     url="https://github.com/HartleyAHartley/RiichiRoyale",
