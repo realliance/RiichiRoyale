@@ -5,7 +5,7 @@
 #include <iterator>
 #include <memory>
 #include <random>
-#include <ext/alloc_traits.h>
+//#include <ext/alloc_traits.h>
 #include <vector>
 
 #include "piecetype.h"
