@@ -129,26 +129,27 @@ auto ThriceBot::ReceiveEvent(Mahjong::Event e) -> void
     {
       lastEvent = e;
     }
-  }
-  if(e.type == Mahjong::Event::Discard && e.player == pid)
-  {
-    handTile h;
-    h.piece = e.piece;
-    if(h.piece.isHonor())
+  
+    if(e.type == Mahjong::Event::Discard && e.player == pid)
     {
-      h.weight = 1.5;
+      handTile h;
+      h.piece = e.piece;
+      if(h.piece.isHonor())
+      {
+        h.weight = 1.5;
+      }
+      else
+      {
+        h.weight = 1;
+      }
+      h = assignTileWeight(h);
+      hand.push_back(h);
+      checkDiscard();
     }
-    else
+    else if(e.type == Mahjong::Event::Discard)
     {
-      h.weight = 1;
+      discarded.push_back(e.piece);
     }
-    h = assignTileWeight(h);
-    hand.push_back(h);
-    checkDiscard();
-  }
-  else if(e.type == Mahjong::Event::Discard)
-  {
-    discarded.push_back(e.piece);
   }
 }
 
