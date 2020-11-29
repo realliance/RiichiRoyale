@@ -1,5 +1,5 @@
 #include "player.h"
-#include <string>       // for operator<<
+#include <string>
 #include "playercontroller.h"
 
 using namespace Mahjong;

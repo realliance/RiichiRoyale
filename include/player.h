@@ -1,6 +1,6 @@
 #pragma once
-#include <iostream>  // for ostream
-   // for Wind
+#include <iostream>
+
 
 namespace Mahjong {
   class PlayerController;  

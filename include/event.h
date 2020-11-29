@@ -1,7 +1,7 @@
 #pragma once
-#include <stdint.h>  // for int16_t
-#include <iostream>  // for ostream
-#include <string>    // for allocator, string
+#include <stdint.h>
+#include <iostream>
+#include <string>
 
 namespace Mahjong {
 

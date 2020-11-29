@@ -1,4 +1,4 @@
-#include <ostream>  // for operator<<, basic_ostream
+#include <ostream>
 #include "meld.h"
 
 

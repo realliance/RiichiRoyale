@@ -1,11 +1,11 @@
 #include "gentlemanbot.h"
-#include "event.h"      // for Event, Decline
-#include "piecetype.h"  // for Piece
-#include "winds.h"      // for Wind
-#include "analysis.h"   // for handtree?
+#include "event.h"
+#include "piecetype.h"
+#include "winds.h"
+#include "analysis.h"
 #include "handnode.h"
-#include <iostream>     // for endl, ostream, basic_ostream<>::__ostream_type
-#include <memory>       // for allocator_traits<>::value_type
+#include <iostream>
+#include <memory>
 
 auto GentlemanBot::Name() -> std::string{
   return "GentlemanBot";

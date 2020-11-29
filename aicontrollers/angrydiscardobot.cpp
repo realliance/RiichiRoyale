@@ -1,9 +1,9 @@
 #include "angrydiscardobot.h"
-#include "event.h"      // for Event, Decline
-#include "piecetype.h"  // for Piece
-#include "winds.h"      // for Wind
-#include <iostream>     // for endl, ostream, basic_ostream<>::__ostream_type
-#include <memory>       // for allocator_traits<>::value_type
+#include "event.h"
+#include "piecetype.h"
+#include "winds.h"
+#include <iostream>
+#include <memory>
 
 auto AngryDiscardoBot::Name() -> std::string{
   return "AngryDiscardoBot";

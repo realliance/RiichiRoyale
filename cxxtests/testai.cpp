@@ -1,5 +1,5 @@
 #include "testai.h"
-#include "event.h"      // for Event, Decline
+#include "event.h"
 
 auto TesterBot::Name() -> std::string{
   return "TesterBot";

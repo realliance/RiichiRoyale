@@ -1,20 +1,20 @@
 #include "controllermanager.h"
-#include <angrydiscardobot.h>  // for AngryDiscardoBot
-#include <thricebot.h>         // for ThriceBot
+#include <angrydiscardobot.h>
+#include <thricebot.h>
 #include <fasttanyao.h>
-#include <alphabeticalbot.h>   // for AlphabeticalBot
+#include <alphabeticalbot.h>
 #include <totobot.h>
 #include <gentlemanbot.h>
-#include <map>                 // for map, map<>::mapped_type
-#include <string>              // for string, operator+
-#include <vector>              // for vector
-#include "statefunctions.h"    // for StateController
+#include <map>
+#include <string>
+#include <vector>
+#include "statefunctions.h"
 #include "playercontroller.h"
-#include "settings.h"          // for GameSettings
+#include "settings.h"
 #ifndef NO_PYBIND
 #include <pybind11/stl.h>      // IWYU pragma: keep
-#include <pybind11/cast.h>     // for object::cast
-#include <pybind11/pytypes.h>  // for object
+#include <pybind11/cast.h>
+#include <pybind11/pytypes.h>
 #endif
 
 using namespace Mahjong;

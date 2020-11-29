@@ -1,9 +1,9 @@
 #include "thricebot.h"
-#include "event.h"      // for Event, Decline
-#include "piecetype.h"  // for Piece
-#include "winds.h"      // for Wind
-#include <iostream>     // for endl, ostream, basic_ostream<>::__ostream_type
-#include <memory>       // for allocator_traits<>::value_type
+#include "event.h"
+#include "piecetype.h"
+#include "winds.h"
+#include <iostream>
+#include <memory>
 
 
 auto ThriceBot::Name() -> std::string
@@ -43,9 +43,9 @@ auto ThriceBot::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Wind s, M
 
 void ThriceBot::assignweights()
 {
-  for(int i =0; i < hand.size();i++)
+  for(size_t i =0; i < hand.size();i++)
   {
-    for(int j = i; j < hand.size();j++)
+    for(size_t j = i; j < hand.size();j++)
     {
       if(j != i)
       {
@@ -73,7 +73,7 @@ handTile ThriceBot::assignTileWeight(handTile h1)
   handTile h;
   h.piece = h1.piece;
   h.weight = h1.weight;
-  for(int i =0; i < hand.size();i++)
+  for(size_t i =0; i < hand.size();i++)
   {
     if(hand[i].piece.getSuit() == h.piece.getSuit() && hand[i].piece.getPieceNum() == h.piece.getPieceNum())
     {
@@ -87,9 +87,9 @@ handTile ThriceBot::assignTileWeight(handTile h1)
 
 void ThriceBot::checkDiscard()
 {
-	for(int i =0; i < hand.size();i++)
+	for(size_t i =0; i < hand.size();i++)
   {
-		for(int j = i; j < hand.size();j++)
+		for(size_t j = i; j < hand.size();j++)
 		{
 		  if(j != i)
 		  {
@@ -192,7 +192,7 @@ auto ThriceBot::RetrieveDecision() -> Mahjong::Event
 bool ThriceBot::checkTile(Mahjong::Piece p)
 {
   int j = 0;
-  for(int i =0; i < hand.size();i++)
+  for(size_t i =0; i < hand.size();i++)
   {
     if(hand[i].piece.getSuit() == p.getSuit() && hand[i].piece.getPieceNum() == p.getPieceNum())
     {
@@ -210,7 +210,7 @@ bool ThriceBot::checkTile(Mahjong::Piece p)
 Mahjong::Piece ThriceBot::popDiscard()
 {
   int indexOfLowest = 0;
-  for (int i = 0; i < hand.size();i++)
+  for (size_t i = 0; i < hand.size();i++)
   {
     if(hand[i].weight < hand[indexOfLowest].weight)
     {
@@ -222,6 +222,3 @@ Mahjong::Piece ThriceBot::popDiscard()
   discarded.push_back(p);
   return p;
 }
-
-
-

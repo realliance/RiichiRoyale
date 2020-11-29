@@ -1,9 +1,9 @@
 #include "fasttanyao.h"
-#include "event.h"      // for Event, Decline
-#include "piecetype.h"  // for Piece
-#include "winds.h"      // for Wind
-#include <iostream>     // for endl, ostream, basic_ostream<>::__ostream_type
-#include <memory>       // for allocator_traits<>::value_type
+#include "event.h"
+#include "piecetype.h"
+#include "winds.h"
+#include <iostream>
+#include <memory>
 #include <tuple>
 #include <algorithm>
 
@@ -25,7 +25,7 @@ auto FastTanyao::IncrementPiece(Mahjong::Piece piece, pieceSet& set) -> void {
   IncreasePiece(piece, set, 1);
 }
 
-auto FastTanyao::IncreasePiece(Mahjong::Piece piece, pieceSet& set, uint8_t count) -> void {
+auto FastTanyao::IncreasePiece(Mahjong::Piece piece, pieceSet& set, uint8_t) -> void {
   pieceSet::iterator setContainsPiece = set.find(piece.raw_value());
   if(setContainsPiece != set.end()) {
     setContainsPiece->second++;
@@ -58,7 +58,7 @@ auto FastTanyao::ProcessNewPiece(Mahjong::Piece piece) -> void {
   IncrementPiece(piece, possibleTriples);
 }
 
-auto FastTanyao::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Wind _seatWind, Mahjong::Wind _prevalentWind) -> void {
+auto FastTanyao::RoundStart(std::vector<Mahjong::Piece> _hand, Mahjong::Wind, Mahjong::Wind) -> void {
   for (auto piece : _hand) {
     ProcessNewPiece(piece);
   }
@@ -132,6 +132,8 @@ auto FastTanyao::ReceiveEvent(Mahjong::Event e) -> void {
         IncrementPiece(eventPiece, allDiscards);
       }
       break;
+    default:;
+      // doing nothing here on purpose -alice
   }
 }
 
