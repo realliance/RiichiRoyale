@@ -6,11 +6,10 @@ add_executable(testingZone "")
 target_compile_definitions(testingZone PUBLIC -DNO_PYBIND)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wmost -Wextra -fstack-protector -fsanitize=address)
+target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wmost -Wextra -fsanitize=address -fno-omit-frame-pointer)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wextra -fstack-protector -fsanitize=address)
+  target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wextra -fsanitize=address -fno-omit-frame-pointer)
 endif()
-target_compile_options(RiichiRoyale PRIVATE -pedantic -Wall -Wextra -fstack-protector -fsanitize=address)
 get_target_property(_sources RiichiRoyale SOURCES)
 target_sources(testingZone
     PRIVATE
