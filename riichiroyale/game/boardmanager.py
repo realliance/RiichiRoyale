@@ -236,7 +236,7 @@ def on_tsumo_event(
     game_manager,
     _is_ai,
     is_decision,
-    _event,
+    event,
     _match,
     event_player,
     _pov_player,
@@ -244,12 +244,12 @@ def on_tsumo_event(
 ):
     if is_decision:
         game_manager.board_manager.waiting_on_decision = True
+        game_manager.board_manager.last_decision_event = event
         event_player.calls_avaliable += [Call.Tsumo]
     else:
         event_player.calls_avaliable = []
         game_manager.board_manager.waiting_on_decision = False
         game_manager.board_manager.did_exhaustive_draw = False
-        game_manager.board_manager.round_should_end = True
 
 
 def on_riichi_event(
@@ -374,7 +374,8 @@ def on_point_diff_event(
     _pov_player,
     _extra_player,
 ):
-    match.delta_scores[event.player] += event.piece.get_raw_value() * 1000
+    value = event.piece.get_raw_value() if isinstance(event.piece, Piece) else event.piece
+    match.delta_scores[event.player] += value * 1000
     game_manager.board_manager._point_diff_count += 1
     if game_manager.board_manager._point_diff_count >= 4:
         game_manager.board_manager.round_should_end = True
