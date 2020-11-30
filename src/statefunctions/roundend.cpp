@@ -25,10 +25,10 @@ auto Mahjong::RoundEnd(GameState& state) -> GameState& {
       static_cast<int16_t>(state.scores[i]/100),
       false
     });
+    state.players[i].points += state.scores[i];
   }
   state.scores = {};
 
-  std::cout << "ROUND NUM: " << state.roundNum << std::endl;
   if(state.roundNum > 3){ // east only lmao
     state.nextState = GameEnd;
   }else{

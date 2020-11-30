@@ -16,7 +16,7 @@ int main(){
     StartGame({
       { "Fast Tanyao","AngryDiscardoBot","GentlemanBot","ThriceBot"},
       {},
-      1580952521
+      2310380705
     }, false);
   }
   return 0;

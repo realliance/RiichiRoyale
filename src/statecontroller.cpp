@@ -30,6 +30,7 @@ auto Mahjong::StartGame(GameSettings settings, bool async) -> int {
 
 auto Mahjong::ExitGame(int game) -> void{
   if(shouldHalt.contains(game)){
+    std::cout << "Halting Game..." << std::endl;
     shouldHalt[game] = true;
   }
 }
@@ -48,6 +49,7 @@ auto Mahjong::StateController(GameSettings settings) -> void{
     std::random_device rd;
     state.seed = rd();
   }
+  std::cout << "=============SEED============= : " << state.seed << std::endl;
   if(!settings.overrideWall.empty()){
     std::swap(state.overrideWall, settings.overrideWall);
     state.seed = 0xBEEFBABE;

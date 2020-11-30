@@ -13,7 +13,7 @@ auto Mahjong::Exhaust(GameState& state) -> GameState& {
     // of you're then not in tenpai
     // shouldn't matter much
     // message Alice for complains
-    if(!isInTenpai(state.hands[i].live).empty()){ 
+    if(state.hands[i].riichi || !isInTenpai13Pieces(state.hands[i].live).empty()){ 
       winningPlayers[i] = true;
       totalWinners++;
     }
