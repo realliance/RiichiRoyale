@@ -27,7 +27,19 @@ auto Mahjong::Exhaust(GameState& state) -> GameState& {
       if(winningPlayers[i]){
         state.scores[i] = 3000/totalWinners;
       }else{
-        state.scores[i] = -3000/totalWinners;
+        switch(totalWinners){
+          case 1:
+            state.scores[i] = -1000;
+            break;
+          case 2:
+            state.scores[i] = -1500;
+            break;
+          case 3:
+            state.scores[i] = -3000;
+            break;
+          default:
+            break;
+        }
       }
       if(state.hands[i].riichi){
         state.scores[i] -= 1000;
