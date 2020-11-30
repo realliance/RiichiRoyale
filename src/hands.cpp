@@ -75,6 +75,26 @@ namespace Mahjong {
       for(auto yakuFunction : yakumanFunctions){
         branchscore.yakuman += yakuFunction(state,player, branch);
       }
+      for(const auto& dora : state.walls.GetDoras()){
+        for(const auto& p : state.hands[player].live){
+          if(p == dora){
+            branchscore.han++;
+          }
+        }
+        for(const auto& meld : state.hands[player].melds){
+          if(meld.start == dora){
+            branchscore.han++;
+          }
+          if(meld.type == Meld::Chi){
+            if(meld.start+1 == dora){
+              branchscore.han++;
+            }
+            if(meld.start+2 == dora){
+              branchscore.han++;
+            }
+          }
+        }
+      }
       branchscore.fu = getFu(state,player,branch);
       if(getBasicPoints(branchscore) > getBasicPoints(s)){
         s = branchscore;
