@@ -67,6 +67,8 @@ class StoryModeGame(GameView):
         self.match_dict = match_dict
         prefix = "<b>{}</b><br><br>".format(self.match_dict['opponent'])
         self.match_opponent = self.match_dict['opponent_index']
+
+        self.dialogue_manager = DialogManager()
         
         for possible_event in DIALOGUE_EVENT_PRIORITY:
             if possible_event in self.match_dict:

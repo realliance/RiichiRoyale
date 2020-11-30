@@ -13,6 +13,7 @@ auto Mahjong::GameEnd(GameState& state) -> GameState& {
   for(auto & player : state.players){
     player.controller->ReceiveEvent(END_EVENT);
     delete player.controller;
+    player.controller = nullptr;
     std::cout << player.points << ", ";
   }
   std::cout << std::endl;

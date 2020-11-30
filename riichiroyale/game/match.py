@@ -76,8 +76,8 @@ class Match(Thread):
         while self.match_alive:
             self.on_update()
         print('Match Halting...')
-        if not self.encountered_end_game:
-            halt_game(self.game_id)
+        #if not self.encountered_end_game:
+        halt_game(self.game_id)
 
     def start_next_round(self):
         self.scores = list(map(lambda x: x[0] + x[1], zip(self.scores, self.delta_scores)))

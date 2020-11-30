@@ -16,13 +16,13 @@ class PlayerManager(MahjongAI, Player):
   def reset(self, should_call_super=True, clear=False):
     with self.lock:
       if clear:
-        self.player_id = 0
+        self.player_id = None
         self.received_events = []
         self.decision_complete = False
         self.decision_made = None
         self.current_match = None
-    if should_call_super:
-      super().reset()
+      if should_call_super:
+        super().reset()
 
   def GameStart(self, player_id):
     print('==GAME STARTED==')

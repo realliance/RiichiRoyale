@@ -517,7 +517,7 @@ def on_game_event(game_manager, event, match):
     event_type = event.type
 
     if (is_ai and event.player != -1 and event.type != EventType.PointDiff) or (not is_ai and event.type == EventType.Discard and is_decision):
-        sleep(0.5)
+        sleep(0)
 
     if (event.type == EventType.PointDiff):
         sleep(0.1)
