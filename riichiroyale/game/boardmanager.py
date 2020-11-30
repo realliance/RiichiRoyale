@@ -227,7 +227,7 @@ def on_kan_event(
         ]
 
         if is_ai:
-            del event_player.hand[-4:]
+            del event_player.hand[-3:]
         else:
             event_player.calls_avaliable = []
             event_player.hand.remove(event.piece)
@@ -517,7 +517,7 @@ def on_game_event(game_manager, event, match):
     event_type = event.type
 
     if (is_ai and event.player != -1 and event.type != EventType.PointDiff) or (not is_ai and event.type == EventType.Discard and is_decision):
-        sleep(0)
+        sleep(0.5)
 
     if (event.type == EventType.PointDiff):
         sleep(0.1)
