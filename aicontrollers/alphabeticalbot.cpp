@@ -78,6 +78,9 @@ auto AlphabeticalBot::ReceiveEvent(Mahjong::Event e) -> void{
 }
 
 auto AlphabeticalBot::RetrieveDecision() -> Mahjong::Event{
+    if(hand.empty()){
+        return this->decisionToTake;
+    }
     if (this->decisionToTake.type == Mahjong::Event::Discard)
     {
         auto indexToDiscard = getDiscardPiece();
