@@ -112,7 +112,7 @@ int ThriceBot::discardHas(Mahjong::Piece check)
   int has = 0;
   for(Mahjong::Piece p : discarded)
   {
-    if(check.getSuit() == p.getSuit() && check.getPieceNum() == p.getPieceNum())
+    if(p == check)
     {
       has++;
     }
