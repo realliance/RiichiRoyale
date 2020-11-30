@@ -107,6 +107,8 @@ class StoryModeGame(GameView):
         if event_name in ROUND_END_EVENTS:
             self.game_manager.set_active_view("storymodeselect")
             self.game_manager.sound_manager.play_music("lobby")
+            self.match.player_manager.reset()
+            self.match = None
         self.lock_user_input = False
 
     def process_possible_dialogue_events(self):
@@ -139,7 +141,7 @@ class StoryModeGame(GameView):
                     break
                 i += 1
             save_object('matches', matches)
-        elif ranks[self.match_dict.opponent_index] == 0:
+        elif ranks[self.match_dict['opponent_index']] == 0:
             self.play_oneshot_dialogue('on_player_loses')
         else:
             self.play_oneshot_dialogue('on_both_lose')
@@ -148,6 +150,7 @@ class StoryModeGame(GameView):
         self.process_possible_dialogue_events()
         if self.game_manager.board_manager.game_should_end:
             self.game_manager.board_manager.game_should_end = False
+            self.match.match_alive = False
             self._determine_winner()
 
         super().update(time_delta)

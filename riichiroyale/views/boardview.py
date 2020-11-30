@@ -114,7 +114,7 @@ class BoardView(MenuView):
             (self.player_area_rect.width, self.player_area_rect.height),
             flags=pygame.SRCALPHA,
         )
-        del self.board_render
+        self.board_render = None
         self.board_render = BoardRender(
             self.small_tile_dict,
             self.tile_dict,

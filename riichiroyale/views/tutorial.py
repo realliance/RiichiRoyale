@@ -156,7 +156,7 @@ class TutorialView(BoardView):
             self.buttons["text"].kill()
             self.game_manager.set_active_view("main_menu")
             self.game_manager.sound_manager.play_music("lobby")
-            self.match.player_manager.reset()
+            self.match.player_manager.reset(clear=True)
             self.match = None
             return
         if event_name == "skip_pon":
