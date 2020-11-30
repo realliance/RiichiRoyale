@@ -75,6 +75,26 @@ namespace Mahjong {
       for(auto yakuFunction : yakumanFunctions){
         branchscore.yakuman += yakuFunction(state,player, branch);
       }
+      for(const auto& dora : state.walls.GetDoras()){
+        for(const auto& p : state.hands[player].live){
+          if(p == dora){
+            branchscore.han++;
+          }
+        }
+        for(const auto& meld : state.hands[player].melds){
+          if(meld.start == dora){
+            branchscore.han++;
+          }
+          if(meld.type == Meld::Chi){
+            if(meld.start+1 == dora){
+              branchscore.han++;
+            }
+            if(meld.start+2 == dora){
+              branchscore.han++;
+            }
+          }
+        }
+      }
       branchscore.fu = getFu(state,player,branch);
       if(getBasicPoints(branchscore) > getBasicPoints(s)){
         s = branchscore;
@@ -251,11 +271,32 @@ namespace Mahjong {
       Piece::SOUTH_WIND,Piece::NORTH_WIND,Piece::WEST_WIND
   };
 
+  auto countSingles(std::vector<Piece> hand) -> int {
+    auto root = breakdownHand(hand);
+    int minSingles = 15;
+    for(const auto& branch : root->AsBranchVectors()){
+      int singles = 0;
+      for(const auto& node : branch){
+        if(node->type == Node::Single){
+          singles++;
+        }
+      }
+      if(singles < minSingles){
+        minSingles = singles;
+      }
+    }
+    return minSingles;
+  }
+
   //this is an extrememly inefficient algorithm but it's probably good enough for 
   //the frequency it needs to be ran
   //will revisit if necessary 
   //assumption is 14 piece hand
   auto isInTenpai13Pieces(std::vector<Piece> hand, bool allWaits) -> std::vector<Piece> {
+    int minSingles = countSingles(hand);
+    if(minSingles > 5 || minSingles == 3 || minSingles == 0){
+        return {};
+    }
     int8_t counts[256] = {};
     std::vector<Piece> waits;
     for(const auto & p : hand){
@@ -281,6 +322,10 @@ namespace Mahjong {
   }
 
   auto isInTenpai(std::vector<Piece> hand, bool allWaits) -> std::vector<Piece> {
+    int minSingles = countSingles(hand);
+    if(minSingles > 6 || minSingles == 1 || minSingles == 4 || minSingles == 0){
+        return {};
+    }
     bool removedbefore[256] = {};
     std::vector<Piece> waits;
     for(int i = 0; i < 14; i++){
@@ -723,16 +768,11 @@ namespace Mahjong {
     if(isFullFlush(state,player,branch)){
       return 0;
     }
-    int suit;
-    bool suitSet = false;
+    int suit = state.hands[player].live.front().getSuit();
     bool honors = false;
     for(const auto & piece : state.hands[player].live){
       if(piece.isHonor()){
         honors = true;
-        continue;
-      }
-      if(!suitSet){
-        suit = piece.getSuit();
         continue;
       }
       if(suit != piece.getSuit()){
@@ -742,10 +782,6 @@ namespace Mahjong {
     for(const auto & meld : state.hands[player].melds){
       if(meld.start.isHonor()){
         honors = true;
-        continue;
-      }
-      if(!suitSet){
-        suit = meld.start.getSuit();
         continue;
       }
       if(suit != meld.start.getSuit()){

@@ -49,11 +49,11 @@ void ThriceBot::assignweights()
     {
       if(j != i)
       {
-        if((int)hand[i].weight == 2 && discardHas(hand[i].piece) == 2)
+        if((int)hand[i].weight == 2 && discarded[hand[i].piece.toUint8_t()] == 2)
         {
           hand[i].weight = -1;
         }
-        else if(discardHas(hand[i].piece) == 3)
+        else if(discarded[hand[i].piece.toUint8_t()] == 3)
         {
           hand[i].weight = -1;
         }
@@ -93,31 +93,17 @@ void ThriceBot::checkDiscard()
 		{
 		  if(j != i)
 		  {
-        if((int)hand[i].weight == 2 && discardHas(hand[i].piece) == 2)
+        if((int)hand[i].weight == 2 && discarded[hand[i].piece.toUint8_t()] == 2)
         {
           hand[i].weight = -1;
         }
-        else if(discardHas(hand[i].piece) == 3)
+        else if(discarded[hand[i].piece.toUint8_t()] == 3)
         {
           hand[i].weight = -1;
         }
 		  }
 		}
 	}
-}
-
-
-int ThriceBot::discardHas(Mahjong::Piece check)
-{
-  int has = 0;
-  for(Mahjong::Piece p : discarded)
-  {
-    if(check.getSuit() == p.getSuit() && check.getPieceNum() == p.getPieceNum())
-    {
-      has++;
-    }
-  }
-  return has;
 }
 
 
@@ -129,26 +115,28 @@ auto ThriceBot::ReceiveEvent(Mahjong::Event e) -> void
     {
       lastEvent = e;
     }
-  }
-  if(e.type == Mahjong::Event::Discard && e.player == pid)
-  {
-    handTile h;
-    h.piece = e.piece;
-    if(h.piece.isHonor())
+  
+    if(e.type == Mahjong::Event::Discard && e.player == pid)
     {
-      h.weight = 1.5;
+      handTile h;
+      h.piece = e.piece;
+      if(h.piece.isHonor())
+      {
+        h.weight = 1.5;
+      }
+      else
+      {
+        h.weight = 1;
+      }
+      h = assignTileWeight(h);
+      hand.push_back(h);
+      checkDiscard();
     }
-    else
-    {
-      h.weight = 1;
-    }
-    h = assignTileWeight(h);
-    hand.push_back(h);
-    checkDiscard();
+    
   }
   else if(e.type == Mahjong::Event::Discard)
   {
-    discarded.push_back(e.piece);
+    discarded[Mahjong::Piece(e.piece).toUint8_t()]++;
   }
 }
 
@@ -178,7 +166,7 @@ auto ThriceBot::RetrieveDecision() -> Mahjong::Event
   else if(lastEvent.type == Mahjong::Event::Riichi)
   {
     Mahjong::Piece p = lastEvent.piece;
-    if(discardHas(p) == 3)
+    if(discarded[p.toUint8_t()] == 3)
     {
       lastEvent.type = Mahjong::Event::Decline;
     }
@@ -222,6 +210,6 @@ Mahjong::Piece ThriceBot::popDiscard()
   }
   Mahjong::Piece p = hand[indexOfLowest].piece;
   hand.erase(hand.begin()+indexOfLowest);
-  discarded.push_back(p);
+  discarded[p.toUint8_t()]++;
   return p;
 }

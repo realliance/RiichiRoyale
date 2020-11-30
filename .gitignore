@@ -192,3 +192,5 @@ cmake-build-debug
 release
 
 vgcore.*
+callgrind.out.*
+*.svg
