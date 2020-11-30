@@ -10,10 +10,8 @@
 using namespace Mahjong;
 
 auto Mahjong::GameEnd(GameState& state) -> GameState& {
-  std::cerr << "Scores: ";
   for(auto & player : state.players){
     player.controller->ReceiveEvent(END_EVENT);
-    std::cerr << player.points << ", ";
     #ifndef NO_PYBIND
       if(player.controller->Name() == "Player" || player.controller->Name() == "StubbornBot"){
         continue;
@@ -22,6 +20,5 @@ auto Mahjong::GameEnd(GameState& state) -> GameState& {
     delete player.controller;
     player.controller = nullptr;
   }
-  std::cerr << std::endl;
   return state;
 }
