@@ -23,14 +23,13 @@ class ThriceBot : public Mahjong::PlayerController
 	private:
 	  //private functions
 	  void assignweights(void);
-	  int discardHas(Mahjong::Piece);
 	  Mahjong::Piece popDiscard(void);
 	  handTile assignTileWeight(handTile);
 	  void checkDiscard(void);
 	  bool checkTile(Mahjong::Piece);
 	  //instance vars
 	  std::vector<handTile> hand;
-	  std::vector<Mahjong::Piece> discarded;
+	  int discarded[256] = {};
 	  Mahjong::Event lastEvent;
 	  Mahjong::Wind swind;
 	  Mahjong::Wind pwind;

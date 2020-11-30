@@ -9,7 +9,11 @@
 #include "stateutilities.h"
 using namespace Mahjong;
 
-auto Mahjong::Ron(GameState& state) -> GameState& { 
+auto Mahjong::Ron(GameState& state) -> GameState& {
+
+  state.hands[state.lastCaller].live.push_back(state.pendingPiece);
+  state.hands[state.lastCaller].sort();
+
   int basicPoints[4] = {};
   if(state.hands[state.currentPlayer].riichi &&
      state.hands[state.currentPlayer].discards.size() == state.hands[state.currentPlayer].riichiPieceDiscard)
@@ -65,6 +69,17 @@ auto Mahjong::Ron(GameState& state) -> GameState& {
     state.roundNum++;
     state.counters = 0;
   }
+
+  bool allzeros = true;
+  for(int i = 0; i < 4; i++){
+    if(state.scores[i] != 0){
+      allzeros = false;
+    }
+  }
+  if(allzeros){
+    throw "oof";
+  }
+
   state.nextState = RoundEnd;
   return state;
 }

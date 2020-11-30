@@ -17,8 +17,8 @@ auto FastTanyao::ShouldKeep(Mahjong::Piece piece) -> bool {
   return !piece.isHonor() && !piece.isTerminal();
 }
 
-auto FastTanyao::OutputSet(uint8_t id, pieceSet& set) -> void {
-  std::cout << "(" << Mahjong::Piece(id).toStr() << ", " << unsigned(set.at(id)) << ")" << std::endl;
+auto FastTanyao::OutputSet(uint8_t, pieceSet&) -> void {
+  //std::cout << "(" << Mahjong::Piece(id).toStr() << ", " << unsigned(set.at(id)) << ")" << std::endl;
 }
 
 auto FastTanyao::IncrementPiece(Mahjong::Piece piece, pieceSet& set) -> void {
@@ -51,7 +51,7 @@ auto FastTanyao::DecrementPiece(Mahjong::Piece piece, pieceSet& set) -> void {
 auto FastTanyao::ProcessNewPiece(Mahjong::Piece piece) -> void {
   if (!ShouldKeep(piece)) {
     immediateDiscard.push_back(piece);
-    std::cout << Mahjong::Piece(piece).toStr() << " should be immediately discarded." << std::endl;
+    //std::cout << Mahjong::Piece(piece).toStr() << " should be immediately discarded." << std::endl;
     return;
   }
 
@@ -69,7 +69,7 @@ auto FastTanyao::ChooseDiscard() -> Mahjong::Piece {
   if (immediateDiscard.size() > 0) {
     auto discard = immediateDiscard.back();
     immediateDiscard.pop_back();
-    std::cout << "Chose piece " << discard.toStr() << " to discard (imm discard)" << std::endl;
+    //std::cout << "Chose piece " << discard.toStr() << " to discard (imm discard)" << std::endl;
     return discard;
   }
 
@@ -82,7 +82,7 @@ auto FastTanyao::ChooseDiscard() -> Mahjong::Piece {
     if(setContainsPiece != allDiscards.end()) {
       if (set->second + setContainsPiece->second == 4 && set->second < 3) {
         DecrementPiece(Mahjong::Piece(piece), possibleTriples);
-        std::cout << "Chose piece " << Mahjong::Piece(piece).toStr() << " to discard (all pieces in play)" << std::endl;
+        //std::cout << "Chose piece " << Mahjong::Piece(piece).toStr() << " to discard (all pieces in play)" << std::endl;
         return Mahjong::Piece(piece);
       } else if (set->second > 0) {
         IncreasePiece(Mahjong::Piece(piece), discardOptions, set->second);
@@ -92,10 +92,10 @@ auto FastTanyao::ChooseDiscard() -> Mahjong::Piece {
 
 
   auto minValue = *std::min_element(discardOptions.begin(), discardOptions.end(), [](const auto& l, const auto& r) { return l.second < r.second; });
-  std::cout << unsigned(minValue.first) << ", " << unsigned(minValue.second) << std::endl;
+  //std::cout << unsigned(minValue.first) << ", " << unsigned(minValue.second) << std::endl;
   auto discardPiece = Mahjong::Piece(minValue.first);
   DecrementPiece(discardPiece, possibleTriples);
-  std::cout << "Chose piece " << discardPiece.toStr() << " to discard (min risk)" << std::endl;
+  //std::cout << "Chose piece " << discardPiece.toStr() << " to discard (min risk)" << std::endl;
   return discardPiece;
 }
 
@@ -104,7 +104,7 @@ auto FastTanyao::ReceiveEvent(Mahjong::Event e) -> void {
   if (e.type <= Mahjong::Event::Discard && e.decision) {
     if (e.type == Mahjong::Event::Discard || ShouldKeep(e.piece)) {
       if (e.type < decidedDecision.type) {
-        std::cout << "Choosing decision " << e.type << std::endl;
+        //std::cout << "Choosing decision " << e.type << std::endl;
         decidedDecision = e;
       }
     }
@@ -144,6 +144,6 @@ auto FastTanyao::RetrieveDecision() -> Mahjong::Event{
 
   auto finalEvent = decidedDecision;
   decidedDecision.type = Mahjong::Event::Discard;
-  std::cout << "Sending Decision: " << finalEvent << std::endl;
+  //std::cout << "Sending Decision: " << finalEvent << std::endl;
   return finalEvent;
 }

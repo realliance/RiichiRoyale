@@ -59,7 +59,9 @@ auto Mahjong::PlayerHand(GameState& state) -> GameState&{
 
   //note riichi handling is a lil borked on the player agency side
   //checkout riichi.cpp for more info
-  state.pendingPiece = decision.piece;
+  if(decision.type == Event::Discard){
+    state.pendingPiece = decision.piece;
+  }
 
   switch (decision.type){
     case Event::Tsumo:

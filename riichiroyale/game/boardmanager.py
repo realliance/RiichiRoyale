@@ -30,6 +30,8 @@ def convert_event(event):
 
 def process_event_queue(game_manager, match):
     event = match.player_manager.Pop()
+    if event.type == EventType.End:
+        match.player_manager.encountered_end_game = True
     if event is None:
         return
     
@@ -152,7 +154,7 @@ def on_ron_event(
     event,
     _match,
     event_player,
-    _pov_player,
+    pov_player,
     _extra_player,
 ):
     if not is_decision:
@@ -163,7 +165,7 @@ def on_ron_event(
 
     else:
         game_manager.board_manager.waiting_on_decision = True
-        event_player.calls_avaliable += [Call.Ron]
+        pov_player.calls_avaliable += [Call.Ron]
 
 
 def on_converted_kan_event(
@@ -301,6 +303,7 @@ def on_discard_event(
         game_manager.board_manager.waiting_on_decision = True
     else:
         game_manager.board_manager.waiting_on_decision = False
+        match.play_clack()
         if not is_ai:
             if not event_player.riichi_declared:
                 event_player.hand.remove(event.piece)
@@ -378,7 +381,7 @@ def on_point_diff_event(
     _extra_player,
 ):
     value = event.piece.get_raw_value() if isinstance(event.piece, Piece) else event.piece
-    match.delta_scores[event.player] += value * 1000
+    match.delta_scores[event.player] += value * 100
     game_manager.board_manager._point_diff_count += 1
     if game_manager.board_manager._point_diff_count >= 4:
         game_manager.board_manager.round_should_end = True
@@ -389,12 +392,13 @@ def on_end_event(
     _is_ai,
     _is_decision,
     _event,
-    _match,
+    match,
     _event_player,
     _pov_player,
     _extra_player,
 ):
     game_manager.board_manager.game_should_end = True
+    match.match_alive = False
 
 
 def on_discard_chi_event(
@@ -413,6 +417,8 @@ def on_discard_chi_event(
         game_manager.board_manager.last_decision_event = event
         game_manager.board_manager.waiting_on_decision = True
         pov_player.calls_avaliable += [Call.Chi]
+        if len(match.current_board.wall) > 0:
+            del match.current_board.wall[-1]
     else:
         del extra_player.hand[-2:]
         chi_tile = event.extra_piece
@@ -438,6 +444,8 @@ def on_discard_kan_event(
         game_manager.board_manager.last_decision_event = event
         game_manager.board_manager.waiting_on_decision = True
         pov_player.calls_avaliable += [Call.Kan]
+        if len(match.current_board.wall) > 0:
+            del match.current_board.wall[-1]
     else:
         del extra_player.hand[-3:]
         kan_tile = event.extra_piece
@@ -467,6 +475,8 @@ def on_discard_pon_event(
         game_manager.board_manager.last_decision_event = event
         game_manager.board_manager.waiting_on_decision = True
         pov_player.calls_avaliable += [Call.Pon]
+        if len(match.current_board.wall) > 0:
+            del match.current_board.wall[-1]
     else:
         del extra_player.hand[-2:]
         pon_tile = event.extra_piece
@@ -484,7 +494,7 @@ def on_discard_ron_event(
     _is_ai,
     is_decision,
     event,
-    _match,
+    match,
     event_player,
     pov_player,
     extra_player,
@@ -495,6 +505,8 @@ def on_discard_ron_event(
         game_manager.board_manager.last_decision_event = event
         game_manager.board_manager.waiting_on_decision = True
         pov_player.calls_avaliable += [Call.Ron]
+        if len(match.current_board.wall) > 0:
+            del match.current_board.wall[-1]
     else:
         extra_player.hand += [event.piece]
         game_manager.board_manager.waiting_on_decision = False
@@ -504,8 +516,11 @@ def on_game_event(game_manager, event, match):
     is_decision = event.decision
     event_type = event.type
 
-    if is_ai and event.player != -1:
-        sleep(0.5)
+    if (is_ai and event.player != -1 and event.type != EventType.PointDiff) or (not is_ai and event.type == EventType.Discard and is_decision):
+        sleep(0)
+
+    if (event.type == EventType.PointDiff):
+        sleep(0.1)
 
     print('== NEW EVENT ==')
     print('Player:', event.player)

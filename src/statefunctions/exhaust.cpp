@@ -13,7 +13,7 @@ auto Mahjong::Exhaust(GameState& state) -> GameState& {
     // of you're then not in tenpai
     // shouldn't matter much
     // message Alice for complains
-    if(!isInTenpai(state.hands[i].live).empty()){ 
+    if(state.hands[i].riichi || !isInTenpai13Pieces(state.hands[i].live).empty()){ 
       winningPlayers[i] = true;
       totalWinners++;
     }
@@ -27,7 +27,19 @@ auto Mahjong::Exhaust(GameState& state) -> GameState& {
       if(winningPlayers[i]){
         state.scores[i] = 3000/totalWinners;
       }else{
-        state.scores[i] = -3000/totalWinners;
+        switch(totalWinners){
+          case 1:
+            state.scores[i] = -1000;
+            break;
+          case 2:
+            state.scores[i] = -1500;
+            break;
+          case 3:
+            state.scores[i] = -3000;
+            break;
+          default:
+            break;
+        }
       }
       if(state.hands[i].riichi){
         state.scores[i] -= 1000;

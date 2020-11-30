@@ -67,7 +67,7 @@ def render_vertical_discard_pile(board_render, player_id, seat):
     if seat == 1:
         rect.right = side_calculation + 180
     if seat == 3:
-        rect.left = -side_calculation - 150
+        rect.left = -side_calculation - 180
 
     tile_offset = 10
     tiles_per_row = 8

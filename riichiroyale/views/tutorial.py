@@ -54,15 +54,12 @@ class TutorialView(BoardView):
         self.tutorial = Tutorial(
             prefered_discards, calls, PieceType.THREE_PIN, wall, deadwall
         )
-        self.match = None
+        del self.match
         self.match = self.match = Match(["Player"] + ["TotoBot"] * 3, self.game_manager, self.player_manager, self.sound_manager, wall=wall, deadwall=deadwall)
         self.match.start()
         self.pons = 0
 
     def on_pov_init(self):
-        if self.player_manager is None:
-            self.match_pov = 0
-
         self.dialogue_manager.start_event('intro')
 
         #self.match.new_board(wall=self.tutorial.wall, deadwall=self.tutorial.deadwall)
@@ -75,7 +72,6 @@ class TutorialView(BoardView):
                 self.game_manager.board_manager.waiting_on_decision
                 and len(owner.calls_avaliable) == 0
             ):
-                self.match.play_clack()
                 event = EngineEvent()
                 event.type = EventType.Discard
                 event.piece = int(tile.get_raw_value())
@@ -144,6 +140,7 @@ class TutorialView(BoardView):
             self.match.player_manager.MakeDecision(
                 self.game_manager.board_manager.last_decision_event.raw_event_b
             )
+            self.match.match_alive = False
             return True
         return False
 
@@ -153,8 +150,15 @@ class TutorialView(BoardView):
     def on_dialogue_event_ending(self, event_name):
         print('Stage 1')
         if event_name == "end":
+            self.dialogue_manager.current_event = None
+            self.match.current_board.decision_pending = False
+            self.buttons["advance_text"].hide()
+            self.buttons["text"].kill()
             self.game_manager.set_active_view("main_menu")
             self.game_manager.sound_manager.play_music("lobby")
+            self.match.player_manager.reset(clear=True)
+            self.match = None
+            return
         if event_name == "skip_pon":
             print('Stage 2')
             self.dialogue_manager.start_event("discard_tip")

@@ -75,15 +75,16 @@ auto GetValidDecisionOrThrow(const GameState& state, int player, bool inHand) ->
   int i = 0;
   while(!valid){
     if(i > 100){
-      std::cerr << "WARNING: Player Controller sent invalid event too many times." << std::endl;
-      std::cerr << "Decision.type: " << decision.type << " Decision.piece " << decision.piece << " player: " << player << " inHand: " << (inHand ? "true" : "false") << std::endl;
-      decision.type = inHand ? Event::Discard : Event::Decline;
+      Event replacementDecision = decision;
+      replacementDecision.type = inHand ? Event::Discard : Event::Decline;
       if(inHand){
-        decision.piece = static_cast<int16_t>(state.hands[player].live.back().toUint8_t());
+        replacementDecision.piece = static_cast<int16_t>(state.hands[player].live.back().toUint8_t());
       }
-      if(ValidateDecision(state, player, decision, inHand)){
-        return decision;
+      if(ValidateDecision(state, player, replacementDecision, inHand)){
+        return replacementDecision;
       }else{
+        std::cerr << "WARNING: Player Controller sent invalid event too many times." << std::endl;
+        std::cerr << "Decision.type: " << decision.type << " Decision.piece " << decision.piece << " player: " << player << " inHand: " << (inHand ? "true" : "false") << std::endl;
         std::cerr << "ERROR: was not able to recover from invalid event." << std::endl;
         throw 0xBAD22222;
       }
@@ -124,7 +125,7 @@ auto ValidateDecision(const GameState& state, int player, Event decision, bool i
     case Event::ConvertedKan:
       return CanConvertedKan(state);
     case Event::Riichi:
-      return CanRiichi(state) && CountPieces(state,player,decision.piece) > 0;
+      return CanRiichi(state);
     case Event::Discard:
       return CountPieces(state,player,decision.piece) > 0;
     case Event::Decline:

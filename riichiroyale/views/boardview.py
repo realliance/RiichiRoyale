@@ -4,6 +4,7 @@ import random
 import atexit
 import pygame_gui
 import pygame
+import numpy
 from copy import deepcopy
 from pygame import Rect
 from pygame import surface
@@ -107,11 +108,13 @@ class BoardView(MenuView):
         )
 
     def on_round_start(self):
+        print('Round start called')
         """Called on the beginning of each round."""
         self.play_area = surface.Surface(
             (self.player_area_rect.width, self.player_area_rect.height),
             flags=pygame.SRCALPHA,
         )
+        self.board_render = None
         self.board_render = BoardRender(
             self.small_tile_dict,
             self.tile_dict,
@@ -129,6 +132,7 @@ class BoardView(MenuView):
         self.background = background.convert_alpha()
         self.background.fill((7, 99, 36))
 
+        self.match_pov = None
         self.on_match_init()
         self.on_pov_init()
 

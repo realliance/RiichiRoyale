@@ -22,6 +22,7 @@ namespace Mahjong {
   auto isComplete(const GameState& state, int player) -> bool;
 
   auto isInTenpai(std::vector<Piece> hand, bool allWaits = false) -> std::vector<Piece>;
+  auto isInTenpai13Pieces(std::vector<Piece> hand, bool allWaits = false) -> std::vector<Piece>;
 
   auto getRiichiDiscard(std::vector<Piece> hand) -> std::vector<Piece>;
 

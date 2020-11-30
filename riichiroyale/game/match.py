@@ -32,6 +32,7 @@ class Match(Thread):
         self.match_lock = Lock()
         self.game_id = -1
         self.current_board = None
+        self.encountered_end_game = False
         if wall is not None and deadwall is not None:
             self.current_board = Board(
                 wall=wall,
@@ -66,6 +67,8 @@ class Match(Thread):
     def run(self):
         settings = GameSettings()
         settings.seat_controllers = self.ai_list
+        settings.seed = numpy.random.randint(0, 2147483647)
+        print('SEED:', settings.seed)
         if self.current_board is not None:
             wall = list(map(Piece, self.current_board.wall+self.current_board.deadwall))
             settings.override_wall = wall
@@ -73,17 +76,17 @@ class Match(Thread):
         while self.match_alive:
             self.on_update()
         print('Match Halting...')
+        #if not self.encountered_end_game:
         halt_game(self.game_id)
 
     def start_next_round(self):
         self.scores = list(map(lambda x: x[0] + x[1], zip(self.scores, self.delta_scores)))
-        winner_indices = numpy.argwhere(numpy.array(self.delta_scores) > 0).flatten()
         self.delta_scores = [0] * 4
-        self.player_manager.reset()
-        self.player_manager.next_round()
-        if self.current_board.current_dealer not in winner_indices:
+        if self.player_manager.seat_wind != self.player_manager.next_round_seat:
             self.round_number += 1
             self.east_prevalent = not (self.east_prevalent and self.player_manager.prevalent_wind != Wind.East)
+        self.player_manager.reset()
+        self.player_manager.next_round()
         self.new_board()
         for i in range(4):
             if i != self.player_manager.player_id:

@@ -1,5 +1,5 @@
 from threading import Lock
-from libmahjong import MahjongAI, EventType, EngineEvent, PieceType
+from libmahjong import MahjongAI, EventType, EngineEvent, PieceType, Piece
 from .player import Player
 from .gameevent import Event
 
@@ -12,6 +12,17 @@ class PlayerManager(MahjongAI, Player):
     self.decision_made = None
     self.current_match = None
     self.lock = Lock()
+
+  def reset(self, should_call_super=True, clear=False):
+    with self.lock:
+      if clear:
+        self.player_id = None
+        self.received_events = []
+        self.decision_complete = False
+        self.decision_made = None
+        self.current_match = None
+      if should_call_super:
+        super().reset()
 
   def GameStart(self, player_id):
     print('==GAME STARTED==')
@@ -41,6 +52,7 @@ class PlayerManager(MahjongAI, Player):
       self.prevalent_wind = self.next_round_prevalent_wind
 
   def ReceiveEvent(self, event):
+    print(event.type)
     should_notify = True
     with self.lock:
       self.received_events += [event]
@@ -48,10 +60,14 @@ class PlayerManager(MahjongAI, Player):
         if not event.decision:
           should_notify = False
     if should_notify:
+      print('notifying')
       with self.current_match.process_lock:
         self.current_match.process_lock.notify()
 
   def RetrieveDecision(self):
+    if self.current_match is None:
+      print('[PlayerManager] Warning! Still attached to an active match and not aware of it!')
+      return
     print('[PlayerManager] Decision Retrieve Started')
     while not self.decision_complete:
       continue
@@ -61,15 +77,13 @@ class PlayerManager(MahjongAI, Player):
       return self.decision_made
 
   def MakeDecision(self, event):
-    if isinstance(event, Event):
-      print('INFO: Casted Event to Engine Event')
-      engine_event = EngineEvent()
-      engine_event.type = event.type
-      engine_event.player = event.player
-      print(event.piece.get_raw_value())
-      engine_event.piece = event.piece.get_raw_value()
-      engine_event.decision = event.decision
-      event = engine_event
+    # Enforce Shape and data ownership
+    engine_event = EngineEvent()
+    engine_event.type = event.type
+    engine_event.player = event.player
+    engine_event.piece = event.piece.get_raw_value() if isinstance(event.piece, Piece) else event.piece
+    engine_event.decision = event.decision
+    event = engine_event
 
     with self.lock:
       self.calls_avaliable = []

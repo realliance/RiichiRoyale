@@ -1,6 +1,7 @@
 #include "hands.h"
 #include <stddef.h>
 #include <array>
+#include <fstream>
 #include <map>
 #include <vector>
 //#include <ext/alloc_traits.h>
@@ -49,45 +50,54 @@ std::vector<yakuFunc> yakumanFunctions = {
 namespace Mahjong {
 
   auto scoreHand(const GameState& state, int player) -> Score{
-    const Node* root = breakdownHand(state.hands[state.currentPlayer].live);
+    const Node* root = breakdownHand(state.hands[player].live);
     Score s;
     s.han = 0;
     s.yakuman = 0;
     s.fu = 0;
-    int basepoints = 0;
+    if(!root->IsComplete() && 
+       !isThirteenOrphans(state,player) &&
+       !isSevenPairs(state,player)){
+      delete root;
+      return s;
+    }
     for(const auto& branch : root->AsBranchVectors()){
-      int branchhan = 0;
-      int branchyakumans = 0;
-      if(!root->IsComplete() && 
-         !isThirteenOrphans(state,player,branch) &&
-         !isSevenPairs(state,player,branch)){
-        continue;
+      Score branchscore;
+      for(const auto& node : branch){
+        if(node->type == Node::Single){
+          continue;
+        }
       }
+
       for(auto yakuFunction : yakuFunctions){
-        branchhan += yakuFunction(state,player, branch);
+        branchscore.han += yakuFunction(state,player, branch);
       }
       for(auto yakuFunction : yakumanFunctions){
-        branchyakumans += yakuFunction(state,player, branch);
+        branchscore.yakuman += yakuFunction(state,player, branch);
       }
-      if(s.yakuman > 0 || branchyakumans > 0){
-        s.yakuman = branchyakumans > s.yakuman ? branchyakumans : s.yakuman;
-        continue;
+      for(const auto& dora : state.walls.GetDoras()){
+        for(const auto& p : state.hands[player].live){
+          if(p == dora){
+            branchscore.han++;
+          }
+        }
+        for(const auto& meld : state.hands[player].melds){
+          if(meld.start == dora){
+            branchscore.han++;
+          }
+          if(meld.type == Meld::Chi){
+            if(meld.start+1 == dora){
+              branchscore.han++;
+            }
+            if(meld.start+2 == dora){
+              branchscore.han++;
+            }
+          }
+        }
       }
-      if(s.han >= 5 || branchhan >= 5){
-        s.han = branchhan > s.han ? branchhan : s.han;
-        continue;
-      }
-      int fu = getFu(state,player,branch);
-      if(basepoints == 0){
-        s.han = branchhan;
-        s.fu = fu;
-        basepoints = fu*(2<<(1+branchhan));
-      }
-      int branchbase = fu*(2<<(1+branchhan));
-      if(branchbase > basepoints){
-        s.han = branchhan;
-        s.fu = fu;
-        basepoints = branchbase;
+      branchscore.fu = getFu(state,player,branch);
+      if(getBasicPoints(branchscore) > getBasicPoints(s)){
+        s = branchscore;
       }
     }
     delete root;
@@ -220,12 +230,18 @@ namespace Mahjong {
 
   auto isComplete(const GameState& state, int player) -> bool{
     const Node* root = breakdownHand(state.hands[player].live);
+    if(!root->IsComplete() && 
+      !isThirteenOrphans(state,player) &&
+      !isSevenPairs(state,player)){
+      return false;
+    }
     for(const auto& branch : root->AsBranchVectors()){
-      if(!root->IsComplete() && 
-         !isThirteenOrphans(state,player,branch) &&
-         !isSevenPairs(state,player,branch)){
-        continue;
+      for(const auto& node : branch){
+        if(node->type == Node::Single){
+          continue;
+        }
       }
+
       for(auto yakuFunction : yakuFunctions){
         if(yakuFunction(state,player, branch) > 0){
           delete root;
@@ -255,17 +271,63 @@ namespace Mahjong {
       Piece::SOUTH_WIND,Piece::NORTH_WIND,Piece::WEST_WIND
   };
 
+  auto countSingles(std::vector<Piece> hand) -> int {
+    auto root = breakdownHand(hand);
+    int minSingles = 15;
+    for(const auto& branch : root->AsBranchVectors()){
+      int singles = 0;
+      for(const auto& node : branch){
+        if(node->type == Node::Single){
+          singles++;
+        }
+      }
+      if(singles < minSingles){
+        minSingles = singles;
+      }
+    }
+    return minSingles;
+  }
+
   //this is an extrememly inefficient algorithm but it's probably good enough for 
   //the frequency it needs to be ran
   //will revisit if necessary 
   //assumption is 14 piece hand
-  auto isInTenpai(std::vector<Piece> hand, bool allWaits) -> std::vector<Piece> {
+  auto isInTenpai13Pieces(std::vector<Piece> hand, bool allWaits) -> std::vector<Piece> {
+    int minSingles = countSingles(hand);
+    if(minSingles > 5 || minSingles == 3 || minSingles == 0){
+        return {};
+    }
     int8_t counts[256] = {};
-    bool removedbefore[256] = {};
     std::vector<Piece> waits;
     for(const auto & p : hand){
       counts[p.toUint8_t()]++;
     }
+    for(const auto & p : PIECE_SET){
+      if(counts[p.toUint8_t()] == 4){
+        continue;
+      }
+      hand.push_back(p);
+      Node* root = breakdownHand(hand);
+      if(root->IsComplete()){
+        waits.push_back(p);
+        if(!allWaits){
+          delete root;
+          return waits;
+        }
+      }
+      delete root;
+      hand.pop_back();
+    }
+    return waits;
+  }
+
+  auto isInTenpai(std::vector<Piece> hand, bool allWaits) -> std::vector<Piece> {
+    int minSingles = countSingles(hand);
+    if(minSingles > 6 || minSingles == 1 || minSingles == 4 || minSingles == 0){
+        return {};
+    }
+    bool removedbefore[256] = {};
+    std::vector<Piece> waits;
     for(int i = 0; i < 14; i++){
       Piece removed = hand.front();
       hand.erase(hand.begin());
@@ -274,19 +336,12 @@ namespace Mahjong {
         continue;
       }
       removedbefore[removed.toUint8_t()] = true;
-      for(const auto & p : PIECE_SET){
-        if(counts[p.toUint8_t()] == 4 || p == removed){
-          continue;
+      std::vector<Piece> tempwaits = isInTenpai13Pieces(hand,allWaits);
+      if(!tempwaits.empty()){
+        if(!allWaits){
+          return tempwaits;
         }
-        hand.push_back(p);
-        Node* root = breakdownHand(hand);
-        if(root->IsComplete()){
-          waits.push_back(p);
-          if(!allWaits){
-            return waits;
-          }
-        }
-        hand.pop_back();
+        waits.insert(waits.begin(),tempwaits.begin(),tempwaits.end());
       }
       hand.push_back(removed);
     }
@@ -318,6 +373,7 @@ namespace Mahjong {
         if(root->IsComplete()){
           removeMe.push_back(removed);
         }
+        delete root;
         hand.pop_back();
       }
       hand.push_back(removed);
@@ -629,26 +685,26 @@ namespace Mahjong {
     for(const auto& node : branch){
       if(node->type == Node::PonSet){
         if(node->start.getSuit() == Piece::BAMBOO_SUIT){
-          bambooPon[node->start.getPieceNum()] = true;
+          bambooPon[node->start.getPieceNum()-1] = true;
         }
         if(node->start.getSuit() == Piece::CHARACTER_SUIT){
-          charPon[node->start.getPieceNum()] = true;
+          charPon[node->start.getPieceNum()-1] = true;
         }
         if(node->start.getSuit() == Piece::PIN_SUIT){
-          pinPon[node->start.getPieceNum()] = true;
+          pinPon[node->start.getPieceNum()-1] = true;
         }
       }
     }
     for(const auto& meld : state.hands[player].melds){
       if(meld.type >= Meld::Pon){
         if(meld.start.getSuit() == Piece::BAMBOO_SUIT){
-          bambooPon[meld.start.getPieceNum()] = true;
+          bambooPon[meld.start.getPieceNum()-1] = true;
         }
         if(meld.start.getSuit() == Piece::CHARACTER_SUIT){
-          charPon[meld.start.getPieceNum()] = true;
+          charPon[meld.start.getPieceNum()-1] = true;
         }
         if(meld.start.getSuit() == Piece::PIN_SUIT){
-          pinPon[meld.start.getPieceNum()] = true;
+          pinPon[meld.start.getPieceNum()-1] = true;
         }
       }
     }
@@ -712,16 +768,11 @@ namespace Mahjong {
     if(isFullFlush(state,player,branch)){
       return 0;
     }
-    int suit;
-    bool suitSet = false;
+    int suit = state.hands[player].live.front().getSuit();
     bool honors = false;
     for(const auto & piece : state.hands[player].live){
       if(piece.isHonor()){
         honors = true;
-        continue;
-      }
-      if(!suitSet){
-        suit = piece.getSuit();
         continue;
       }
       if(suit != piece.getSuit()){
@@ -731,10 +782,6 @@ namespace Mahjong {
     for(const auto & meld : state.hands[player].melds){
       if(meld.start.isHonor()){
         honors = true;
-        continue;
-      }
-      if(!suitSet){
-        suit = meld.start.getSuit();
         continue;
       }
       if(suit != meld.start.getSuit()){

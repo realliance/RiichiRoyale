@@ -1,5 +1,5 @@
 from libmahjong import start_game, EventType, EngineEvent, PieceType
-from riichiroyale.game import Player, Match, process_event_queue, DialogManager, loadStory
+from riichiroyale.game import Player, Match, process_event_queue, DialogManager, loadStory, CombinedEventType
 from .boardview import BoardView
 
 
@@ -33,9 +33,13 @@ class GameView(BoardView):
         )
         self.player_manager = player_manager
         self.ai_list = ["Player"] + ["AngryDiscardoBot"] * 3
+        self.end_game = False
+        self.match = None
 
     def on_match_init(self):
-        self.match = None
+        if self.match is not None:
+            self.match.match_alive = False
+            self.match = None
         self.match = Match(self.ai_list, self.game_manager, self.player_manager, self.sound_manager)
         self.match.start()
 
@@ -50,7 +54,6 @@ class GameView(BoardView):
                 self.game_manager.board_manager.waiting_on_decision
                 and len(owner.calls_avaliable) == 0
             ):
-                self.match.play_clack()
                 event = EngineEvent()
                 event.type = EventType.Discard
                 event.piece = int(tile.get_raw_value())
@@ -79,25 +82,13 @@ class GameView(BoardView):
         return True
 
     def on_kan_button_pressed(self):
-        if (
-            self.game_manager.board_manager.last_decision_event.type
-            == EventType.ConvertedKan
-        ):
-            event = EngineEvent()
-            event.type = EventType.ConvertedKan
-            event.piece = -1
-            event.player = -1
-            event.decision = True
+        event = EngineEvent()
+        event.type =  self.game_manager.board_manager.last_decision_event.raw_event_b.type if self.game_manager.board_manager.last_decision_event.type == CombinedEventType.DiscardKan else self.game_manager.board_manager.last_decision_event.type
+        event.piece = -1
+        event.player = -1
+        event.decision = True
 
-            self.match.player_manager.MakeDecision(event)  
-        else:
-            event = EngineEvent()
-            event.type = EventType.Kan
-            event.piece = -1
-            event.player = -1
-            event.decision = True
-
-            self.match.player_manager.MakeDecision(event)  
+        self.match.player_manager.MakeDecision(event)  
         return True
 
     def on_tsumo_button_pressed(self):
@@ -158,4 +149,14 @@ class GameView(BoardView):
         if self.game_manager.board_manager.round_should_end:
             self._end_round_dialog()
 
+        if self.game_manager.board_manager.game_should_end:
+            self.game_manager.board_manager.game_should_end = False
+            # Use own flag to ensure inheritance does not mess with game ending
+            self.end_game = True
+
         super().update(time_delta)
+
+        if self.end_game:
+            self.end_game = False
+            self.game_manager.set_active_view("main_menu")
+            self.game_manager.sound_manager.play_music("lobby")

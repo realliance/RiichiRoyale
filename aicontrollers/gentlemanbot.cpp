@@ -40,18 +40,9 @@ auto GentlemanBot::ReceiveEvent(Mahjong::Event e) -> void{
 }
 
 auto GentlemanBot::RetrieveDecision() -> Mahjong::Event{
-  if(lastEvent.type == Mahjong::Event::Ron){
-    lastEvent.type = Mahjong::Event::Ron;
-  }
-  else if(lastEvent.type == Mahjong::Event::Tsumo){
-    lastEvent.type = Mahjong::Event::Tsumo;
-  }
-  else if (lastEvent.type == Mahjong::Event::Riichi){
+  if (lastEvent.type == Mahjong::Event::Riichi){
     lastEvent.type = Mahjong::Event::Riichi;
     riichi=true;
-  }
-  else if (lastEvent.type == Mahjong::Event::ConcealedKan){
-    lastEvent.type = Mahjong::Event::ConcealedKan;
   }
   else if(lastEvent.type != Mahjong::Event::Discard){
     lastEvent.type = Mahjong::Event::Decline;
@@ -115,7 +106,7 @@ auto GentlemanBot::getDiscard() -> Mahjong::Piece{
 
   for(const auto &p : preferedDiscards){
     if(p.isHonor()){
-      for(int i=0; i<hand.size(); i++){
+      for(size_t i=0; i<hand.size(); i++){
         if(hand[i].toUint8_t() == p.toUint8_t()){
           hand.erase(hand.begin()+i);
         }
@@ -123,7 +114,8 @@ auto GentlemanBot::getDiscard() -> Mahjong::Piece{
       return p;
     }
   }
-  for(const auto &p : preferedDiscards){for(int i=0; i<hand.size(); i++){
+  for(const auto &p : preferedDiscards){
+    for(size_t i=0; i<hand.size(); i++){
         if(hand[i].toUint8_t() == p.toUint8_t()){
           hand.erase(hand.begin()+i);
         }
@@ -131,7 +123,7 @@ auto GentlemanBot::getDiscard() -> Mahjong::Piece{
       return p;
   }
   for(const auto &p : secondTierDiscards){
-    for(int i=0; i<hand.size(); i++){
+    for(size_t i=0; i<hand.size(); i++){
         if(hand[i].toUint8_t() == p.toUint8_t()){
           hand.erase(hand.begin()+i);
         }
@@ -139,7 +131,7 @@ auto GentlemanBot::getDiscard() -> Mahjong::Piece{
       return p;
   }
   for(const auto &p : thirdTierDiscards){
-    for(int i=0; i<hand.size(); i++){
+    for(size_t i=0; i<hand.size(); i++){
         if(hand[i].toUint8_t() == p.toUint8_t()){
           hand.erase(hand.begin()+i);
         }

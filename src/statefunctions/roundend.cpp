@@ -25,6 +25,7 @@ auto Mahjong::RoundEnd(GameState& state) -> GameState& {
       static_cast<int16_t>(state.scores[i]/100),
       false
     });
+    state.players[i].points += state.scores[i];
   }
   state.scores = {};
 

@@ -8,10 +8,14 @@
 #include "mahjongns.h"
 using namespace Mahjong;
 
-auto Mahjong::GameEnd(GameState& state) -> GameState& {  
+auto Mahjong::GameEnd(GameState& state) -> GameState& {
+  std::cout << "Scores: ";
   for(auto & player : state.players){
     player.controller->ReceiveEvent(END_EVENT);
     delete player.controller;
+    player.controller = nullptr;
+    std::cout << player.points << ", ";
   }
+  std::cout << std::endl;
   return state;
 }
