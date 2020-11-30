@@ -13,14 +13,16 @@ class PlayerManager(MahjongAI, Player):
     self.current_match = None
     self.lock = Lock()
 
-  def reset(self):
+  def reset(self, should_call_super=True, clear=False):
     with self.lock:
-      self.player_id = 0
-      self.received_events = []
-      self.decision_complete = False
-      self.decision_made = None
-      self.current_match = None
-    super().reset()
+      if clear:
+        self.player_id = 0
+        self.received_events = []
+        self.decision_complete = False
+        self.decision_made = None
+        self.current_match = None
+    if should_call_super:
+      super().reset()
 
   def GameStart(self, player_id):
     print('==GAME STARTED==')
@@ -50,8 +52,7 @@ class PlayerManager(MahjongAI, Player):
       self.prevalent_wind = self.next_round_prevalent_wind
 
   def ReceiveEvent(self, event):
-    if self.current_match is None:
-      return
+    print(event.type)
     should_notify = True
     with self.lock:
       self.received_events += [event]
@@ -59,9 +60,9 @@ class PlayerManager(MahjongAI, Player):
         if not event.decision:
           should_notify = False
     if should_notify:
+      print('notifying')
       with self.current_match.process_lock:
-        if self.current_match is not None:
-          self.current_match.process_lock.notify()
+        self.current_match.process_lock.notify()
 
   def RetrieveDecision(self):
     if self.current_match is None:
