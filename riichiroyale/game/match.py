@@ -68,14 +68,14 @@ class Match(Thread):
         settings = GameSettings()
         settings.seat_controllers = self.ai_list
         settings.seed = numpy.random.randint(0, 2147483647)
-        print('SEED:', settings.seed)
+        #print('SEED:', settings.seed)
         if self.current_board is not None:
             wall = list(map(Piece, self.current_board.wall+self.current_board.deadwall))
             settings.override_wall = wall
         self.game_id = start_game(settings, True)
         while self.match_alive:
             self.on_update()
-        print('Match Halting...')
+        #print('Match Halting...')
         #if not self.encountered_end_game:
         halt_game(self.game_id)
 
@@ -99,7 +99,7 @@ class Match(Thread):
         if not self.match_ready and self.player_manager.player_id is None:
             return
         if not self.match_ready and self.player_manager.player_id is not None:
-            print("Player ID Found, bootstrapping...")
+            #print("Player ID Found, bootstrapping...")
             self.bootstrap_match()
 
         with self.process_lock:

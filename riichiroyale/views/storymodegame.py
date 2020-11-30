@@ -129,7 +129,7 @@ class StoryModeGame(GameView):
         temp = array.argsort()[::-1]
         ranks = numpy.empty_like(temp)
         ranks[temp] = numpy.arange(len(array))
-        print(ranks)
+        #print(ranks)
 
         if ranks[self.match.player_manager.player_id] == 0:
             self.play_oneshot_dialogue('on_player_wins')

@@ -88,3 +88,35 @@ The C++ test suite is located in `cxxtests/` and can be run with `make -C build 
 [Pygame Example Projects](https://github.com/ternus/pygame-examples): Great showing of how everything in pygame pieces together.
 
 [Pybind11 Docs](https://pybind11.readthedocs.io/en/latest/): The documentation for pybind11, which is what we use for building the C++ python module.
+
+## Attribution
+
+### Music
+
+lobby.ogg:
+Airport Lounge by Kevin MacLeod
+Link: https://incompetech.filmmusic.io/song/3347-airport-lounge
+License: http://creativecommons.org/licenses/by/4.0/
+
+game1.ogg:
+Acid Trumpet by Kevin MacLeod
+Link: https://incompetech.filmmusic.io/song/3340-acid-trumpet
+License: http://creativecommons.org/licenses/by/4.0/
+
+game2.ogg:
+Shades of Spring by Kevin MacLeod
+Link: https://incompetech.filmmusic.io/song/4342-shades-of-spring
+License: http://creativecommons.org/licenses/by/4.0/
+
+game3.ogg:
+Backbay Lounge by Kevin MacLeod
+Link: https://incompetech.filmmusic.io/song/3408-backbay-lounge
+License: http://creativecommons.org/licenses/by/4.0/
+
+### Icons
+
+Icons are by Daniela Travieso, used with permission
+
+### Trophy
+
+[Trophy Icon](https://game-icons.net/1x1/lorc/trophy.html) by Lorc and used under CC BY 3.0

@@ -31,7 +31,7 @@ def isComplete(filename):
 
 def main(args):
     x = loadStory("../../storyfiles/demo.txt")
-    print(x[0])
+    #print(x[0])
     return 0
 
 if __name__ == '__main__':

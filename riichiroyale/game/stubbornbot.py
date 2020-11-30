@@ -22,7 +22,7 @@ class StubbornBot(MahjongAI, Player):
 
     def GameStart(self, arg0):
         self.player_id = arg0
-        print("Assigned player with id", self.player_id)
+        #print("Assigned player with id", self.player_id)
 
     def RoundStart(self, hand, seatWind, prevalentWind):
         self.hand = hand
@@ -31,7 +31,7 @@ class StubbornBot(MahjongAI, Player):
         self.seat_wind = seatWind
         self.prevalent_wind = prevalentWind
         self.goal_yaku = self.ChooseGoalYaku()
-        print("AI", self.player_id, "chose goal of", self.goal_yaku)
+        #print("AI", self.player_id, "chose goal of", self.goal_yaku)
 
     def ReceiveEvent(self, e):
         print(
@@ -43,8 +43,6 @@ class StubbornBot(MahjongAI, Player):
         if e.decision:
             self.decision = e
             self.decision_to_act_on = e
-            if e.type == EventType.Discard:
-                print("player", self.player_id, "PIECE TYPE:", e.piece)
         else:
             if e.type == EventType.Discard and e.player != self.player_id:
                 self.others_discarded_pieces.append(e.piece)
@@ -156,19 +154,19 @@ class StubbornBot(MahjongAI, Player):
 
             pieceToDiscard = self.hand[lowestIndex]
             self.decision.piece = pieceToDiscard
-            print("Discarding:", self.decision.piece)
+            #print("Discarding:", self.decision.piece)
             return self.decision
 
         elif self.goal_yaku == "all_simples":
             if self.decision_to_act_on.piece != 0 and (self.__isHonor(self.decision_to_act_on.piece) or self.__isTerminal(self.decision_to_act_on.piece)):
                 self.decision.piece = self.decision_to_act_on.piece
-                print("Discarding:", self.decision_to_act_on.piece)
+                #print("Discarding:", self.decision_to_act_on.piece)
                 return self.decision  # Discard piece we just picked
             else:
                 for piece in self.hand:
                     if self.__isHonor(piece) or self.__isTerminal(piece):
                         self.decision.piece = piece
-                        print("Discarding:", self.decision.piece)
+                        #print("Discarding:", self.decision.piece)
                         return self.decision  # Discard first honor or terminal piece we find
 
                 # If we got here, then our hand has no more honors or terminals
@@ -181,19 +179,19 @@ class StubbornBot(MahjongAI, Player):
                 pieceToDiscard = self.hand[lowestIndex]
                 self.decision.piece = pieceToDiscard
 
-                print("Discarding:", self.decision.piece)
+                #print("Discarding:", self.decision.piece)
                 return self.decision
         elif self.goal_yaku == "outside":
             if self.decision_to_act_on.piece != 0 and (not (self.__isHonor(self.decision_to_act_on.piece) or self.__isTerminal(self.decision_to_act_on.piece))):
                 if not (Piece(self.decision_to_act_on.piece).get_piece_num() <= 3 or Piece(self.decision_to_act_on.piece).get_piece_num() >= 7):
                     self.decision.piece = self.decision_to_act_on.piece
-                    print("Discarding:", self.decision.piece)
+                    #print("Discarding:", self.decision.piece)
                     return self.decision  # Discard piece we just picked
             for piece in self.hand:
                 if not (self.__isHonor(self.decision_to_act_on.piece) or self.__isTerminal(self.decision_to_act_on.piece)):
                     if not (Piece(piece).get_piece_num() <= 3 or Piece(piece).get_piece_num() >= 7):
                         self.decision.piece = piece
-                        print("Discarding:", self.decision.piece)
+                        #print("Discarding:", self.decision.piece)
                         return self.decision
 
             # If we got here, then our hand has no more non-terminal pieces
@@ -206,10 +204,7 @@ class StubbornBot(MahjongAI, Player):
             pieceToDiscard = self.hand[lowestIndex]
             self.decision.piece = pieceToDiscard
 
-            print("Discarding:", self.decision.piece)
             return self.decision
-        else:
-            print(self.goal_yaku, "discarding unimplemented")
 
     def CountInHand(self, suit, number):
         i = 0
@@ -245,23 +240,23 @@ class StubbornBot(MahjongAI, Player):
                         self.decision.type = EventType.Decline
                         return self.decision  # Don't chi if it'll include a 9 (terminal)
             piecesRemoved = 0
-            print(self.hand)
+            #print(self.hand)
             # TODO: Fails on red fives
             # Remove pieces from hand.
             temp = Piece(self.decision_to_act_on.piece)
             if self.decision_to_act_on.piece in self.hand:
                 piecesRemoved += 1
                 self.hand.remove(self.decision_to_act_on.piece)
-                print("Removed", self.decision_to_act_on.piece)
+                #print("Removed", self.decision_to_act_on.piece)
             if self.decision_to_act_on.piece-1 in self.hand:
                 piecesRemoved += 1
                 self.hand.remove(self.decision_to_act_on.piece - 1)
-                print("Removed", self.decision_to_act_on.piece - 1)
+                #print("Removed", self.decision_to_act_on.piece - 1)
             if self.decision_to_act_on.piece - 2 in self.hand:
                 piecesRemoved += 1
                 self.hand.remove(self.decision_to_act_on.piece - 2)
-                print("Removed", self.decision_to_act_on.piece - 2)
-            print("REMOVED:", piecesRemoved)
+                #print("Removed", self.decision_to_act_on.piece - 2)
+            #print("REMOVED:", piecesRemoved)
             self.decision.piece = self.decision_to_act_on.piece
             return self.decision  # Make the call if all conditions are met
 
@@ -279,7 +274,7 @@ class StubbornBot(MahjongAI, Player):
                 if self.decision_to_act_on.piece + 2 in self.hand:
                     piecesRemoved += 1
                     self.hand.remove(self.decision_to_act_on.piece + 2)
-                print("REMOVED:", piecesRemoved)
+                #print("REMOVED:", piecesRemoved)
                 self.decision.piece = self.decision_to_act_on.piece
                 return self.decision
             else:
@@ -314,26 +309,26 @@ class StubbornBot(MahjongAI, Player):
         return kanEvent
 
     def RetrieveDecision(self):  # Seems to fail if the player already has the same piece in their hand as the one they just drew
-        print("Player", self.player_id, "needs to make a decision.")
+        #print("Player", self.player_id, "needs to make a decision.")
         if self.decision_acted_on:
-            print("Player", self.player_id, "made an invalid decision!")
-            print(
-                "Tried to act on decision of type", self.decision_to_act_on.type,
-                "piece:", self.decision_to_act_on.piece, "player:", self.decision_to_act_on.player,
-                "decision:", self.decision_to_act_on.decision
-            )
-            print("Hand:", self.hand)
+            #print("Player", self.player_id, "made an invalid decision!")
+            #print(
+            #    "Tried to act on decision of type", self.decision_to_act_on.type,
+            #    "piece:", self.decision_to_act_on.piece, "player:", self.decision_to_act_on.player,
+            #    "decision:", self.decision_to_act_on.decision
+            #)
+            #print("Hand:", self.hand)
 
             return self.decision_to_act_on
 
         if self.decision_to_act_on.type == EventType.Discard:
             if self.decision_to_act_on.piece != 0:
                 self.hand.append(self.decision_to_act_on.piece)
-            print("Picking tile to discard for player", self.player_id, " drew piece:", self.decision_to_act_on.piece)
-            print("Hand after picking:", self.hand)
+            #print("Picking tile to discard for player", self.player_id, " drew piece:", self.decision_to_act_on.piece)
+            #print("Hand after picking:", self.hand)
             self.decision = self.PickDiscard()
             self.hand.remove(self.decision.piece)
-            print("Hand after discarding:", self.hand)
+            #print("Hand after discarding:", self.hand)
 
         elif self.decision_to_act_on.type == EventType.Pon:
             self.decision = self.DecidePon()
@@ -343,9 +338,6 @@ class StubbornBot(MahjongAI, Player):
 
         elif self.decision_to_act_on.type == EventType.Kan:
             self.decision = self.DecideKan()
-
-        else:
-            print("Requested a decision for an unimplemented event type:", self.decision_to_act_on.type)
 
         self.decision_acted_on = True
         return self.decision

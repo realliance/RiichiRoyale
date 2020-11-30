@@ -25,14 +25,14 @@ class PlayerManager(MahjongAI, Player):
         super().reset()
 
   def GameStart(self, player_id):
-    print('==GAME STARTED==')
+    #print('==GAME STARTED==')
     with self.lock:
       self.player_id = player_id
 
   def RoundStart(self, hand, seatWind, prevalentWind):
-    print('====ROUND START CALLED====')
-    print('SEATWIND:', seatWind)
-    print(list(map(lambda x: PieceType(x.get_raw_value()), hand)))
+    #print('====ROUND START CALLED====')
+    #print('SEATWIND:', seatWind)
+    #print(list(map(lambda x: PieceType(x.get_raw_value()), hand)))
     with self.lock:
       if len(self.hand) == 0:
         self.hand = hand
@@ -52,7 +52,7 @@ class PlayerManager(MahjongAI, Player):
       self.prevalent_wind = self.next_round_prevalent_wind
 
   def ReceiveEvent(self, event):
-    print(event.type)
+    #print(event.type)
     should_notify = True
     with self.lock:
       self.received_events += [event]
@@ -60,20 +60,20 @@ class PlayerManager(MahjongAI, Player):
         if not event.decision:
           should_notify = False
     if should_notify:
-      print('notifying')
+      #print('notifying')
       with self.current_match.process_lock:
         self.current_match.process_lock.notify()
 
   def RetrieveDecision(self):
     if self.current_match is None:
-      print('[PlayerManager] Warning! Still attached to an active match and not aware of it!')
+      #print('[PlayerManager] Warning! Still attached to an active match and not aware of it!')
       return
-    print('[PlayerManager] Decision Retrieve Started')
+    #print('[PlayerManager] Decision Retrieve Started')
     while not self.decision_complete:
       continue
     with self.lock:
       self.decision_complete = False
-      print('[PlayerManager] Decision Retrieved')
+      #print('[PlayerManager] Decision Retrieved')
       return self.decision_made
 
   def MakeDecision(self, event):

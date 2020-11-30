@@ -148,7 +148,7 @@ class TutorialView(BoardView):
         self.dialogue_manager.start_event("ron")
 
     def on_dialogue_event_ending(self, event_name):
-        print('Stage 1')
+        #print('Stage 1')
         if event_name == "end":
             self.dialogue_manager.current_event = None
             self.match.current_board.decision_pending = False
@@ -160,7 +160,7 @@ class TutorialView(BoardView):
             self.match = None
             return
         if event_name == "skip_pon":
-            print('Stage 2')
+            #print('Stage 2')
             self.dialogue_manager.start_event("discard_tip")
             self.match.current_board.decision_pending = False
         else:

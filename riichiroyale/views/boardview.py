@@ -108,7 +108,7 @@ class BoardView(MenuView):
         )
 
     def on_round_start(self):
-        print('Round start called')
+        #print('Round start called')
         """Called on the beginning of each round."""
         self.play_area = surface.Surface(
             (self.player_area_rect.width, self.player_area_rect.height),

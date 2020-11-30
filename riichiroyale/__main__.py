@@ -101,7 +101,7 @@ def main():
     stubborn_bot = StubbornBot()
     register_ai(stubborn_bot, "StubbornBot")
 
-    print(avaliable_ais())
+    #print(avaliable_ais())
 
     # Set Icon
     pygame.display.set_icon(tile_dictionary[PieceType.GREEN_DRAGON])

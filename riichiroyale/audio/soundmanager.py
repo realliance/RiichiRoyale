@@ -61,7 +61,7 @@ class SoundManager:
     def on_update(self):
         if not pygame.mixer.music.get_busy():  # plays next song when previous song ends
             self.current_playlist_song += 1
-            if self.current_playlist_song >= len(self.current_playlist_song):
+            if self.current_playlist_song >= len(self.music_playlist):
                 self.current_playlist_song = 0
             self.play_music(self.music_playlist[self.current_playlist_song])
 

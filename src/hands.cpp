@@ -322,6 +322,9 @@ namespace Mahjong {
   }
 
   auto isInTenpai(std::vector<Piece> hand, bool allWaits) -> std::vector<Piece> {
+    if(hand.empty()){
+      return {};
+    }
     int minSingles = countSingles(hand);
     if(minSingles > 6 || minSingles == 1 || minSingles == 4 || minSingles == 0){
         return {};
@@ -350,6 +353,9 @@ namespace Mahjong {
 
   //see above comment
   auto getRiichiDiscard(std::vector<Piece> hand) -> std::vector<Piece> {
+    if(hand.empty()){
+      return {};
+    }
     int8_t counts[256] = {};
     bool removedbefore[256] = {};
     std::vector<Piece> removeMe;

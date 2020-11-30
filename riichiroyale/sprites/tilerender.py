@@ -17,7 +17,7 @@ class TileRender(DirtySprite):
         rotation=0,
     ):
         if not hasattr(tile, 'get_raw_value'):
-            print('WARNING: Just attempted to pass a PieceType to TileRender!')
+            #print('WARNING: Just attempted to pass a PieceType to TileRender!')
             tile = Piece(int(tile))
 
         DirtySprite.__init__(self)
