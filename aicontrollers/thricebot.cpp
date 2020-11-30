@@ -146,11 +146,12 @@ auto ThriceBot::ReceiveEvent(Mahjong::Event e) -> void
       hand.push_back(h);
       checkDiscard();
     }
-    else if(e.type == Mahjong::Event::Discard)
+    
+  }
+  else if(e.type == Mahjong::Event::Discard)
     {
       discarded.push_back(e.piece);
     }
-  }
 }
 
 
