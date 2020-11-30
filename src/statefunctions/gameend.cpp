@@ -15,7 +15,7 @@ auto Mahjong::GameEnd(GameState& state) -> GameState& {
     player.controller->ReceiveEvent(END_EVENT);
     std::cout << player.points << ", ";
     #ifndef NO_PYBIND
-      if(pythonManagedControllers.contains(player.controller->Name())){
+      if(player.controller->Name() == "Player" || player.controller->Name() == "StubbornBot"){
         continue;
       }
     #endif

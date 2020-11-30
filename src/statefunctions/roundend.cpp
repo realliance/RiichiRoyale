@@ -29,7 +29,7 @@ auto Mahjong::RoundEnd(GameState& state) -> GameState& {
   }
   state.scores = {};
 
-  if(state.roundNum > 3){ // east only lmao
+  if(state.roundNum > 1){ // east only lmao
     state.nextState = GameEnd;
   }else{
     state.nextState = RoundStart;
