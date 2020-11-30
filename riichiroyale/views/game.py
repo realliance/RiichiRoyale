@@ -146,6 +146,7 @@ class GameView(BoardView):
         pass
 
     def update(self, time_delta):
+        self.sound_manager.on_update()
         if self.game_manager.board_manager.round_should_end:
             self._end_round_dialog()
 
