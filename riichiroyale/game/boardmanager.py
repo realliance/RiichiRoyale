@@ -381,7 +381,7 @@ def on_point_diff_event(
     _extra_player,
 ):
     value = event.piece.get_raw_value() if isinstance(event.piece, Piece) else event.piece
-    match.delta_scores[event.player] += value * 1000
+    match.delta_scores[event.player] += value * 100
     game_manager.board_manager._point_diff_count += 1
     if game_manager.board_manager._point_diff_count >= 4:
         game_manager.board_manager.round_should_end = True
