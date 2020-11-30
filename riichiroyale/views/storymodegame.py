@@ -107,7 +107,7 @@ class StoryModeGame(GameView):
         if event_name in ROUND_END_EVENTS:
             self.game_manager.set_active_view("storymodeselect")
             self.game_manager.sound_manager.play_music("lobby")
-            self.match.player_manager.reset()
+            self.match.player_manager.reset(clear=True)
             self.match = None
         self.lock_user_input = False
 

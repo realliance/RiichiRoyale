@@ -1,5 +1,5 @@
 from libmahjong import start_game, EventType, EngineEvent, PieceType
-from riichiroyale.game import Player, Match, process_event_queue, DialogManager, loadStory
+from riichiroyale.game import Player, Match, process_event_queue, DialogManager, loadStory, CombinedEventType
 from .boardview import BoardView
 
 
@@ -83,7 +83,7 @@ class GameView(BoardView):
 
     def on_kan_button_pressed(self):
         event = EngineEvent()
-        event.type = self.game_manager.board_manager.last_decision_event.type
+        event.type =  self.game_manager.board_manager.last_decision_event.raw_event_b.type if self.game_manager.board_manager.last_decision_event.type == CombinedEventType.DiscardKan else self.game_manager.board_manager.last_decision_event.type
         event.piece = -1
         event.player = -1
         event.decision = True
