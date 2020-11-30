@@ -53,14 +53,17 @@ auto Mahjong::RegisterController(newControllerInst newFunc, std::string name) ->
 
 
 #ifndef NO_PYBIND
+
 auto Mahjong::RegisterPythonController(pybind11::object pythonController, std::string Name) -> bool {
   auto genFunction = [=]() -> PlayerController* {
     return pythonController.cast<PlayerController*>(); 
   };
+  pythonManagedControllers.insert(Name);
   return Mahjong::RegisterController(genFunction, Name);
 }
 
 auto Mahjong::UnregisterController(std::string Name) -> void {
+  pythonManagedControllers.erase(Name);
   availableControllers.erase(Name);
 }
 #endif

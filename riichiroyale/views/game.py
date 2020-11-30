@@ -146,6 +146,7 @@ class GameView(BoardView):
         pass
 
     def update(self, time_delta):
+        self.sound_manager.on_update()
         if self.game_manager.board_manager.round_should_end:
             self._end_round_dialog()
 
@@ -153,10 +154,13 @@ class GameView(BoardView):
             self.game_manager.board_manager.game_should_end = False
             # Use own flag to ensure inheritance does not mess with game ending
             self.end_game = True
+            self.match.match_alive = False
 
         super().update(time_delta)
 
         if self.end_game:
             self.end_game = False
+            self.match.player_manager.reset(clear=True)
+            self.match = None
             self.game_manager.set_active_view("main_menu")
             self.game_manager.sound_manager.play_music("lobby")

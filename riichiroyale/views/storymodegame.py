@@ -67,8 +67,6 @@ class StoryModeGame(GameView):
         self.match_dict = match_dict
         prefix = "<b>{}</b><br><br>".format(self.match_dict['opponent'])
         self.match_opponent = self.match_dict['opponent_index']
-
-        self.dialogue_manager = DialogManager()
         
         for possible_event in DIALOGUE_EVENT_PRIORITY:
             if possible_event in self.match_dict:
@@ -138,7 +136,7 @@ class StoryModeGame(GameView):
             matches = get_object('matches')
             i = 0
             for match in matches['matches']:
-                if match['stage'] == i:
+                if match['stage'] == self.stage_number:
                     matches['matches'][i]['completed'] = True
                     break
                 i += 1
@@ -208,4 +206,8 @@ def new_dialogue(match_dict, gui_manager, button_map, element_list, text):
 
     button_map["text"] = text_box
     button_map["advance_text"] = text_next
+
+    button_map["text"].show()
+    button_map["advance_text"].show()
+    
     element_list += [icon]

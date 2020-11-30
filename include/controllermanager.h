@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <set>
 #include <functional>
 
 #ifndef NO_PYBIND
@@ -16,6 +17,7 @@ namespace Mahjong{
   auto GetController(std::string controller) -> newControllerInst;
   auto RegisterController(newControllerInst newFunc, std::string Name) -> bool;
 #ifndef NO_PYBIND
+  static std::set<std::string> pythonManagedControllers;
   auto RegisterPythonController(pybind11::object pythonController, std::string Name) -> bool;
   auto UnregisterController(std::string Name) -> void;
 #endif
