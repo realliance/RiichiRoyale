@@ -136,8 +136,7 @@ class StoryModeGame(GameView):
             matches = get_object('matches')
             i = 0
             for match in matches['matches']:
-                if match['stage'] == i:
-                    print(match)
+                if match['stage'] == self.stage_number:
                     matches['matches'][i]['completed'] = True
                     break
                 i += 1
