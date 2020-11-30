@@ -22,7 +22,7 @@ def convert_event(event):
 
     event_piece = event.piece.get_raw_value() if isinstance(event.piece, Piece) else event.piece
     event_piece_value = int(event_piece)
-    print(event_piece_value)
+    #print(event_piece_value)
     if event_piece_value >= 0:
         return Event(event.type, event.player, Piece(event_piece_value), event.decision)
 
@@ -86,7 +86,7 @@ def on_chi_event(
 
         if is_ai:
             del event_player.hand[-4:]
-            print(len(event_player.hand))
+            #print(len(event_player.hand))
         else:
             event_player.hand.remove(event.piece)
             event_player.hand.remove(event.piece + 1)
@@ -522,11 +522,11 @@ def on_game_event(game_manager, event, match):
     if (event.type == EventType.PointDiff):
         sleep(0.1)
 
-    print('== NEW EVENT ==')
-    print('Player:', event.player)
-    print('Type:', event.type)
-    print('Piece:', PieceType(event.piece.get_raw_value()) if isinstance(event.piece, Piece) else event.piece)
-    print('Decision?', event.decision)
+    #print('== NEW EVENT ==')
+    #print('Player:', event.player)
+    #print('Type:', event.type)
+    #print('Piece:', PieceType(event.piece.get_raw_value()) if isinstance(event.piece, Piece) else event.piece)
+    #print('Decision?', event.decision)
 
     EVENTS = {
         EventType.Chi: on_chi_event,
@@ -586,7 +586,7 @@ def on_game_event(game_manager, event, match):
     if hasattr(game_manager.get_active_view(), "receive_ai_events"):
         if not is_decision:
             if event.player == game_manager.get_active_view().receive_ai_events and event.type in valid_dialogue_events:
-                print('Registered Event', event.type)
+                #print('Registered Event', event.type)
                 game_manager.get_active_view().watched_ai_event_log += [event]
 
     EVENTS[event_type](
